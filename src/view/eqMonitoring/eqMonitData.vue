@@ -1,6 +1,6 @@
 <template>
    <div class="eq-detail">
-      <a-tabs default-active-key="1" tabPosition="left">
+      <a-tabs default-active-key="1" v-model="currentPage" tabPosition="left">
          <a-tab-pane key="1" tab="设备参数">
             <eq-param></eq-param>
          </a-tab-pane>
@@ -15,7 +15,9 @@
 import eqParam from './components/eqParam.vue'
 export default {
    data() {
-      return {}
+      return {
+         currentPage: '1',
+      }
    },
    components: {
       eqParam,

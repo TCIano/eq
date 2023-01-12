@@ -150,6 +150,9 @@ export default {
          console.log('get')
       },
    },
+   created() {
+      console.log('created')
+   },
 }
 </script>
 
