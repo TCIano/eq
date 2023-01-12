@@ -1,0 +1,80 @@
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+.device-scroll-page {
+  height: calc(100vh - 100px);
+  overflow: auto;
+}
+.device-scroll-page::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  opacity: 0;
+}
+.device-scroll-page::-webkit-scrollbar-thumb {
+  opacity: 0;
+  border-radius: 4px;
+}
+.device-scroll-page:hover::-webkit-scrollbar-thumb {
+  opacity: 1;
+  background: hsla(0, 0%, 53%, 0.4);
+}
+.device-scroll-page:hover::-webkit-scrollbar-track {
+  opacity: 1;
+  background: hsla(0, 0%, 53%, 0.1);
+}
+.device-scroll-page .item-pagination {
+  float: right;
+}
+/**
+    圆形状态
+    红色：故障
+    绿色：正常运行
+    黄色：警告
+**/
+#success {
+  width: 30px;
+  height: 30px;
+  background: inherit;
+  background-color: #227c16;
+  box-sizing: border-box;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #001831;
+  border-radius: 100px;
+  -moz-box-shadow: 5px 5px 5px #001b36;
+  -webkit-box-shadow: 5px 5px 5px #001b36;
+  box-shadow: 5px 5px 5px #001b36;
+}
+#waring {
+  border-width: 0px;
+  width: 30px;
+  height: 30px;
+  background: inherit;
+  background-color: #ea7504;
+  box-sizing: border-box;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #001831;
+  border-radius: 100px;
+  -moz-box-shadow: 5px 5px 5px #001b36;
+  -webkit-box-shadow: 5px 5px 5px #001b36;
+  box-shadow: 5px 5px 5px #001b36;
+}
+#error {
+  width: 30px;
+  height: 30px;
+  background: inherit;
+  background-color: #a70707;
+  box-sizing: border-box;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #001831;
+  border-radius: 100px;
+  -moz-box-shadow: 5px 5px 5px #001b36;
+  -webkit-box-shadow: 5px 5px 5px #001b36;
+  box-shadow: 5px 5px 5px #001b36;
+}

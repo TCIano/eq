@@ -1,0 +1,90 @@
+html,
+body,
+#app {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+
+}
+
+.device-scroll-page {
+    height: calc(100vh - 100px);
+    overflow: auto;
+    &::-webkit-scrollbar {
+       width: 6px;
+       height: 6px;
+       opacity: 0;
+    }
+    &::-webkit-scrollbar-thumb {
+       opacity: 0;
+       border-radius: 4px;
+    }
+    &:hover::-webkit-scrollbar-thumb {
+       opacity: 1;
+       background: hsla(0, 0%, 53%, 0.4);
+    }
+    &:hover::-webkit-scrollbar-track {
+       opacity: 1;
+       background: hsla(0, 0%, 53%, 0.1);
+    }
+    .item-pagination {
+       float: right;
+    }
+ }
+
+/**
+    圆形状态
+    红色：故障
+    绿色：正常运行
+    黄色：警告
+**/
+#success {
+    // border-width: 0px;
+   
+    width: 30px;
+    height: 30px;
+    background: inherit;
+    background-color: rgb(34, 124, 22);
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgba(0, 24, 49, 1);
+    border-radius: 100px;
+    -moz-box-shadow: 5px 5px 5px rgba(0, 27, 54, 1);
+    -webkit-box-shadow: 5px 5px 5px rgb(0 27 54);
+    box-shadow: 5px 5px 5px rgb(0 27 54);
+}
+
+#waring {
+    border-width: 0px;
+   
+    width: 30px;
+    height: 30px;
+    background: inherit;
+    background-color: rgba(234, 117, 4, 1);
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgba(0, 24, 49, 1);
+    border-radius: 100px;
+    -moz-box-shadow: 5px 5px 5px rgba(0, 27, 54, 1);
+    -webkit-box-shadow: 5px 5px 5px rgb(0 27 54);
+    box-shadow: 5px 5px 5px rgb(0 27 54);
+}
+
+#error {
+    // border-width: 0px;
+    
+    width: 30px;
+    height: 30px;
+    background: inherit;
+    background-color: rgba(167, 7, 7, 1);
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgba(0, 24, 49, 1);
+    border-radius: 100px;
+    -moz-box-shadow: 5px 5px 5px rgba(0, 27, 54, 1);
+    -webkit-box-shadow: 5px 5px 5px rgb(0 27 54);
+    box-shadow: 5px 5px 5px rgb(0 27 54);
+}
