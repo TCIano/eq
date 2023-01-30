@@ -1,0 +1,52 @@
+.ant-card {
+  opacity: 0.9;
+  color: white;
+  background: #081d3d;
+  border: 2px solid #386b8a;
+}
+.ant-card ::v-deep .ant-card-head {
+  border-bottom: 2px solid #386b8a;
+}
+.ant-card ::v-deep .ant-card-head .ant-card-head-title {
+  color: white;
+}
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-thead,
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-tbody,
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-placeholder {
+  background: #081d3d;
+}
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-thead .ant-empty-description,
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-tbody .ant-empty-description,
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-placeholder .ant-empty-description {
+  color: white;
+}
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-input {
+  border: 1px solid #47d6d7;
+  color: white;
+  background: transparent;
+}
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-input:hover {
+  border: 1px solid #386b8a;
+}
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-thead > tr > th,
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-tbody > tr > td {
+  background: transparent;
+  color: white;
+  border-bottom: 2px solid #386b8a;
+}
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-tbody > tr:hover {
+  background: #444343;
+  opacity: 0.9;
+}
+.ant-card ::v-deep .ant-card-body .ant-card-actions {
+  background: transparent;
+}
+.ant-card ::v-deep .ant-card-body .ant-card-meta-detail .ant-card-meta-title {
+  color: white;
+}
+.ant-card ::v-deep .ant-card-body .ant-card-meta-detail .ant-card-meta-description {
+  color: white;
+}
+.ant-card ::v-deep .ant-card-body span {
+  color: white;
+}

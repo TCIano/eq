@@ -157,54 +157,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-// @import 'ant-design-vue/dist/antd.dark.less';
-.ant-card {
-   opacity: 0.9;
-   color: white;
-   background: #081d3d;
-   //    border: none;
-   border: 2px solid #386b8a;
-
-   ::v-deep .ant-card-head {
-      border-bottom: 2px solid #386b8a;
-      .ant-card-head-title {
-         color: white;
-      }
-   }
-   ::v-deep .ant-card-body {
-      .ant-table-content {
-         .ant-table-thead,
-         .ant-table-tbody {
-            background: #081d3d;
-         }
-         .ant-table-thead > tr > th,
-         .ant-table-tbody > tr > td {
-            background: transparent;
-            color: white;
-            border-bottom: 2px solid #386b8a;
-         }
-         .ant-table-tbody > tr:hover {
-            background: rgb(131, 129, 129);
-            opacity: 0.5;
-         }
-      }
-      .ant-card-actions {
-         background: transparent;
-      }
-      .ant-card-meta-detail {
-         .ant-card-meta-title {
-            color: white;
-         }
-         .ant-card-meta-description {
-            color: white;
-         }
-      }
-
-      span {
-         color: white;
-      }
-   }
-}
 /deep/.ant-modal {
    background: transparent;
    .ant-modal-content {
