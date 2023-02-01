@@ -21,4 +21,14 @@ export default [
       path: '/equipmentMonitoringData',
       component: () => import('@/view/eqMonitoring/eqMonitData.vue'),
    },
+   {
+      name: '设备故障预测',
+      path: '/equipmentFailurePrediction',
+      component: () => import('@/view/eqFailurePrediction/index.vue'),
+   },
+   {
+      name: '设备故障诊断',
+      path: '/equipmentFailureDiagnosis',
+      component: () => import('@/view/eqFailureDiagnosis/index.vue'),
+   },
 ]

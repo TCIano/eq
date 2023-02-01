@@ -2,11 +2,11 @@
    <a-card>
       <div slot="title" style="display: flex; align-items: center">
          <a-icon type="pause" style="font-size: 20px" />
-         <span>时域分析图谱</span>
+         <span>{{ title }}</span>
       </div>
       <e-chart :option="option" theme="dark" height="300px" width="100%" />
       <!-- 计算表格 -->
-      <a-table :data-source="data" :rowSelection="rowSelection" :columns="columns">
+      <a-table size="middle" :data-source="data" :rowSelection="rowSelection" :columns="columns">
          <template slot="value" slot-scope="text, record">
             <a-input
                :value="text.value"
@@ -25,6 +25,7 @@ export default {
    components: { eChart },
    data() {
       return {
+         title: '时域分析图谱',
          option: {
             xAxis: {
                type: 'category',
@@ -57,9 +58,11 @@ export default {
                title: '去噪选择',
                dataIndex: 'select',
                key: 'select',
+               width: 300,
             },
             {
                title: '输入值',
+               width: 300,
                scopedSlots: { customRender: 'value' },
                key: 'value',
             },
@@ -67,6 +70,7 @@ export default {
                title: '操作',
                scopedSlots: { customRender: 'action' },
                key: 'option',
+               width: 700,
             },
          ],
       }

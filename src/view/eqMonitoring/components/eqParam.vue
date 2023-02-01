@@ -2,7 +2,7 @@
    <a-card>
       <div slot="title" style="display: flex; align-items: center">
          <a-icon type="pause" style="font-size: 20px" />
-         <span>设备参数</span>
+         <span>{{ title }}</span>
       </div>
       <a-table :columns="columns" :data-source="data" :pagination="false">
          <template slot="action">
@@ -104,6 +104,7 @@ const data = [
 export default {
    data() {
       return {
+         title: '设备参数',
          columns,
          data,
          visible: false,
@@ -120,6 +121,10 @@ export default {
             ],
          },
          dateFormat: 'YYYY-MM-DD HH:mm:ss',
+         time: [
+            moment(moment(this.currentTime).subtract(3, 'hours').format(this.dateFormat)), //moment写法获取前三个小时
+            moment(moment(this.currentTime).subtract(0, 'hours').format(this.dateFormat)),
+         ],
          currentTime: new Date(),
          // wrapperCol: { span: 14 },
       }
@@ -128,11 +133,13 @@ export default {
       formItemLayout() {
          return {}
       },
-      time() {
-         return [
-            moment(moment(this.currentTime).subtract(3, 'hours').format(this.dateFormat)), //moment写法获取前三个小时
-            moment(moment(this.currentTime).subtract(0, 'hours').format(this.dateFormat)),
-         ]
+   },
+   watch: {
+      currentTime: {
+         handler(newVal, oldVal) {
+            //重新给time赋值
+            this.reSetTime()
+         },
       },
    },
    methods: {
@@ -148,6 +155,12 @@ export default {
       //获取波形参数分析分析结果
       getAnaData() {
          console.log('get')
+      },
+      reSetTime() {
+         this.time = [
+            moment(moment(this.currentTime).subtract(3, 'hours').format(this.dateFormat)), //moment写法获取前三个小时
+            moment(moment(this.currentTime).subtract(0, 'hours').format(this.dateFormat)),
+         ]
       },
    },
    created() {

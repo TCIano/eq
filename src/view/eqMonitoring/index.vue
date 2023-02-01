@@ -1188,6 +1188,9 @@ export default {
          background: transparent;
       }
       .ant-card-body {
+         .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+            background: #326986;
+         }
          .ant-card-actions {
             background: transparent;
          }

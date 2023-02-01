@@ -50,3 +50,29 @@
 .ant-card ::v-deep .ant-card-body span {
   color: white;
 }
+.ant-card ::v-deep .ant-card-body .ant-calendar-picker-input.ant-input {
+  background: transparent;
+  border: 1px solid #47d6d7;
+  color: white;
+}
+.ant-card ::v-deep .ant-card-body .ant-calendar {
+  color: white;
+  background-color: #141414 !important;
+  border: 1px solid #141414;
+}
+.ant-card ::v-deep .ant-card-body .ant-input {
+  color: white;
+  border: 1px solid #47d6d7;
+  background: transparent;
+}
+.ant-card ::v-deep .ant-card-body .ant-input:hover {
+  border: 1px solid #386b8a;
+}
+.ant-card ::v-deep .ant-card-body .ant-select-selection {
+  color: white;
+  background-color: transparent;
+  border: 1px solid #47d6d7;
+}
+.ant-card ::v-deep .ant-card-body .ant-alert-message {
+  color: black;
+}
