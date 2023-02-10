@@ -38,13 +38,11 @@ export default {
          let isDisplayRouter = this.$store.getters['setting/menuData'].filter(
             item => item.display !== false
          )
-         console.log(isDisplayRouter)
+         // console.log(isDisplayRouter)
          return isDisplayRouter
       },
    },
-   created() {
-      console.log(this.$store)
-   },
+   created() {},
 }
 </script>
 

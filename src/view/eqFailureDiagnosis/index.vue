@@ -1098,6 +1098,7 @@ export default {
          eq: [],
       }
    },
+   methods: {},
 }
 </script>
 

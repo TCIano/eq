@@ -31,4 +31,10 @@ export default [
       path: '/equipmentFailureDiagnosis',
       component: () => import('@/view/eqFailureDiagnosis/index.vue'),
    },
+   {
+      display: false,
+      name: '设备管理增加修改',
+      path: '/equipmentManagementHandle',
+      component: () => import('@/view/eqManagement/components/eqManageHandle.vue'),
+   },
 ]

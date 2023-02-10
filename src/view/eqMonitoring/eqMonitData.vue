@@ -1,5 +1,8 @@
 <template>
    <div class="eq-detail">
+      <div class="text-center bg-transparent text-4xl text-white font-mono">
+         {{ eqName }}综合监视
+      </div>
       <a-tabs default-active-key="1" v-model="currentPage" tabPosition="left">
          <a-tab-pane key="1" tab="设备参数">
             <eq-param></eq-param>
@@ -22,6 +25,7 @@ import TimeDomain from './components/timeDomain.vue'
 export default {
    data() {
       return {
+         eqName: '鼓风机',
          currentPage: '1',
       }
    },
@@ -39,10 +43,10 @@ export default {
 
 .eq-detail {
    padding: 0 20px;
-   padding-top: 60px;
+   padding-top: 10px;
    width: 100%;
    height: 100%;
-   background: url('@/assets/img/eqdetail.jpg') no-repeat;
+   background: url('@/assets/img/eqdetail.png') no-repeat;
    background-size: cover;
    .ant-tabs {
       color: white;

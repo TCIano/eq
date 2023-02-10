@@ -12,6 +12,7 @@
                   :expanded-keys="expandedKeys"
                   :auto-expand-parent="autoExpandParent"
                   :tree-data="gData"
+                  @select="select"
                   @expand="onExpand"
                >
                   <template slot="title" slot-scope="{ title }">
@@ -116,6 +117,9 @@ export default {
       getEqDetail(item) {
          console.log(111)
          console.log(item)
+      },
+      select(key, e) {
+         console.log(key, e)
       },
    },
    created() {

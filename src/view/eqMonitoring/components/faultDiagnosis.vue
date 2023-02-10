@@ -29,7 +29,7 @@
          <!-- 警告提示 -->
          <a-row>
             <a-alert
-               message="请注意！通过高斯图方法训练对比发现：预测推断离心泵可能发生故障发生参考点：2021/11/25 18:40:00    故障位号：温度Reactor.Inlet.TotalFlow    "
+               message="请注意！通过高斯图方法训练对比发现:预测推断离心泵可能发生故障发生参考点:2021/11/25 18:40:00    故障位号:温度Reactor.Inlet.TotalFlow"
                banner
             />
          </a-row>
