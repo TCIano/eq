@@ -1,7 +1,7 @@
 <template>
    <div class="eq-monit">
-      <a-row :gutter="10">
-         <a-col :span="5">
+      <a-row>
+         <a-col :span="4">
             <a-card :bordered="false" class="device-scroll-page">
                <a-input-search
                   style="margin-bottom: 8px"
@@ -26,11 +26,11 @@
                </a-tree>
             </a-card>
          </a-col>
-         <a-col :span="19">
+         <a-col :span="20">
             <a-card class="device-scroll-page" :bordered="false">
                <a-row :gutter="15">
                   <!-- 设备监控列表 -->
-                  <eq-list :eqInfo="eqInfo" />
+                  <eq-list />
                </a-row>
             </a-card>
          </a-col>
@@ -77,7 +77,7 @@ export default {
          searchValue: '',
          autoExpandParent: true,
          gData: [],
-         eqInfo: [],
+         // eqInfo: [],
       }
    },
    methods: {

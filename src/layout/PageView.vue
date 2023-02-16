@@ -1,18 +1,12 @@
 <template>
-   <a-layout
-      id="components-layout-demo-custom-trigger"
-      :class="['admin-layout']"
-      style="min-height: 100%"
-   >
+   <a-layout id="components-layout-demo-custom-trigger" style="min-height: 100%">
       <SideMenu :menuData="sideMenuData"></SideMenu>
       <a-layout>
          <a-layout-content
             :style="{
-               margin: '24px 16px',
+               margin: '24px 10px',
                padding: '24px',
                background: '#fff',
-               minHeight: '280px',
-               minWidth: '1500px',
             }"
          >
             <router-view></router-view>

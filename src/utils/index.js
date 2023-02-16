@@ -10,21 +10,34 @@ export const deepClone = data => {
 /**
  * 二维数组转为链表
  * @param {二维数组} arr
+ * isSelectAll 每个节点是否可选
+ * cascader 是否为级联数据
  * @returns
  */
-function arr2List(arr, isSelectAll) {
+function arr2List(arr, isSelectAll, cascader) {
    const list = []
+   let head = {}
    let key = arr[0]
-   const head = {
-      title: arr[0],
-      key: arr[0],
-      children: [],
-      selectable: isSelectAll ? true : false,
-   }
+   //解决当只能选中子节点且当前元素只有一层时，不能被选中的问题
+   head =
+      arr.length > 1
+         ? {
+              title: arr[0],
+              key: arr[0],
+              children: [],
+              selectable: isSelectAll ? true : false,
+           }
+         : {
+              title: arr[0],
+              key: arr[0],
+              children: [],
+              selectable: true,
+           }
    let prev = head
    list.push(prev)
    for (let i = 1; i < arr.length; i++) {
-      key += ',' + arr[i]
+      !cascader ? (key += ',' + arr[i]) : (key = arr[i])
+
       let current
       if (isSelectAll) {
          current = {
@@ -71,10 +84,10 @@ function mergeList(tree, list) {
  * @param {二维数组} arr
  * @returns
  */
-export const arr2Tree = (arr, isSelectAll = true) => {
+export const arr2Tree = (arr, isSelectAll = true, cascader = false) => {
    const tree = []
    arr.forEach(item => {
-      const list = arr2List(item, isSelectAll)
+      const list = arr2List(item, isSelectAll, cascader)
       mergeList(tree, list)
    })
    return tree

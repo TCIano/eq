@@ -37,4 +37,10 @@ export default [
       path: '/equipmentManagementHandle',
       component: () => import('@/view/eqManagement/components/eqManageHandle.vue'),
    },
+   {
+      display: false,
+      name: '设备训练',
+      path: '/equipmentTrain',
+      component: () => import('@/view/eqManagement/components/eqTrain.vue'),
+   },
 ]

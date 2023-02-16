@@ -4,19 +4,23 @@
          <a-icon type="pause" style="font-size: 20px" />
          <span>{{ title }}</span>
       </div>
-      <a-table :columns="columns" :data-source="data" :pagination="false">
-         <template slot="action">
+      <a-table :columns="columns" :data-source="data" :pagination="false" row-key="name">
+         <template slot="action" slot-scope="text">
             <img
+               v-if="text.time_domain"
                src="@/assets/img/parameAnalysis.svg"
                alt=""
                style="width: 35px; cursor: pointer"
-               @click="openModal"
+               @click="openModal(text.position_number, text.name)"
             />
+         </template>
+         <template slot="value" slot-scope="text">
+            {{ text.name + '  ' + text.unit }}
          </template>
       </a-table>
       <!-- 参数分析弹窗 -->
       <a-modal
-         title="title"
+         :title="title"
          :visible="visible"
          centered
          @cancel="closeModal"
@@ -33,15 +37,21 @@
          </a-form-model>
          <a-form :layout="form.layout" :model="form">
             <a-row :gutter="24">
-               <a-col :span="12" v-for="item in form.result" :key="item.key">
-                  <a-form-item :label="item.key">
-                     <a-input placeholder="请输入" v-model="item.value"></a-input>
+               <a-col :span="12" v-for="(value, key) in form.waveParam" :key="key">
+                  <a-form-item :label="form.map[key]">
+                     <a-input
+                        placeholder="请输入"
+                        disabled
+                        v-model.number="form.waveParam[key]"
+                     ></a-input>
                   </a-form-item>
                </a-col>
             </a-row>
          </a-form>
          <template slot="footer">
-            <a-button type="primary" icon="calculator">分析</a-button>
+            <a-button type="primary" icon="calculator" @click="getAnaData(position_number)">
+               分析
+            </a-button>
          </template>
       </a-modal>
    </a-card>
@@ -49,64 +59,43 @@
 
 <script>
 import moment from 'moment'
+import { getWaveShapeAnalysisApi } from '@/api/eqMonitor'
 
 const columns = [
    {
       dataIndex: 'name',
       key: 'name',
-      title: 'Name',
+      align: 'center',
+      title: '参数',
    },
    {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
+      title: '状态或位号值',
+      align: 'center',
+      key: 'value',
+      scopedSlots: { customRender: 'value' },
    },
+
    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-   },
-   {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-   },
-   {
-      title: 'Action',
+      title: '',
       key: 'action',
       scopedSlots: { customRender: 'action' },
    },
 ]
 
-const data = [
-   {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-      tags: ['nice', 'developer'],
-   },
-   {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-   },
-   {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-   },
-]
 export default {
+   props: {
+      equipment_id: {
+         type: String,
+      },
+      data: {
+         type: Array,
+      },
+   },
    data() {
       return {
          title: '设备参数',
          columns,
-         data,
+         // data: [],
          visible: false,
          labelCol: { span: 4 },
          wrapperCol: {
@@ -114,11 +103,17 @@ export default {
          },
          form: {
             layout: 'inline',
-            result: [
-               { key: '峰值', value: 120 },
-               { key: '峰值1', value: 120 },
-               { key: '峰值2', value: 120 },
-            ],
+            waveParam: {}, //波形参数
+            map: {
+               peak: '峰值',
+               mean: '平均值',
+               rms: '有效值',
+               peak_value: '峰值指标',
+               waveform: '波形指标',
+               pulse: '脉冲指标',
+               margin: '裕度指标',
+               kurtosis: '峭度指标',
+            },
          },
          dateFormat: 'YYYY-MM-DD HH:mm:ss',
          time: [
@@ -126,6 +121,7 @@ export default {
             moment(moment(this.currentTime).subtract(0, 'hours').format(this.dateFormat)),
          ],
          currentTime: new Date(),
+         position_number: '',
          // wrapperCol: { span: 14 },
       }
    },
@@ -144,17 +140,28 @@ export default {
    },
    methods: {
       moment,
-      openModal() {
+      openModal(position_number, name) {
+         this.position_number = position_number
          this.visible = true
+         this.title = name + '参数分析'
          this.currentTime = new Date()
-         this.getAnaData()
+         this.getAnaData(position_number)
       },
       closeModal() {
          this.visible = false
       },
       //获取波形参数分析分析结果
-      getAnaData() {
-         console.log('get')
+      async getAnaData(position_number) {
+         console.log(this.time)
+         const {
+            result: { data },
+         } = await getWaveShapeAnalysisApi({
+            equipment_id: this.equipment_id,
+            position_number,
+            start_time: moment(this.time[0]).format(this.dateFormat),
+            end_time: moment(this.time[1]).format(this.dateFormat),
+         })
+         this.form.waveParam = data
       },
       reSetTime() {
          this.time = [

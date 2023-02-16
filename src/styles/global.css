@@ -5,38 +5,30 @@ body,
   margin: 0px;
   padding: 0px;
 }
-
 .device-scroll-page {
   height: calc(100vh - 100px);
   overflow: auto;
 }
-
 .device-scroll-page::-webkit-scrollbar {
   width: 6px;
   height: 6px;
   opacity: 0;
 }
-
 .device-scroll-page::-webkit-scrollbar-thumb {
   opacity: 0;
   border-radius: 4px;
 }
-
 .device-scroll-page:hover::-webkit-scrollbar-thumb {
   opacity: 1;
   background: hsla(0, 0%, 53%, 0.4);
 }
-
 .device-scroll-page:hover::-webkit-scrollbar-track {
   opacity: 1;
   background: hsla(0, 0%, 53%, 0.1);
 }
-
 .device-scroll-page .item-pagination {
-  /* margin-bottom: 5px; */
   float: right;
 }
-
 /**
     圆形状态
     红色：故障
@@ -57,7 +49,6 @@ body,
   -webkit-box-shadow: 5px 5px 5px #001b36;
   box-shadow: 5px 5px 5px #001b36;
 }
-
 #waring {
   border-width: 0px;
   width: 30px;
@@ -73,7 +64,6 @@ body,
   -webkit-box-shadow: 5px 5px 5px #001b36;
   box-shadow: 5px 5px 5px #001b36;
 }
-
 #error {
   width: 30px;
   height: 30px;

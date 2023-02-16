@@ -1,6 +1,6 @@
 <template>
    <a-row :gutter="10">
-      <a-col :span="5">
+      <a-col :span="4">
          <a-card class="device-scroll-page">
             <a-input-search
                style="margin-bottom: 8px"
@@ -25,9 +25,9 @@
             </a-tree>
          </a-card>
       </a-col>
-      <a-col :span="19">
+      <a-col :span="20">
          <a-card class="device-scroll-page">
-            <a-row :gutter="[15]">
+            <a-row :gutter="10">
                <a-col :span="6">
                   <a-card hoverable style="width: 300px" @click="addEq">
                      <template slot="actions" class="ant-card-actions">
@@ -39,11 +39,11 @@
                <a-col :span="6" v-for="item in eqList" :key="item.equipment_id">
                   <a-card hoverable style="width: 300px; margin-bottom: 15px">
                      <template slot="actions" class="ant-card-actions">
-                        <a href="#" @click.prevent="edit(item.equipment_id)">
+                        <a href="#" @click.prevent="edit(item.equipment_id, item.isopen)">
                            <a-icon key="edit" type="edit" />
                            编辑
                         </a>
-                        <a href="#">
+                        <a href="#" @click.prevent="train(item.equipment_id)">
                            <a-icon key="training" type="redo" />
                            训练
                         </a>
@@ -67,7 +67,6 @@
                   </a-card>
                </a-col>
             </a-row>
-
             <!-- 分页 -->
             <a-pagination
                :default-current="1"
@@ -158,13 +157,13 @@ export default {
       },
       //获取组织机构
       async getOrigination() {
-         const result = await getOriginationApi()
+         const { result } = await getOriginationApi()
          this.gData = arr2Tree(result)
          generateList(this.gData)
       },
       //获取设备列表
       async getEquipmentList() {
-         const result = await getEquipmentListApi()
+         const { result } = await getEquipmentListApi()
          this.eqList = result
       },
       selectOri(value, e) {
@@ -172,22 +171,19 @@ export default {
       },
       //新增设备
       addEq() {
-         // this.visible = true
-         // this.title = '新增'
          this.$router.push({
             path: '/equipmentManagementHandle',
             query: {
-               // origination: arr2Tree(this.listOrignation),
                title: '新增',
             },
          })
       },
-      async edit(id) {
-         // const result = await getEquipmentDetailApi(id)
+      async edit(id, isopen) {
          this.$router.push({
             path: '/equipmentManagementHandle',
             query: {
                id,
+               isopen,
                title: '修改',
             },
          })
@@ -205,6 +201,15 @@ export default {
       async deleteEq(id) {
          await deleteEquipmentExampleApi(id)
          this.getEquipmentList()
+      },
+      // /跳转模型训练页面
+      train(id) {
+         this.$router.push({
+            path: '/equipmentTrain',
+            query: {
+               id,
+            },
+         })
       },
    },
    created() {

@@ -10,6 +10,11 @@
 .ant-card ::v-deep .ant-card-head .ant-card-head-title {
   color: white;
 }
+.ant-card ::v-deep .ant-card-body .ant-btn {
+  border: 1px solid #47d6d7 !important;
+  color: white;
+  background: transparent;
+}
 .ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-thead,
 .ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-tbody,
 .ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-placeholder {
@@ -26,6 +31,14 @@
   background: transparent;
 }
 .ant-card ::v-deep .ant-card-body .ant-table-content .ant-input:hover {
+  border: 1px solid #386b8a;
+}
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-input-number {
+  border: 1px solid #47d6d7;
+  color: white;
+  background: transparent;
+}
+.ant-card ::v-deep .ant-card-body .ant-table-content .ant-input-number:hover {
   border: 1px solid #386b8a;
 }
 .ant-card ::v-deep .ant-card-body .ant-table-content .ant-table-thead > tr > th,

@@ -4,7 +4,7 @@
          <a-form-model-item label="监控数据">
             <a-select mode="multiple" v-model="selectBit" @change="onSelect">
                <a-select-option
-                  v-for="(item, index) in monitor"
+                  v-for="item in monitor"
                   :disabled="selectBit.length >= 2 && selectBit.findIndex(o => o === item) === -1"
                   :key="item"
                >

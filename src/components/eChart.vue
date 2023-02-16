@@ -14,7 +14,6 @@ export default {
    props: {
       option: {
          type: Object,
-         default: () => {},
       },
       width: {
          type: String,
@@ -37,20 +36,18 @@ export default {
    },
    methods: {
       getEchartData() {
-         this.chart = this.$refs.chart
-         if (this.chart) {
-            let myChart = echarts.init(this.chart, this.theme)
-            //添加true属性，可以重写渲染
-            this.spinning = true
-            myChart.setOption(this.option, true)
-            window.onresize = function () {
-               myChart.resize()
-            }
-            //监听结束
-            myChart.on('finished', () => {
-               this.spinning = false
-            })
+         this.chart = echarts.init(this.$refs.chart, this.theme)
+         //添加true属性，可以重写渲染
+         this.spinning = true
+         this.option && this.chart.setOption(this.option, true)
+         window.onresize = () => {
+            console.log('resize')
+            this.chart.resize()
          }
+         //监听渲染结束
+         this.chart.on('finished', () => {
+            this.spinning = false
+         })
       },
       refresh() {
          this.destory()
@@ -58,7 +55,6 @@ export default {
       },
       destory() {
          this.chart && this.$echarts.dispose(this.chart)
-         console.log(123)
       },
    },
    computed: {

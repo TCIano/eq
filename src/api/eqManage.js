@@ -135,3 +135,10 @@ export const deleteEquipmentExampleApi = equipment_id => {
       },
    })
 }
+/**
+ *
+ * @returns
+ */
+export const getEquipmentType = () => {
+   return request({})
+}

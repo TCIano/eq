@@ -107,7 +107,7 @@ export default {
    },
    methods: {
       async getEqTypeList() {
-         const result = await getEqTypeListApi()
+         const { result } = await getEqTypeListApi()
          this.eqData = result
       },
       reset() {

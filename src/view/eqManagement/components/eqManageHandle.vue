@@ -13,6 +13,7 @@
                ref="basicInfo"
                :title="title"
                :form="basicInfoForm"
+               @getType="getType"
             />
             <bit-config
                v-show="current === 1"
@@ -39,6 +40,7 @@
 import {
    addEquipmentExampleApi,
    getEquipmentDetailApi,
+   getModeBitApi,
    updateEquipmentExampleApi,
 } from '@/api/eqManage'
 import basicInfo from './basicInfo.vue'
@@ -62,6 +64,7 @@ export default {
                title: '在线展示',
             },
          ],
+         currentEqType: [],
          bitConfigForm: {},
          basicInfoForm: {},
       }
@@ -72,9 +75,16 @@ export default {
       },
       next() {
          this.current++
-         if (this.current === 2) {
+         if (this.currentEqType.length && this.current === 1) {
+            console.log(12)
+            let list = this.getBitByType()
+            this.bitConfigForm = {
+               position_number: list,
+            }
+         } else if (this.current === 2) {
+            console.log(22)
             console.log(this.$refs.bitConfig)
-            let bitList = this.$refs.bitConfig.arrList
+            let bitList = this.$refs.bitConfig.bitList.position_number
             this.$refs.onlineShow.getBitList(bitList)
          }
       },
@@ -86,7 +96,6 @@ export default {
       },
       async submit() {
          let basicInfo = this.$refs.basicInfo.form
-         // let bitConfig = this.$refs.bitConfig.bitList
          let onlineShow = this.$refs.onlineShow.list
          let option = {
             ...basicInfo,
@@ -99,14 +108,74 @@ export default {
          }
          console.log(option)
       },
+      getType(param) {
+         this.currentEqType = param
+      },
+      //根据设备类型获取模位号
+      getBitByType() {
+         let otherOption = {
+            comprehensive_show: 0,
+            online_show: 0,
+            base_name: '',
+            position_number: '',
+            upper: 0,
+            lower: 0,
+         }
+         // const res = await getModeBitApi()
+         let res = [
+            { position_type: '轴转速', unit: 'um/' },
+            { position_type: '轴温度', unit: 'um/p' },
+            { position_type: '轴电流', unit: 'u/p' },
+            { position_type: '润滑油流量高报', unit: 'um/p' },
+            { position_type: '设备启停状态', unit: 'ump' },
+         ]
+         res.forEach((element, index) => {
+            element.id = index
+            for (const key in otherOption) {
+               element[key] = otherOption[key]
+            }
+         })
+         return res
+      },
       async getDetail() {
-         let id = this.$route.query.id
          this.title = this.$route.query.title
-         let result = await getEquipmentDetailApi(id)
-         let detail = deepClone(result)
-         console.log(result)
-         this.bitConfigForm = detail
-         this.basicInfoForm = detail
+         if (this.title === '修改') {
+            let id = this.$route.query.id
+            let { result } = await getEquipmentDetailApi(id)
+            let {
+               equipment_attribute,
+               equipment_id,
+               equipment_name,
+               equipment_status,
+               equipment_tree,
+               equipment_type,
+               position_number,
+               message_id,
+               isopen,
+            } = deepClone(result)
+            console.log(result)
+            this.bitConfigForm = {
+               position_number,
+            }
+            this.basicInfoForm = {
+               equipment_attribute,
+               equipment_id,
+               message_id,
+               isopen,
+               equipment_status,
+               equipment_tree,
+               equipment_type,
+            }
+         } else {
+            this.basicInfoForm = {
+               isopen: 1,
+               equipment_attribute: undefined,
+               equipment_name: undefined,
+               equipment_status: '',
+               equipment_tree: undefined,
+               equipment_type: undefined,
+            }
+         }
       },
    },
    created() {

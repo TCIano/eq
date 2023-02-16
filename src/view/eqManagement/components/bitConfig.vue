@@ -5,11 +5,11 @@
          justify="center"
          align="middle"
          :gutter="[15, 35]"
-         v-for="(item, index) in arrList"
+         v-for="(item, index) in bitList.position_number"
          :key="item.id"
       >
-         <a-col :span="1">{{ item.position_type }} :</a-col>
-         <a-col :span="4">
+         <a-col :span="3">{{ item.position_type }} :</a-col>
+         <a-col :span="5">
             <a-input v-model="item.base_name" placeholder="请输入对应名称"></a-input>
          </a-col>
          <a-col :span="2">
@@ -20,16 +20,16 @@
          </a-col>
          <a-col :span="8">
             <a-row type="flex" justify="center" align="middle" :gutter="10">
-               <a-col>上下限范围：</a-col>
-               <a-col>
+               <a-col :span="6">上下限范围：</a-col>
+               <a-col :span="8">
                   <a-input
                      type="number"
                      v-model.number="item.upper"
                      placeholder="请输入上限"
                   ></a-input>
                </a-col>
-               <a-col>~</a-col>
-               <a-col>
+               <a-col :span="1">~</a-col>
+               <a-col :span="8">
                   <a-input
                      type="number"
                      v-model.number="item.lower"
@@ -57,53 +57,23 @@
 </template>
 
 <script>
-import { getModeBitApi } from '@/api/eqManage'
-
 export default {
    name: 'bitConfig',
    props: {
       bitList: {
          type: Object,
-         default: () => [],
       },
       title: {
          type: String,
       },
    },
    data() {
-      return {
-         editbitList: [],
-      }
+      return {}
    },
    methods: {
-      getModeBit() {
-         //  let res = await getModeBitApi()
-         let otherOption = {
-            comprehensive_show: 0,
-            online_show: 0,
-            base_name: '',
-            position_number: '',
-            upper: 0,
-            lower: 0,
-         }
-         let res = [
-            { position_type: '轴转速', unit: 'um/' },
-            { position_type: '轴温度', unit: 'um/p' },
-            { position_type: '轴电流', unit: 'u/p' },
-            { position_type: '润滑油流量高报', unit: 'um/p' },
-            { position_type: '设备启停状态', unit: 'ump' },
-         ]
-         res.forEach((element, index) => {
-            element.id = index
-            for (const key in otherOption) {
-               element[key] = otherOption[key]
-            }
-         })
-         this.editbitList = res
-      },
       copyBit(param, index) {
          let id = this.bitList.length
-         this.arrList.splice(index + 1, 0, {
+         this.bitList.position_number.splice(index + 1, 0, {
             id,
             position_type: param.position_type,
             unit: param.unit,
@@ -116,20 +86,11 @@ export default {
          })
       },
       deleteBit(id) {
-         this.arrList = this.arrList.filter(item => item.id !== id)
+         this.bitList.position_number = this.bitList.position_number.filter(item => item.id !== id)
       },
    },
-   computed: {
-      arrList() {
-         return this.title === '新增' ? this.editbitList : this.bitList.position_number
-      },
-   },
-   created() {
-      console.log(this.title)
-      if (this.title === '新增') {
-         this.getModeBit()
-      }
-   },
+
+   created() {},
 }
 </script>
 
