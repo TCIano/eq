@@ -1,5 +1,5 @@
 <template>
-   <a-layout-sider v-model="collapsed" :trigger="null" width="15%" collapsible v-if="true">
+   <a-layout-sider v-model="collapsed" :trigger="null" width="200px" collapsible v-if="true">
       <!-- <div class="logo" /> -->
       <a-menu
          mode="inline"

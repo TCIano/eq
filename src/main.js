@@ -7,6 +7,7 @@ Vue.config.productionTip = false
 //引入全局样式
 import './styles/global.less'
 import '@/styles/tailwind.css'
+import 'lib-flexible'
 //引入antd样式
 import 'ant-design-vue/dist/antd.css'
 Vue.use(Antd)

@@ -29,7 +29,7 @@
          <a-card class="device-scroll-page">
             <a-row :gutter="10">
                <a-col :span="6">
-                  <a-card hoverable style="width: 300px" @click="addEq">
+                  <a-card hoverable style="" @click="addEq">
                      <template slot="actions" class="ant-card-actions">
                         <a-icon key="add" type="plus-circle" />
                      </template>
@@ -37,7 +37,7 @@
                   </a-card>
                </a-col>
                <a-col :span="6" v-for="item in eqList" :key="item.equipment_id">
-                  <a-card hoverable style="width: 300px; margin-bottom: 15px">
+                  <a-card hoverable style="margin-bottom: 15px">
                      <template slot="actions" class="ant-card-actions">
                         <a href="#" @click.prevent="edit(item.equipment_id, item.isopen)">
                            <a-icon key="edit" type="edit" />

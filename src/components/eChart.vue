@@ -1,7 +1,9 @@
 <template>
-   <a-spin tip="渲染中....." :spinning="spinning">
+   <a-spin tip="加载中....." :spinning="spinning">
+      <!-- <div> -->
       <a-icon slot="indicator" type="loading" style="font-size: 24px" spin />
       <div ref="chart" class="echart" :style="style"></div>
+      <!-- </div> -->
    </a-spin>
 </template>
 
@@ -36,25 +38,31 @@ export default {
    },
    methods: {
       getEchartData() {
-         this.chart = echarts.init(this.$refs.chart, this.theme)
-         //添加true属性，可以重写渲染
-         this.spinning = true
-         this.option && this.chart.setOption(this.option, true)
-         window.onresize = () => {
-            console.log('resize')
-            this.chart.resize()
+         if (!this.chart) {
+            console.log('566')
+            this.chart = echarts.init(this.$refs.chart, this.theme)
          }
+         this.spinning = true
+         //添加true属性，可以重写渲染
+         this.option && this.chart.setOption(this.option, true)
+         window.addEventListener('resize', () => {
+            this.chart.resize()
+         })
          //监听渲染结束
          this.chart.on('finished', () => {
             this.spinning = false
          })
       },
       refresh() {
-         this.destory()
+         // this.destory()
+
          this.getEchartData()
       },
       destory() {
-         this.chart && this.$echarts.dispose(this.chart)
+         window.removeEventListener('resize', () => {
+            this.chart.resize()
+         })
+         this.chart && this.chart.clear()
       },
    },
    computed: {

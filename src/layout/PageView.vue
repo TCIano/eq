@@ -1,11 +1,15 @@
 <template>
    <a-layout id="components-layout-demo-custom-trigger" style="min-height: 100%">
       <SideMenu :menuData="sideMenuData"></SideMenu>
-      <a-layout>
+      <a-layout
+         :style="{
+            minHeight: '100%',
+            minWidth: '1330px',
+         }"
+      >
          <a-layout-content
             :style="{
-               margin: '24px 10px',
-               padding: '24px',
+               padding: '20px 20px 0px 20px',
                background: '#fff',
             }"
          >

@@ -4,10 +4,17 @@
          <a-icon type="pause" style="font-size: 20px" />
          <span>{{ title }}</span>
       </div>
-      <a-table :columns="columns" :data-source="data" :pagination="false" row-key="name">
+      <a-table
+         :columns="columns"
+         :data-source="data"
+         :pagination="{
+            pageSize: 7,
+         }"
+         row-key="name"
+      >
          <template slot="action" slot-scope="text">
             <img
-               v-if="text.time_domain"
+               v-if="text.wave_analysis"
                src="@/assets/img/parameAnalysis.svg"
                alt=""
                style="width: 35px; cursor: pointer"

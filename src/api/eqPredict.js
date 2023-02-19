@@ -46,3 +46,14 @@ export const getKurtosisAnalysisApi = data => {
       data,
    })
 }
+/**
+ * 设备故障预测外部接口
+ * @returns Promise
+ */
+export const getExternalFaultPredictApi = () => {
+   return request({
+      method: 'GET',
+      // url: '/getFaultPredict',
+      url: 'http://127.0.0.1:4523/m1/2242345-0-default/getFaultPredict',
+   })
+}

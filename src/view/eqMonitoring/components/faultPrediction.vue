@@ -5,32 +5,32 @@
          <span>{{ title }}</span>
       </div>
       <a-row type="flex" justify="end">
-         <span class="text-lg">
+         <span class="title">
             24小时故障预测:
             <span class="text-red-600 font-bold">{{ isnormal }}</span>
          </span>
       </a-row>
       <a-row>
-         <e-chart :option="predictOption" :theme="theme" height="350px" />
+         <e-chart :option="predictOption" :theme="theme" height="4.5rem" />
       </a-row>
       <a-row :gutter="20">
          <a-col :span="12">
-            <a-row type="flex">
+            <a-row type="flex" justify="end">
                <a-select
                   placeholder="请选择分析数据"
                   style="width: 40%"
                   v-model="frequency"
                   @change="onChangeFre"
                >
-                  <a-select-option v-for="item in positionNumber" :key="item" :value="item">
+                  <a-select-option v-for="item in frePositionNumber" :key="item" :value="item">
                      {{ item }}
                   </a-select-option>
                </a-select>
             </a-row>
-            <e-chart :option="frequencyOption" :theme="theme" height="270px" />
+            <e-chart :option="frequencyOption" :theme="theme" height="3.5rem" />
          </a-col>
          <a-col :span="12">
-            <a-row type="flex" justify="end" align="middle" :gutter="10">
+            <a-row type="flex" justify="end" align="middle" :gutter="5">
                <a-col :span="2">
                   <a-input v-model.number="interval" placeholder="输入间隔时间"></a-input>
                </a-col>
@@ -39,12 +39,12 @@
                </a-col>
                <a-col :span="6">
                   <a-select style="width: 100%" v-model="kurtosis" placeholder="请选择分析数据">
-                     <a-select-option v-for="item in positionNumber" :key="item" :value="item">
+                     <a-select-option v-for="item in kurPositionNumber" :key="item" :value="item">
                         {{ item }}
                      </a-select-option>
                   </a-select>
                </a-col>
-               <a-col :span="12">
+               <a-col :span="11">
                   <a-range-picker
                      :format="dateFormat"
                      allowClear
@@ -59,7 +59,7 @@
                   <a-button icon="undo" @click="reGetKurtosis"></a-button>
                </a-col>
             </a-row>
-            <e-chart :option="kurtosisOption" :theme="theme" height="270px" />
+            <e-chart :option="kurtosisOption" :theme="theme" height="3.5rem" />
          </a-col>
       </a-row>
    </a-card>
@@ -76,7 +76,11 @@ import eChart from '@/components/eChart.vue'
 export default {
    components: { eChart },
    props: {
-      positionNumber: {
+      frePositionNumber: {
+         type: Array,
+         default: () => [],
+      },
+      kurPositionNumber: {
          type: Array,
          default: () => [],
       },
@@ -93,7 +97,7 @@ export default {
          title: '故障预测',
          frequency: [], //频域分析下拉框
          kurtosis: [], //鞘度分析下拉框
-         interval: '2', //间隔时间
+         interval: 2, //间隔时间
          dateFormat: 'YYYY-MM-DD HH:mm',
          currentTime: new Date(),
          isnormal: '',
@@ -103,6 +107,7 @@ export default {
             moment(moment(this.currentTime).subtract(0, 'days').format(this.dateFormat)),
          ],
          predictOption: {}, //预测
+         //频域
          frequencyOption: {
             legend: {
                data: ['正常', '实时'],
@@ -112,7 +117,9 @@ export default {
                trigger: 'axis',
             },
             grid: {
-               left: '5%',
+               top: '15%',
+               bottom: '15%',
+               left: '6%',
                right: '3%',
             },
             xAxis: {},
@@ -131,14 +138,17 @@ export default {
                   type: 'line',
                },
             ],
-         }, //频域
+         },
+         //鞘度
          kurtosisOption: {
             tooltip: {
                show: true,
                trigger: 'axis',
             },
             grid: {
-               left: '5%',
+               top: '15%',
+               bottom: '15%',
+               left: '6%',
                right: '3%',
             },
             xAxis: {
@@ -154,22 +164,15 @@ export default {
                   type: 'line',
                },
             ],
-         }, //鞘度
+         },
       }
    },
    methods: {
-      async getFaultPredict() {
-         const { result } = await getFaultPredictApi({
-            equipment_id: this.equipment_id,
-         })
-         if (result) {
-            this.handleOption(result)
-         }
-      },
       handleOption(result) {
          this.isnormal = result.isnormal
          this.frequency = result.frequency_analysis.position_nunber
          this.kurtosis = result.kurtosis_analysis.position_nunber
+         let threshold = result.predict_result.threshold
          let predictData = result.predict_result.data.map(item => {
             return [item.time, item.predict_number]
          })
@@ -179,6 +182,7 @@ export default {
          let frequencyCurrentData = result.frequency_analysis.current_frequency.map(item => {
             return [item.freq, item.amp]
          })
+
          this.frequencyOption.series[0].data = frequencyNormalData
          this.frequencyOption.series[1].data = frequencyCurrentData
          let kurtosisData = result.kurtosis_analysis.result.map(item => {
@@ -187,10 +191,28 @@ export default {
          this.kurtosisOption.series[0].data = kurtosisData
          this.predictOption = {
             tooltip: {
-               show: true,
                trigger: 'axis',
+               formatter: param => {
+                  let tip = ''
+                  if (param != null && param.length > 0) {
+                     tip += param[0].data[0] + '<br/>'
+                     for (var i = 0; i < param.length; i++) {
+                        tip +=
+                           '<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:red;"></span>' +
+                           '阈值 :' +
+                           threshold +
+                           '<br/>' +
+                           param[i].marker +
+                           '当前值 :' +
+                           param[i].data[1]
+                     }
+                  }
+                  return tip
+               },
             },
             grid: {
+               top: '15%',
+               bottom: '15%',
                left: '5%',
                right: '3%',
             },
@@ -207,8 +229,29 @@ export default {
                   areaStyle: {
                      color: '#9cd9ee',
                   },
+                  markLine: {
+                     symbol: 'none',
+                     lineStyle: {
+                        color: 'red',
+                        width: 3,
+                     },
+                     data: [
+                        {
+                           name: '阈值',
+                           yAxis: threshold,
+                        },
+                     ],
+                  },
                },
             ],
+         }
+      },
+      async getFaultPredict() {
+         const { result } = await getFaultPredictApi({
+            equipment_id: this.equipment_id,
+         })
+         if (result) {
+            this.handleOption(result)
          }
       },
       //频域分析内容
@@ -244,10 +287,12 @@ export default {
          }
       },
    },
-   created() {
-      this.getFaultPredict()
-   },
+   created() {},
 }
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.title {
+   font-size: 0.3rem;
+}
+</style>

@@ -43,4 +43,15 @@ export default [
       path: '/equipmentTrain',
       component: () => import('@/view/eqManagement/components/eqTrain.vue'),
    },
+   {
+      name: '设备维修预警',
+      path: '/equipmentMaintenance',
+      component: () => import('@/view/eqMaintenance'),
+   },
+   {
+      display: false,
+      name: '设备维修预警详情',
+      path: '/equipmentMaintenanceDetail',
+      component: () => import('@/view/eqMaintenance/eqMaintenanceDetail'),
+   },
 ]

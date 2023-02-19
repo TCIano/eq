@@ -6,7 +6,7 @@ body,
   padding: 0px;
 }
 .device-scroll-page {
-  height: calc(100vh - 100px);
+  height: calc(100vh - 40px);
   overflow: auto;
 }
 .device-scroll-page::-webkit-scrollbar {
