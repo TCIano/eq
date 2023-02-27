@@ -4,9 +4,15 @@ import request from '@/utils/request'
  * 获取设备类型列表
  * @returns Promise
  */
-export const getEqTypeListApi = () => {
+export const getEqTypeListApi = ({ page = 1, amount = 10, filtration = '' }) => {
    return request({
+      method: 'POST',
       url: '/getEquipmentType',
+      data: {
+         page,
+         amount,
+         filtration,
+      },
    })
 }
 /**
@@ -63,5 +69,23 @@ export const getEqbitNameApi = data => {
       method: 'POST',
       url: '/getEquipmentMessage',
       data,
+   })
+}
+export const deleteEquipmentTypeApi = id => {
+   return request({
+      method: 'POST',
+      url: '/deleteEquipmentType',
+      data: {
+         id,
+      },
+   })
+}
+/**
+ * 获取设备属性和设备类型
+ * @returns Promise
+ */
+export const getEquipInitMessageApi = () => {
+   return request({
+      url: '/message',
    })
 }

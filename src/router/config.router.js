@@ -54,4 +54,9 @@ export default [
       path: '/equipmentMaintenanceDetail',
       component: () => import('@/view/eqMaintenance/eqMaintenanceDetail'),
    },
+   {
+      name: '设备故障预测统计',
+      path: '/equipmentWaringStatic',
+      component: () => import('@/view/eqWaringStatic'),
+   },
 ]

@@ -3,8 +3,8 @@
       <SideMenu :menuData="sideMenuData"></SideMenu>
       <a-layout
          :style="{
-            minHeight: '100%',
-            minWidth: '1330px',
+            // minHeight: '100%',
+            // minWidth: '1330px',
          }"
       >
          <a-layout-content

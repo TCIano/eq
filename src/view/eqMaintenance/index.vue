@@ -1,10 +1,10 @@
 <template>
    <div>
       <a-row type="flex" justify="space-between" align="middle">
-         <a-tabs default-active-key="1" style="width: 40%" size="large">
-            <a-tab-pane key="1" tab="全部（233）"></a-tab-pane>
-            <a-tab-pane key="2" tab="待处理（200）"></a-tab-pane>
-            <a-tab-pane key="3" tab="已处理（33）"></a-tab-pane>
+         <a-tabs default-active-key="0" style="width: 40%" size="large" @change="getFaultByStatus">
+            <a-tab-pane key="1" tab="全部"></a-tab-pane>
+            <a-tab-pane key="2" tab="待处理"></a-tab-pane>
+            <a-tab-pane key="3" tab="已处理"></a-tab-pane>
          </a-tabs>
          <a-col>
             <a-row type="flex" justify="end" align="middle">
@@ -21,8 +21,16 @@
                            placeholder="请选择设备组织节点"
                         ></a-tree-select>
                      </a-form-item>
-                     <a-form-item>
-                        <a-input v-model="eq" placeholder="请选择设备名称"></a-input>
+                     <a-form-item label="设备">
+                        <a-select v-model="eq" placeholder="请选择设备" style="width: 200px">
+                           <a-select-option
+                              :value="item.equipment_id"
+                              v-for="item in eqList"
+                              :key="item.equipment_id"
+                           >
+                              {{ item.equipment_name }}
+                           </a-select-option>
+                        </a-select>
                      </a-form-item>
                   </a-form>
                </a-col>
@@ -36,86 +44,111 @@
          </a-col>
       </a-row>
       <div class="grid grid-cols-3 gap-1">
-         <div class="h-1/3" v-for="item in 9" :key="item">
-            <a-card hoverable style="height: 100%">
-               <template slot="actions">
-                  <div style="height: 0.5rem; line-height: 0.5rem">
-                     <a href="#" @click.prevent="getDetail">
-                        <a-icon key="edit" type="search" />
-                        查看详情
-                     </a>
-                  </div>
-               </template>
-               <a-icon
-                  type="close-circle"
-                  style="float: right; font-size: 16px"
-                  @click="deleteEq(item.equipment_id)"
-               />
-               <a-card-meta :title="56565" class="cardMeta">
-                  <a-avatar slot="avatar" src="" />
-                  <template slot="description">
-                     <div class="MetaCon">
-                        <div>推送报警时间：</div>
-                        <div>可能故障位号：</div>
+         <div v-for="item in faultList" :key="item.fault_id">
+            <a-skeleton avatar :paragraph="{ rows: 5 }" active :loading="loading">
+               <a-card hoverable style="height: 100%">
+                  <template slot="actions">
+                     <div style="height: 0.4rem; line-height: 0.4rem">
+                        <a href="#" @click.prevent="getDetail(item.fault_id)">
+                           <a-icon key="edit" type="search" />
+                           查看详情
+                        </a>
                      </div>
                   </template>
-               </a-card-meta>
-            </a-card>
+                  <a-card-meta :title="item.equipment_name" class="cardMeta">
+                     <a-avatar
+                        slot="avatar"
+                        :style="{ backgroundColor: item.processed ? '#608eef' : '#e68086' }"
+                        :icon="item.processed ? 'check' : 'info'"
+                     />
+                     <template slot="description">
+                        <div class="MetaCon">
+                           <div>推送报警时间：{{ item.warning_time }}</div>
+                           <div>可能故障位号：{{ item.fault_position }}</div>
+                        </div>
+                     </template>
+                  </a-card-meta>
+               </a-card>
+            </a-skeleton>
          </div>
       </div>
+      <a-row>
+         <a-pagination
+            show-quick-jumper
+            :default-current="1"
+            :current="currentPage"
+            :defaultPageSize="9"
+            :total="total"
+            @change="pageChange"
+            class="flex mt-1 justify-end"
+         />
+      </a-row>
    </div>
 </template>
 
 <script>
-import { arr2Tree } from '@/utils'
+import { getWarningListApi } from '@/api/eqWaring'
+import { mixin } from '@/mixins/mixins'
 export default {
+   mixins: [mixin],
    data() {
       return {
-         equipment_id: '',
-         equipment_node: undefined,
-         treeData: [],
-         replaceFields: {
-            children: 'children',
-            title: 'title',
-            key: 'key',
-            value: 'key',
-         },
-         eq: undefined,
-         eqList: [],
+         faultList: [],
+         defaultCurrentPage: 1,
+         currentPage: 1,
+         total: undefined,
+         status: 1,
+         loading: true,
       }
    },
    methods: {
-      async getOrigination() {
-         const { result } = await getOriginationApi()
-         this.treeData = arr2Tree(result)
-         // generateList(this.treeData)
-      },
-      async getEqByTree(value) {
-         this.eq = undefined
-         const { result } = await getEquipmentListApi(
-            Array.isArray(value) ? value : value.split(',')
-         )
+      async getWarningList() {
+         const { result } = await getWarningListApi({
+            equipment_id: this.eq,
+            page: this.currentPage,
+            status: this.status,
+         })
          if (result) {
-            this.eqList = result
+            this.faultList = result.equipment_list
+            this.loading = false
+            this.total = result.count
          }
       },
-      getDetail() {
+      getFaultByStatus(key) {
+         this.status = key / 1
+         this.getWarningList()
+      },
+      getDetail(fault_id) {
          this.$router.push({
             path: '/equipmentMaintenanceDetail',
             query: {
-               id: 1,
+               fault_id,
             },
          })
       },
-      reSearch() {},
-      reset() {},
+      pageChange(page) {
+         this.currentPage = page
+         this.getWarningList()
+      },
+      reSearch() {
+         this.getWarningList()
+      },
+      reset() {
+         this.equipment_node = undefined
+         this.eq = undefined
+         this.eqList = []
+      },
+   },
+   created() {
+      this.getOrigination()
+      this.getWarningList()
    },
 }
 </script>
 
 <style scoped lang="less">
 .cardMeta {
-   height: 1.9rem;
+   height: 1.5rem;
    line-height: 0.5rem;
    margin: 0 auto;
    .MetaCon {

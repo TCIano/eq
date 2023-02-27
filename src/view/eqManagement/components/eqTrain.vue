@@ -2,22 +2,24 @@
    <div>
       <a-row type="flex" justify="space-between" :gutter="[16, 16]">
          <a-col>
-            <a-button type="primary" @click="modeTraining">模型训练</a-button>
+            <a-button type="primary" @click="modeTraining">
+               {{ istrain ? '训练中...' : '模型训练' }}
+            </a-button>
          </a-col>
          <a-col>
             <a-button type="primary" icon="rollback" @click="exit">返回</a-button>
          </a-col>
       </a-row>
       <a-row :gutter="[10, 10]">
-         <a-col :span="10">
-            <a-card class="device-scroll-page" style="height: 500px">
-               <a-row :gutter="[10, 10]">
+         <a-col :span="11">
+            <a-card class="device-scroll-page" style="height: 6.3rem">
+               <a-row :gutter="[5, 10]">
                   <a-col>训练测点：</a-col>
                   <a-col v-for="(item, index) in trainList" :key="index">
                      <a-space size="middle">
                         <a-space :size="1">
                            <span>类型：</span>
-                           <a-input disabled v-model="item.equipment_type"></a-input>
+                           <a-input disabled v-model="item.base_name"></a-input>
                         </a-space>
                         <a-space :size="1">
                            位号：
@@ -28,7 +30,7 @@
                            <a-switch
                               checked-children="是"
                               un-checked-children="否"
-                              :checked="item.isTrain ? true : false"
+                              :checked="item.used ? true : false"
                               @change="changeIsTrain(index, $event)"
                            ></a-switch>
                         </a-space>
@@ -43,31 +45,46 @@
                </a-row>
             </a-card>
          </a-col>
-         <a-col :span="14">
-            <a-card style="height: 500px">
+         <a-col :span="13">
+            <a-card style="height: 6.3rem">
                <a-space>
                   选择日期:
                   <a-range-picker
+                     :disabledDate="disabledDate"
                      v-model="trainTime"
                      showTime
                      :format="timeFormat"
                   ></a-range-picker>
                   <a-button type="primary" icon="check-square" @click="getChartData">提交</a-button>
                </a-space>
-               <e-chart :option="option" height="450px" />
+               <e-chart :option="option" height="5.625rem" width="90%" />
             </a-card>
          </a-col>
       </a-row>
-      <a-row :gutter="[10, 16]">
+      <a-row :gutter="[10, 10]">
          <a-col>
-            <a-table :columns="columns" :data-source="trainHistory">
+            <a-table
+               :columns="columns"
+               :data-source="trainHistory"
+               :scroll="{ y: 240 }"
+               row-key="record_id"
+               bordered
+               :pagination="false"
+            >
+               <template slot="time" slot-scope="text">
+                  <span>{{ text.start_time }} ~ {{ text.end_time }}</span>
+               </template>
                <template slot="option">
                   <a href="#">删除</a>
+               </template>
+               <template slot="position_name" slot-scope="text">
+                  {{ text.position_name.join(' | ') }}
                </template>
             </a-table>
          </a-col>
       </a-row>
-      <a-modal title="提示" :visible="trainModal" :footer="null" @cancel="trainModal = false">
+      <a-modal title="提示" :visible="trainModal" :footer="null" @cancel="closeTrainProgress">
+         {{ '训练进度' }}
          <a-progress :percent="progress" />
       </a-modal>
    </div>
@@ -76,6 +93,13 @@
 <script>
 import eChart from '@/components/eChart.vue'
 import moment from 'moment'
+import {
+   getEquipmentDetailApi,
+   getHistoryDataApi,
+   getHistoryShowApi,
+   getTrainProgressApi,
+   trainModelApi,
+} from '@/api/eqManage'
 export default {
    components: { eChart },
    name: 'eqTrain',
@@ -85,83 +109,170 @@ export default {
          trainTime: [moment(new Date()), moment(new Date())],
          columns: [
             {
-               key: 'time',
+               key: 'start_time',
                align: 'center',
                title: '数据时间段',
-               dataIndex: 'time',
+               scopedSlots: { customRender: 'time' },
             },
             {
-               key: 'point',
+               key: 'position_name',
                align: 'center',
                title: '参与训练测点',
-               dataIndex: 'point',
+               scopedSlots: { customRender: 'position_name' },
             },
             {
                key: 'result',
                align: 'center',
                title: '训练结果',
+               width: 200,
+
                dataIndex: 'result',
             },
             {
                key: 'option',
                align: 'center',
                title: '操作',
+               width: 200,
                scopedSlots: { customRender: 'option' },
                dataIndex: 'option',
             },
          ],
          trainHistory: [],
-         option: {
-            xAxis: {
-               type: 'category',
-               data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            },
-            yAxis: {
-               type: 'value',
-            },
-            series: [
-               {
-                  data: [150, 230, 224, 218, 135, 147, 260],
-                  type: 'line',
-               },
-            ],
-         },
-         totalPoint: 1,
-         trainPoint: 2,
-         trainList: [
-            {
-               equipment_type: '55463',
-               position_number: '2222',
-               isTrain: 0,
-            },
-            {
-               equipment_type: '5dsafa5463',
-               position_number: '2dd222',
-               isTrain: 1,
-            },
-         ],
+         option: {},
+         trainList: [],
          trainModal: false,
-         progress: 30,
+         progress: 0,
+         time: null,
+         istrain: undefined,
       }
    },
 
    methods: {
+      disabledDate(current) {
+         return current && current > moment().endOf('day')
+      },
       exit() {
          this.$router.go(-1)
       },
       //改变状态
       changeIsTrain(index, e) {
-         this.trainList[index].isTrain = e
+         this.trainList[index].used = e
       },
       modeTraining() {
+         if (!this.trainList.some(item => item.used))
+            return this.$message.warning('最少选择一项训练测点')
          this.trainModal = true
+         //1.先进行训练进度查询
+         //每隔一秒进行一次调用
+         this.timer = setInterval(() => {
+            this.getTrainProgress()
+         }, 1000)
       },
-      getChartData() {
-         console.log(this.trainTime)
+      async getTrainProgress() {
+         const {
+            result: { istrain, progress },
+         } = await getTrainProgressApi()
+         this.istrain = istrain
+         //2.若无在训练中的模型则可进行训练，若有则展示进度
+         if (!istrain) {
+            //新的模型训练
+            await trainModelApi({
+               equipment_id: this.$route.query.id,
+               record_id: this.trainList
+                  .filter(item => item.used)
+                  .map(ele => {
+                     return ele.message_id
+                  }),
+            })
+         }
+         this.progress = Number((progress * 100).toFixed(2))
+         if (progress === 1) {
+            this.istrain = 0
+            return clearInterval(this.timer)
+         }
+      },
+      closeTrainProgress() {
+         this.trainModal = false
+         clearInterval(this.timer)
+         if (this.progress === 100) return (this.progress = 0)
+      },
+      async getChartData() {
+         if (!this.trainList.some(item => item.used))
+            return this.$message.warning('最少选择一项训练测点')
          let start = moment(this.trainTime[0]).format(this.timeFormat) + ':00'
          let end = moment(this.trainTime[1]).format(this.timeFormat) + ':00'
-         console.log(start, end)
+         const { result } = await getHistoryDataApi({
+            start_time: start,
+            end_time: end,
+            position_number: this.trainList
+               .filter(ele => ele.used)
+               .map(item => {
+                  return {
+                     name: item.base_name,
+                     value: item.position_number,
+                  }
+               }),
+         })
+         if (result) {
+            this.option = {
+               tooltip: {
+                  trigger: 'axis',
+               },
+               grid: {
+                  left: '6%',
+                  right: '3%',
+               },
+               xAxis: {
+                  type: 'time',
+               },
+               yAxis: {
+                  type: 'value',
+               },
+               series: [],
+            }
+            this.option.series = result.datas.map(item => {
+               return {
+                  name: item.position_name.name,
+                  data: item.values.map(valueOption => {
+                     return [valueOption.time, valueOption.value]
+                  }),
+                  type: 'line',
+               }
+            })
+         }
       },
+      async getEquipmentDetail() {
+         const { result } = await getEquipmentDetailApi(this.$route.query.id)
+         if (result) {
+            this.trainList = result.position_number.map(item => {
+               return {
+                  ...item,
+                  used: 0,
+               }
+            })
+         }
+      },
+      //展示训练数据
+      async historyShow() {
+         const { result } = await getHistoryShowApi({
+            equipment_id: this.$route.query.id,
+         })
+         if (result) {
+            this.trainHistory = result
+         }
+      },
+   },
+   computed: {
+      totalPoint() {
+         return this.trainList.length
+      },
+      trainPoint() {
+         return this.trainList.filter(item => item.used).length
+      },
+   },
+   created() {
+      this.getEquipmentDetail()
+      this.historyShow()
    },
 }
 </script>

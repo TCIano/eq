@@ -69,9 +69,13 @@
             </a-row>
             <!-- 分页 -->
             <a-pagination
+               show-quick-jumper
+               :page-size="pageSize"
                :default-current="1"
-               :total="20"
-               :defaultPageSize="10"
+               :current="currentPage"
+               :defaultPageSize="19"
+               :total="total"
+               @change="pageChange"
                class="item-pagination"
             />
          </a-card>
@@ -81,28 +85,14 @@
 </template>
 
 <script>
-import { arr2Tree } from '@/utils'
 import eqManageModal from './components/eqManageModal.vue'
 import {
    deleteEquipmentExampleApi,
    getEquipmentDetailApi,
    getEquipmentListApi,
-   getOriginationApi,
    updateAlgorithmStatusApi,
 } from '@/api/eqManage'
-import { getEqTypeListApi } from '@/api'
-const dataList = []
-const generateList = data => {
-   for (let i = 0; i < data.length; i++) {
-      const node = data[i]
-      const key = node.key
-      const title = node.title
-      dataList.push({ key, title })
-      if (node.children) {
-         generateList(node.children)
-      }
-   }
-}
+import { oriMixins } from '@/mixins/oriMixins'
 
 const getParentKey = (key, tree) => {
    let parentKey
@@ -119,6 +109,7 @@ const getParentKey = (key, tree) => {
    return parentKey
 }
 export default {
+   mixins: [oriMixins],
    components: { eqManageModal },
    name: 'demo1',
    data() {
@@ -127,18 +118,16 @@ export default {
          // replaceFields: { children: 'children', title: 'name', key: 'key' },
          expandedKeys: [],
          searchValue: '',
-         autoExpandParent: true,
          listOrignation: [],
-         gData: [],
          eqList: [],
          visible: false,
+         currentPage: 1,
+         pageSize: 19,
+         total: 0,
+         equipment_tree: [''],
       }
    },
    methods: {
-      onExpand(expandedKeys) {
-         this.expandedKeys = expandedKeys
-         this.autoExpandParent = false
-      },
       onChange(e) {
          const value = e.target.value
          const expandedKeys = dataList
@@ -155,20 +144,27 @@ export default {
             autoExpandParent: true,
          })
       },
-      //获取组织机构
-      async getOrigination() {
-         const { result } = await getOriginationApi()
-         this.gData = arr2Tree(result)
-         generateList(this.gData)
+      selectOri(value, e) {
+         this.equipment_tree = value[0]?.split(',')
+         this.getEquipmentList()
       },
+      pageChange(page) {
+         this.currentPage = page
+         this.getEquipmentList()
+      },
+
       //获取设备列表
       async getEquipmentList() {
-         const { result } = await getEquipmentListApi()
-         this.eqList = result
+         const {
+            result: { datas, total_amount },
+         } = await getEquipmentListApi({
+            page: this.currentPage,
+            equipment_tree: this.equipment_tree,
+         })
+         this.total = total_amount
+         this.eqList = datas
       },
-      selectOri(value, e) {
-         console.log(value, e)
-      },
+
       //新增设备
       addEq() {
          this.$router.push({

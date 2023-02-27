@@ -1,7 +1,8 @@
 import { message } from 'ant-design-vue'
 import axios from 'axios'
+
 const request = axios.create({
-   // baseURL: process.env.VUE_APP_BASE_API,
+   baseURL: process.env.VUE_APP_BASE_API,
    timeout: 5000,
 })
 let codeInfo = ['正常', '数据库访问错误', '访问实时数据库错误', '传参错误']
@@ -14,11 +15,15 @@ request.interceptors.response.use(
       if (!code) {
          return response.data
       } else if (codeInfo[code]) {
-         return message.warning(codeInfo[code])
+         message.error(codeInfo[code])
+         return Promise.reject(new Error(codeInfo[code]))
+      } else {
+         return response.data
       }
    },
    error => {
-      return message.error(error)
+      message.error(error.message)
+      return Promise.reject(error)
    }
 )
 

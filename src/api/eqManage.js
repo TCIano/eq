@@ -5,8 +5,27 @@ import request from '@/utils/request'
  */
 export const getOriginationApi = () => {
    return request({
-      // url: '/getOrganizationTree',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/getOrganizationTree',
+      url: '/getOrganizationTree',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/getOrganizationTree',
+   })
+}
+/**
+ * 获取设备名称
+ * @param {Object} data
+   "depart":"乙炔车间",          组织
+*  "equipMajorDIC":"动设备",   设备属性
+   "equipType": ""           设备类型
+ * @returns
+ */
+export const getEqNameApi = ({ equipMajorDIC = '', depart = '', equipType = '' }) => {
+   return request({
+      method: 'POST',
+      url: '/message/equipMessage',
+      data: {
+         equipMajorDIC,
+         depart,
+         equipType,
+      },
    })
 }
 /**
@@ -82,15 +101,22 @@ export const updateEquipmentExampleApi = data => {
    })
 }
 /**
- * 获取设备列表
- * @returns Promise
+ * 获取设备实例
+ * @param {Object} data
+ * page int 当前页
+ * amount int 每页多少条
+ * equipment_tree list 设备树
+ * @returns
  */
-export const getEquipmentListApi = data => {
+export const getEquipmentListApi = ({ page = 0, amount = 19, equipment_tree = [] }) => {
    return request({
       method: 'POST',
-      // url: '/getEquipmentList',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/getEquipmentList',
-      data,
+      url: '/getEquipmentList',
+      data: {
+         amount,
+         page,
+         equipment_tree,
+      },
    })
 }
 /**
@@ -101,8 +127,7 @@ export const getEquipmentListApi = data => {
 export const getEquipmentDetailApi = equipment_id => {
    return request({
       method: 'POST',
-      // url: '/getEquipmentDetail',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/getEquipmentDetailApi',
+      url: '/getEquipmentDetail',
       data: {
          equipment_id,
       },
@@ -141,4 +166,58 @@ export const deleteEquipmentExampleApi = equipment_id => {
  */
 export const getEquipmentType = () => {
    return request({})
+}
+/**
+ * 获取历史数据
+ * @param {Object} data
+ * 数据开始时间	start_time	String
+   数据结束时间	end_time	String
+   位号	position_number	List
+      位号名	name	String
+      位号值	value	String
+ * @returns
+ */
+export const getHistoryDataApi = data => {
+   return request({
+      method: 'POST',
+      url: '/getHistoryData',
+      data,
+   })
+}
+/**
+ * 展示训练数据
+ * @param {Object} data
+ * equipment_id 设备id
+ * @returns promise
+ */
+export const getHistoryShowApi = data => {
+   return request({
+      method: 'POST',
+      url: '/getHistoryShow',
+      data,
+   })
+}
+/**
+ * 模型训练
+ * @param {Object} data
+ * 设备ID	equipment_id	String
+ * 数据ID	record_id	List(Int)
+ * @returns
+ */
+export const trainModelApi = data => {
+   return request({
+      method: 'POST',
+      url: '/trainModel',
+      data,
+   })
+}
+/**
+ * 训练进度查询
+ * @returns Promise
+ */
+export const getTrainProgressApi = () => {
+   return request({
+      method: 'GET',
+      url: '/getTrainProgress',
+   })
 }

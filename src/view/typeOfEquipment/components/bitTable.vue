@@ -1,8 +1,17 @@
 <template>
    <div>
-      <a-table :columns="columns" :data-source="bitData" row-key="base_id" :pagination="false">
+      <a-table
+         :columns="columns"
+         :data-source="bitData"
+         row-key="base_id"
+         :scroll="{ y: 320 }"
+         :pagination="false"
+      >
          <template slot="analysis" slot-scope="text, record">
-            <a-checkbox @change="onChange(record.base_id, $event)"></a-checkbox>
+            <a-checkbox
+               :checked="record[tab] ? true : false"
+               @change="onChange(record.base_id, $event)"
+            ></a-checkbox>
          </template>
       </a-table>
    </div>
@@ -15,6 +24,9 @@ export default {
       bitData: {
          type: Array,
          default: () => [],
+      },
+      tab: {
+         type: String,
       },
    },
    data() {

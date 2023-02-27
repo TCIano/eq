@@ -4,9 +4,10 @@ body,
   height: 100%;
   margin: 0px;
   padding: 0px;
+  box-sizing: border-box;
 }
 .device-scroll-page {
-  height: calc(100vh - 40px);
+  height: calc(100vh - 50px);
   overflow: auto;
 }
 .device-scroll-page::-webkit-scrollbar {
@@ -27,6 +28,30 @@ body,
   background: hsla(0, 0%, 53%, 0.1);
 }
 .device-scroll-page .item-pagination {
+  float: right;
+}
+.eq-device-scroll-page {
+  height: calc(100vh - 125px);
+  overflow: auto;
+}
+.eq-device-scroll-page::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  opacity: 0;
+}
+.eq-device-scroll-page::-webkit-scrollbar-thumb {
+  opacity: 0;
+  border-radius: 4px;
+}
+.eq-device-scroll-page:hover::-webkit-scrollbar-thumb {
+  opacity: 1;
+  background: hsla(0, 0%, 53%, 0.4);
+}
+.eq-device-scroll-page:hover::-webkit-scrollbar-track {
+  opacity: 1;
+  background: hsla(0, 0%, 53%, 0.1);
+}
+.eq-device-scroll-page .item-pagination {
   float: right;
 }
 /**
@@ -77,4 +102,13 @@ body,
   -moz-box-shadow: 5px 5px 5px #001b36;
   -webkit-box-shadow: 5px 5px 5px #001b36;
   box-shadow: 5px 5px 5px #001b36;
+}
+#successLabel {
+  color: green;
+}
+#waringLabel {
+  color: orange;
+}
+#errorLabel {
+  color: red;
 }

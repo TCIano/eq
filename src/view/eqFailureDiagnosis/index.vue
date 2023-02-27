@@ -34,59 +34,32 @@
             </a-space>
          </a-col>
       </a-row>
-      <fault-diagnosis theme="" ref="faultDia" :equipment_id="equipment_id" />
+      <fault-diagnosis theme="" ref="faultDia" :equipment_id="eq" />
    </div>
 </template>
 
 <script>
-import { getEquipmentListApi, getOriginationApi } from '@/api/eqManage'
 import FaultDiagnosis from '../eqMonitoring/components/faultDiagnosis.vue'
-import { arr2Tree } from '@/utils'
 import { getExternalFaultDiagnosisApi } from '@/api/eqDiagnosis'
+import { mixin } from '@/mixins/mixins'
 export default {
+   mixins: [mixin],
    components: { FaultDiagnosis },
    data() {
-      return {
-         equipment_id: '',
-         equipment_node: undefined,
-         treeData: [],
-         replaceFields: {
-            children: 'children',
-            title: 'title',
-            key: 'key',
-            value: 'key',
-         },
-         eq: undefined,
-         eqList: [],
-      }
+      return {}
    },
    methods: {
-      async getOrigination() {
-         const { result } = await getOriginationApi()
-         this.treeData = arr2Tree(result)
-         // generateList(this.treeData)
-      },
-      async getEqByTree(value) {
-         this.eq = undefined
-         const { result } = await getEquipmentListApi(
-            Array.isArray(value) ? value : value.split(',')
-         )
-         if (result) {
-            this.eqList = result
-         }
-      },
       async getExternalFaultDiagnosis() {
          const { result } = await getExternalFaultDiagnosisApi()
          if (result) {
-            this.equipment_id = result.equipment_id
             this.equipment_node = result.equipment_node
             this.getEqByTree(this.equipment_node)
-            this.eq = result.equipment_name
+            this.eq = result.equipment_id
             this.$refs.faultDia.handleOption(result)
          }
       },
       reSearch() {
-         this.getExternalFaultDiagnosis()
+         this.$refs.faultDia.getFaultDiagnosis()
       },
       reset() {
          this.equipment_node = undefined
@@ -95,7 +68,6 @@ export default {
       },
    },
    created() {
-      this.getOrigination()
       this.getExternalFaultDiagnosis()
    },
 }

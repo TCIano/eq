@@ -48,6 +48,7 @@ import bitConfig from './bitConfig.vue'
 import onlineShow from './onlineShow.vue'
 import { deepClone } from '@/utils'
 export default {
+   name: 'eqManageHandle',
    components: { basicInfo, bitConfig, onlineShow },
    data() {
       return {
@@ -73,11 +74,10 @@ export default {
       back() {
          this.$router.go(-1)
       },
-      next() {
+      async next() {
          this.current++
          if (this.currentEqType.length && this.current === 1) {
-            console.log(12)
-            let list = this.getBitByType()
+            let list = await this.getBitByType()
             this.bitConfigForm = {
                position_number: list,
             }
@@ -112,7 +112,7 @@ export default {
          this.currentEqType = param
       },
       //根据设备类型获取模位号
-      getBitByType() {
+      async getBitByType() {
          let otherOption = {
             comprehensive_show: 0,
             online_show: 0,
@@ -121,21 +121,24 @@ export default {
             upper: 0,
             lower: 0,
          }
-         // const res = await getModeBitApi()
-         let res = [
-            { position_type: '轴转速', unit: 'um/' },
-            { position_type: '轴温度', unit: 'um/p' },
-            { position_type: '轴电流', unit: 'u/p' },
-            { position_type: '润滑油流量高报', unit: 'um/p' },
-            { position_type: '设备启停状态', unit: 'ump' },
-         ]
-         res.forEach((element, index) => {
+         let { result } = await getModeBitApi({
+            equipment_type: this.$refs.basicInfo.form.equipment_type,
+         })
+         // let res = [
+         //    { position_type: '轴转速', unit: 'um/' },
+         //    { position_type: '轴温度', unit: 'um/p' },
+         //    { position_type: '轴电流', unit: 'u/p' },
+         //    { position_type: '润滑油流量高报', unit: 'um/p' },
+         //    { position_type: '设备启停状态', unit: 'ump' },
+         // ]
+
+         result.forEach((element, index) => {
             element.id = index
             for (const key in otherOption) {
                element[key] = otherOption[key]
             }
          })
-         return res
+         return result
       },
       async getDetail() {
          this.title = this.$route.query.title

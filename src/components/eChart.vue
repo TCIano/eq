@@ -39,19 +39,20 @@ export default {
    methods: {
       getEchartData() {
          if (!this.chart) {
-            console.log('566')
             this.chart = echarts.init(this.$refs.chart, this.theme)
          }
          this.spinning = true
+         // 在调用 setOption 前注册相关事件，否则在动画被禁用时，注册的事件回调可能因时序问题而不被执行。
+         this.chart.on('finished', () => {
+            this.spinning = false
+         })
          //添加true属性，可以重写渲染
-         this.option && this.chart.setOption(this.option, true)
+         this.chart.resize() //初始化的时候对容器进行适应
+         this.chart.setOption(this.option, true)
          window.addEventListener('resize', () => {
             this.chart.resize()
          })
          //监听渲染结束
-         this.chart.on('finished', () => {
-            this.spinning = false
-         })
       },
       refresh() {
          // this.destory()

@@ -11,7 +11,7 @@
          </span>
       </a-row>
       <a-row>
-         <e-chart :option="predictOption" :theme="theme" height="4.5rem" />
+         <e-chart :option="predictOption" :theme="theme" height="4.5rem" width="100%" />
       </a-row>
       <a-row :gutter="20">
          <a-col :span="12">
@@ -27,7 +27,7 @@
                   </a-select-option>
                </a-select>
             </a-row>
-            <e-chart :option="frequencyOption" :theme="theme" height="3.5rem" />
+            <e-chart :option="frequencyOption" :theme="theme" height="3.5rem" width="100%" />
          </a-col>
          <a-col :span="12">
             <a-row type="flex" justify="end" align="middle" :gutter="5">

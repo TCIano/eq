@@ -23,6 +23,7 @@
          :rowSelection="{
             type: 'radio',
             onChange: onSelectChange,
+            selectedRowKeys: selectedRowKeys,
          }"
          :columns="columns"
       >
@@ -146,6 +147,7 @@ export default {
                scopedSlots: { customRender: 'action' },
             },
          ],
+         selectedRowKeys: [],
          position_number: this.timeDomainList[0],
          type: '', //滤波类型
       }
@@ -189,30 +191,31 @@ export default {
             })
             this.setOption(raw_data, filter_data)
          }
-         this.data = [
-            {
-               key: 0,
-               name: '低通滤波',
-               value: 0,
-               select: 0,
-            },
-            {
-               key: 1,
-               name: '高通滤波',
-               value: 0,
-               select: 0,
-            },
-            {
-               key: 2,
-               name: '带通滤波',
-               lowValue: 0,
-               highValue: 0,
-               select: 0,
-            },
-         ]
+         // this.data = [
+         //    {
+         //       key: 0,
+         //       name: '低通滤波',
+         //       value: 0,
+         //       select: 0,
+         //    },
+         //    {
+         //       key: 1,
+         //       name: '高通滤波',
+         //       value: 0,
+         //       select: 0,
+         //    },
+         //    {
+         //       key: 2,
+         //       name: '带通滤波',
+         //       lowValue: 0,
+         //       highValue: 0,
+         //       select: 0,
+         //    },
+         // ]
       },
       onSelectChange(selectedRowKeys) {
          console.log(selectedRowKeys)
+         this.selectedRowKeys = selectedRowKeys
          this.data.map(item => {
             item.key === selectedRowKeys[0] ? (item.select = 1) : (item.select = 0)
          })

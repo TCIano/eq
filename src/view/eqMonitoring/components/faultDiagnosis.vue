@@ -1,12 +1,12 @@
 <template>
-   <a-card>
+   <a-card style="width: 100%">
       <div slot="title" style="display: flex; align-items: center">
          <a-icon type="pause" style="font-size: 20px" />
          <span>{{ title }}</span>
       </div>
-      <div>
+      <div style="width: 100%">
          <a-row>
-            <e-chart :option="option" :theme="theme" height="4.5rem" />
+            <e-chart :option="option" :theme="theme" height="4.3rem" />
          </a-row>
          <a-row :gutter="10" type="flex" align="middle">
             <!-- 标准情况 -->
@@ -73,6 +73,10 @@ export default {
          //关系图
          standardRelateOption: {
             tooltip: {},
+            title: {
+               show: true,
+               text: '标准图',
+            },
             grid: {
                top: '15%',
                bottom: '15%',
@@ -106,6 +110,10 @@ export default {
          },
          currentRelateOption: {
             tooltip: {},
+            title: {
+               show: true,
+               text: '当前图',
+            },
             grid: {
                top: '1%',
                bottom: '1%',

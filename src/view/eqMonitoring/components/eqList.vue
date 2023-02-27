@@ -1,12 +1,11 @@
 <template>
    <div>
-      <a-row>
+      <a-row :gutter="[10, 10]">
          <a-col :span="6" v-for="item in eqInfo" :key="item.equipment_id">
             <a-card
                class="eq-list"
-               style="width: 300px; margin-bottom: 15px"
                :headStyle="{ border: 'none' }"
-               @click="getEqDetail(item.equipment_id)"
+               @click="getEqDetail(item.equipment_id, item.equipment_name, item.equipment_picture)"
             >
                <div
                   slot="title"
@@ -52,19 +51,19 @@
             </a-card>
          </a-col>
       </a-row>
-      <!-- 分页 -->
-      <a-pagination :default-current="1" :total="500" class="item-pagination" />
    </div>
 </template>
 
 <script>
-import { getEquipmentMonitorApi } from '@/api/eqMonitor'
-
 export default {
    name: 'eqInfo',
+   props: {
+      eqInfo: {
+         type: Array,
+      },
+   },
    data() {
       return {
-         eqInfo: [],
          map: [
             { status: '0', id: 'error' },
             {
@@ -76,31 +75,29 @@ export default {
       }
    },
    methods: {
-      async getEquipmentMonitor() {
-         const {
-            result: { equipment, warning_message },
-         } = await getEquipmentMonitorApi()
-         this.eqInfo = equipment
-      },
-      getEqDetail(equipment_id) {
+      getEqDetail(equipment_id, equipment_name, equipment_picture) {
          this.$router.push({
             path: '/equipmentMonitoringData',
             query: {
                equipment_id,
+               equipment_name,
+               equipment_picture,
             },
          })
       },
    },
 
-   created() {
-      this.getEquipmentMonitor()
-   },
+   created() {},
 }
 </script>
 
 <style scoped lang="less">
 .eq-list {
    cursor: pointer;
+
+   ::v-deep .ant-card {
+      box-shadow: 1px 1px 1px 1px;
+   }
    .eq-title {
       font-size: 25px;
       margin-left: 10px;
@@ -109,7 +106,7 @@ export default {
    .row {
       background: url('@/assets/img/attribute.svg') no-repeat center;
       background-size: contain;
-      padding-bottom: 5px;
+      padding-bottom: 10px;
       span {
          font-size: 16px;
       }

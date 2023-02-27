@@ -4,12 +4,16 @@ import request from '@/utils/request'
  * @param {Object} data
  * @returns
  */
-export const getEquipmentMonitorApi = data => {
+export const getEquipmentMonitorApi = ({ page = 0, amount = 9, equipment_tree = [] }) => {
    return request({
       method: 'POST',
-      //   url: '/getEquipmentMonitor',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/getEquipmentMonitor',
-      data,
+      url: '/getEquipmentMonitor',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/getEquipmentMonitor',
+      data: {
+         amount,
+         page,
+         equipment_tree,
+      },
    })
 }
 /**
@@ -21,8 +25,8 @@ export const getEquipmentMonitorApi = data => {
 export const getComprehensiveMonitorApi = equipment_id => {
    return request({
       method: 'POST',
-      // url: '/getComprehensiveMonitor',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/getComprehensiveMonitor',
+      url: '/getComprehensiveMonitor',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/getComprehensiveMonitor',
       data: {
          equipment_id,
       },
@@ -41,8 +45,8 @@ export const getComprehensiveMonitorApi = equipment_id => {
 export const getWaveShapeAnalysisApi = data => {
    return request({
       method: 'POST',
-      // url: '/waveShapeAnalysis',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/waveShapeAnalysis',
+      url: '/waveShapeAnalysis',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/waveShapeAnalysis',
       data,
    })
 }
@@ -60,8 +64,8 @@ export const getWaveShapeAnalysisApi = data => {
 export const getTimeDomainAnalysisApi = data => {
    return request({
       method: 'POST',
-      // url: '/timeDomainAnalysis',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/timeDomainAnalysis',
+      url: '/timeDomainAnalysis',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/timeDomainAnalysis',
       data,
    })
 }

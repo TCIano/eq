@@ -37,7 +37,7 @@
       <fault-prediction
          theme=""
          ref="faultPre"
-         :equipment_id="equipment_id"
+         :equipment_id="eq"
          :frePositionNumber="frePositionNumber"
          :kurPositionNumber="kurPositionNumber"
       />
@@ -45,53 +45,29 @@
 </template>
 
 <script>
-import { getEquipmentListApi, getOriginationApi } from '@/api/eqManage'
-import { arr2Tree } from '@/utils'
 import faultPrediction from '../eqMonitoring/components/faultPrediction.vue'
 import { getExternalFaultPredictApi, getFaultPredictApi } from '@/api/eqPredict'
+import { mixin } from '@/mixins/mixins'
 export default {
+   name: 'eqFailurePre',
+   mixins: [mixin],
    components: { faultPrediction },
    data() {
       return {
-         equipment_id: '',
-         equipment_node: undefined,
-         treeData: [],
-         replaceFields: {
-            children: 'children',
-            title: 'title',
-            key: 'key',
-            value: 'key',
-         },
-         eq: undefined,
-         eqList: [],
          frePositionNumber: [],
          kurPositionNumber: [],
       }
    },
    methods: {
-      async getOrigination() {
-         const { result } = await getOriginationApi()
-         this.treeData = arr2Tree(result)
-         // generateList(this.treeData)
-      },
-      async getEqByTree(value) {
-         this.eq = undefined
-         const { result } = await getEquipmentListApi(
-            Array.isArray(value) ? value : value.split(',')
-         )
-
-         if (result) {
-            this.eqList = result
-         }
-      },
       //获取外部设备预测
       async getExternalFaultPredict() {
          const { result } = await getExternalFaultPredictApi()
          if (result) {
-            this.equipment_id = result.equipment_id
             this.equipment_node = result.equipment_node
             this.getEqByTree(this.equipment_node)
-            this.eq = result.equipment_name
+            // this.eq = result.equipment_name
+            this.eq = result.equipment_id
+
             //获取频域分析，峭度分析位号列表
             this.frePositionNumber = result.frequency_analysis.position_list
             this.kurPositionNumber = result.kurtosis_analysis.position_list
@@ -110,7 +86,6 @@ export default {
       },
    },
    created() {
-      this.getOrigination()
       this.getExternalFaultPredict()
    },
 }
