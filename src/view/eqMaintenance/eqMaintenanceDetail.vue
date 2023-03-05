@@ -50,7 +50,7 @@
 <script>
 import eChart from '@/components/eChart.vue'
 import { getWarningDetailApi } from '@/api/eqWaring'
-import { reactive } from 'vue'
+
 export default {
    components: { eChart },
    data() {
