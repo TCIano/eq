@@ -1,10 +1,10 @@
 <template>
    <div>
       <a-row type="flex" justify="space-between" align="middle">
-         <a-tabs default-active-key="0" style="width: 40%" size="large" @change="getFaultByStatus">
-            <a-tab-pane key="1" tab="全部"></a-tab-pane>
+         <a-tabs default-active-key="3" style="width: 40%" size="large" @change="getFaultByStatus">
+            <a-tab-pane key="3" tab="全部"></a-tab-pane>
+            <a-tab-pane key="1" tab="已处理"></a-tab-pane>
             <a-tab-pane key="2" tab="待处理"></a-tab-pane>
-            <a-tab-pane key="3" tab="已处理"></a-tab-pane>
          </a-tabs>
          <a-col>
             <a-row type="flex" justify="end" align="middle">
@@ -43,6 +43,7 @@
             </a-row>
          </a-col>
       </a-row>
+      <a-empty v-if="!faultList?.length" style="position: absolute; top: 50%; left: 50%"></a-empty>
       <div class="grid grid-cols-3 gap-1">
          <div v-for="item in faultList" :key="item.fault_id">
             <a-skeleton avatar :paragraph="{ rows: 5 }" active :loading="loading">
@@ -74,10 +75,11 @@
       </div>
       <a-row>
          <a-pagination
+            v-if="faultList?.length >= pageSize"
             show-quick-jumper
             :default-current="1"
             :current="currentPage"
-            :defaultPageSize="9"
+            :defaultPageSize="pageSize"
             :total="total"
             @change="pageChange"
             class="flex mt-1 justify-end"
@@ -96,8 +98,9 @@ export default {
          faultList: [],
          defaultCurrentPage: 1,
          currentPage: 1,
+         pageSize: 9,
          total: undefined,
-         status: 1,
+         processed: 3,
          loading: true,
       }
    },
@@ -106,7 +109,8 @@ export default {
          const { result } = await getWarningListApi({
             equipment_id: this.eq,
             page: this.currentPage,
-            status: this.status,
+            amount: this.pageSize,
+            processed: this.processed,
          })
          if (result) {
             this.faultList = result.equipment_list
@@ -115,7 +119,7 @@ export default {
          }
       },
       getFaultByStatus(key) {
-         this.status = key / 1
+         this.processed = key / 1
          this.getWarningList()
       },
       getDetail(fault_id) {
@@ -140,7 +144,6 @@ export default {
       },
    },
    created() {
-      this.getOrigination()
       this.getWarningList()
    },
 }

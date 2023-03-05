@@ -11,7 +11,7 @@ const routes = [
    {
       path: '/',
       component: PageView,
-      redirect: '/equipmentManagement',
+      redirect: '/typeOfEquipment',
       children: childRouter,
    },
 ]

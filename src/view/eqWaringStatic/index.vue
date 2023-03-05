@@ -52,7 +52,11 @@
                      <span>设备故障预测统计表</span>
                   </a-space>
                </template>
-               <a-table :columns="columns" :data-source="data" :scroll="{ y: 200 }"></a-table>
+               <a-table :columns="columns" :data-source="data" :scroll="{ y: 200 }" row-key="month">
+                  <template slot="month" slot-scope="text, record">
+                     <span>{{ moment(record.month).format('YYYY-MM') }}</span>
+                  </template>
+               </a-table>
             </a-card>
          </a-col>
       </a-row>
@@ -71,6 +75,7 @@ export default {
    mixins: [mixin],
    data() {
       return {
+         moment,
          gutter: [10, 10],
          month: undefined,
          optionList: [],
@@ -84,13 +89,14 @@ export default {
             {
                align: 'center',
                key: 'month',
-               dataIndex: 'month',
+               // dataIndex: 'month',
                title: '月份',
+               scopedSlots: { customRender: 'month' },
             },
             {
                align: 'center',
-               key: 'warning_count',
-               dataIndex: 'warning_count',
+               key: 'count',
+               dataIndex: 'count',
                title: '报警次数',
             },
             {
@@ -135,20 +141,21 @@ export default {
    },
    methods: {
       reSearch() {
-         this.equipment_node = undefined
+         // this.equipment_node = undefined
+         this.getWarningStatistics()
       },
       reset() {
          this.equipment_node = undefined
          this.month = undefined
       },
       async getWarningStatistics() {
+         console.log(moment(this.month).format('YYYY-MM'))
          const {
             result: { table, graph },
          } = await getWarningStatisticsApi({
-            equipment_tree: this.equipment_node,
-            month: moment(this.month),
+            equipment_tree: this.equipment_node && this.equipment_node.split(','),
+            month: this.month && moment(this.month).format('YYYY-MM'),
          })
-
          if (table && graph) {
             this.data = table
             this.optionList = graph.map((item, index) => {

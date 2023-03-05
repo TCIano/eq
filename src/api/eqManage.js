@@ -17,13 +17,14 @@ export const getOriginationApi = () => {
    "equipType": ""           设备类型
  * @returns
  */
-export const getEqNameApi = ({ equipMajorDIC = '', depart = '', equipType = '' }) => {
+export const getEqNameApi = ({ section = '', equipMajorDIC = '', depart = '', equipType = '' }) => {
    return request({
       method: 'POST',
       url: '/message/equipMessage',
       data: {
-         equipMajorDIC,
          depart,
+         section,
+         equipMajorDIC,
          equipType,
       },
    })
@@ -108,14 +109,14 @@ export const updateEquipmentExampleApi = data => {
  * equipment_tree list 设备树
  * @returns
  */
-export const getEquipmentListApi = ({ page = 0, amount = 19, equipment_tree = [] }) => {
+export const getEquipmentListApi = ({ page = 0, amount = 0, filtration = [] }) => {
    return request({
       method: 'POST',
       url: '/getEquipmentList',
       data: {
          amount,
          page,
-         equipment_tree,
+         filtration,
       },
    })
 }

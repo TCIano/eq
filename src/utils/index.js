@@ -92,3 +92,39 @@ export const arr2Tree = (arr, isSelectAll = true, cascader = false) => {
    })
    return tree
 }
+/**
+ * 判断连个对象是否相等
+ * @param {Object} obj1
+ * @param {Object} obj2
+ * @returns
+ */
+export const isObjectEqual = (obj1, obj2) => {
+   let o1 = obj1 instanceof Object
+   let o2 = obj2 instanceof Object
+   if (!o1 || !o2) {
+      // 如果不是对象 直接判断数据是否相等
+      return obj1 === obj2
+   }
+   // 判断对象的可枚举属性组成的数组长度
+   if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+      return false
+   }
+   for (let attr in obj1) {
+      let a1 = Object.prototype.toString.call(obj1[attr]) == '[object Object]'
+      let a2 = Object.prototype.toString.call(obj2[attr]) == '[object Object]'
+      let arr1 = Object.prototype.toString.call(obj1[attr]) == '[object Array]'
+      if (a1 && a2) {
+         // 如果是对象继续判断
+         return isObjectEqual(obj1[attr], obj2[attr])
+      } else if (arr1) {
+         // 如果是对象 判断
+         if (obj1[attr].toString() != obj2[attr].toString()) {
+            return false
+         }
+      } else if (obj1[attr] !== obj2[attr]) {
+         // 不是对象的就判断数值是否相等
+         return false
+      }
+   }
+   return true
+}

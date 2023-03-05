@@ -4,7 +4,7 @@ import request from '@/utils/request'
  * @param {Object} data
  * @returns
  */
-export const getEquipmentMonitorApi = ({ page = 0, amount = 9, equipment_tree = [] }) => {
+export const getEquipmentMonitorApi = ({ page = 0, amount = 9, filtration = [] }) => {
    return request({
       method: 'POST',
       url: '/getEquipmentMonitor',
@@ -12,7 +12,7 @@ export const getEquipmentMonitorApi = ({ page = 0, amount = 9, equipment_tree = 
       data: {
          amount,
          page,
-         equipment_tree,
+         filtration,
       },
    })
 }

@@ -17,6 +17,11 @@ export const eqTypeMixin = {
          this.eqMessage = await getEquipInitMessageApi()
          console.log(this.eqMessage)
       },
+      filter(inputValue, path) {
+         return path.some(
+            option => option.name.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
+         )
+      },
    },
    created() {},
 }

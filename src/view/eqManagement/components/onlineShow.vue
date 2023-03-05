@@ -20,12 +20,12 @@
          v-for="(item, index) in list"
          :key="index"
       >
-         <a-col :span="2" :offset="1">{{ item.base_name }} :</a-col>
+         <a-col :span="2" :offset="1">{{ item.position_name }} :</a-col>
          <a-col :span="9">
             <a-input v-model="item.position_number" :disabled="true"></a-input>
          </a-col>
          <a-col :span="1">在线展示</a-col>
-         <a-col :span="1">
+         <a-col :span="2">
             <a-switch
                :checked="item.online_show ? true : false"
                @change="setSwitch(index, $event)"
@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import { deepClone } from '@/utils'
 export default {
    name: 'onlineShow',
    data() {
@@ -57,24 +56,21 @@ export default {
    methods: {
       getBitList(param) {
          console.log(param)
-         this.list = param.filter(item => item.base_name)
+         this.list = param.filter(item => item.position_name)
          this.selectBit = this.list
             .filter(item => item.comprehensive_show)
-            .map(obj => obj.base_name)
+            .map(obj => obj.position_name)
          this.monitor = this.list.map(item => {
-            return item.base_name
+            return item.position_name
          })
       },
       onSelect(selectList) {
-         console.log(selectList)
          this.list.forEach(item => {
-            let right = selectList.some(bit => bit === item.base_name)
+            let right = selectList.some(bit => bit === item.position_name)
             item.comprehensive_show = right ? 1 : 0
          })
       },
       setSwitch(index, e) {
-         console.log(index, e)
-         console.log(this.list[index])
          this.list[index].online_show = e ? 1 : 0
          //重新更新配置里边的数据
       },

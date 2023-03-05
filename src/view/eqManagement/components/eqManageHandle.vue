@@ -46,7 +46,8 @@ import {
 import basicInfo from './basicInfo.vue'
 import bitConfig from './bitConfig.vue'
 import onlineShow from './onlineShow.vue'
-import { deepClone } from '@/utils'
+import { deepClone, isObjectEqual } from '@/utils'
+import { storageStore } from '@/store/local'
 export default {
    name: 'eqManageHandle',
    components: { basicInfo, bitConfig, onlineShow },
@@ -75,25 +76,33 @@ export default {
          this.$router.go(-1)
       },
       async next() {
-         this.current++
-         if (this.currentEqType.length && this.current === 1) {
-            let list = await this.getBitByType()
-            this.bitConfigForm = {
-               position_number: list,
-            }
-         } else if (this.current === 2) {
-            console.log(22)
-            console.log(this.$refs.bitConfig)
+         if (this.current === 0) {
+            this.$refs.basicInfo.$refs.form.validate(async valid => {
+               if (valid) {
+                  this.current++
+                  if (this.title === '新增' && storageStore.get('isTypeChange')) {
+                     let list = await this.getBitByType()
+                     this.bitConfigForm = {
+                        position_number: list,
+                     }
+                  }
+               }
+            })
+         } else {
+            this.current++
+            console.log(this.current)
+         }
+
+         if (this.current === 2) {
             let bitList = this.$refs.bitConfig.bitList.position_number
             this.$refs.onlineShow.getBitList(bitList)
          }
       },
       prev() {
          this.current--
+         storageStore.set('isTypeChange', false)
       },
-      onChange(current) {
-         console.log(current)
-      },
+
       async submit() {
          let basicInfo = this.$refs.basicInfo.form
          let onlineShow = this.$refs.onlineShow.list
@@ -103,10 +112,12 @@ export default {
          }
          if (this.title === '新增') {
             await addEquipmentExampleApi(option)
+            this.$message.success('新增成功')
          } else {
             await updateEquipmentExampleApi(option)
+            this.$message.success('修改成功')
          }
-         console.log(option)
+         this.$router.go(-1)
       },
       getType(param) {
          this.currentEqType = param
@@ -124,13 +135,6 @@ export default {
          let { result } = await getModeBitApi({
             equipment_type: this.$refs.basicInfo.form.equipment_type,
          })
-         // let res = [
-         //    { position_type: '轴转速', unit: 'um/' },
-         //    { position_type: '轴温度', unit: 'um/p' },
-         //    { position_type: '轴电流', unit: 'u/p' },
-         //    { position_type: '润滑油流量高报', unit: 'um/p' },
-         //    { position_type: '设备启停状态', unit: 'ump' },
-         // ]
 
          result.forEach((element, index) => {
             element.id = index
@@ -164,6 +168,7 @@ export default {
                equipment_attribute,
                equipment_id,
                message_id,
+               equipment_name,
                isopen,
                equipment_status,
                equipment_tree,
@@ -175,6 +180,7 @@ export default {
                equipment_attribute: undefined,
                equipment_name: undefined,
                equipment_status: '',
+               equipment_id: '',
                equipment_tree: undefined,
                equipment_type: undefined,
             }

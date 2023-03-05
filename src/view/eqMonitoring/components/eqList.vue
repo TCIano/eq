@@ -25,7 +25,7 @@
                <img
                   slot="cover"
                   alt="example"
-                  :src="item.equipment_picture"
+                  :src="require('../../../assets/equipment/' + item.equipment_picture)"
                   style="width: 150px; height: 150px; margin: 0 auto"
                />
                <a-card-meta>
@@ -105,7 +105,7 @@ export default {
    }
    .row {
       background: url('@/assets/img/attribute.svg') no-repeat center;
-      background-size: contain;
+      background-size: 100% 100%;
       padding-bottom: 10px;
       span {
          font-size: 16px;

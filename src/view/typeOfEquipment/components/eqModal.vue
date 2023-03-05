@@ -1,20 +1,20 @@
 <template>
    <div>
-      <a-modal :title="title" :visible="visible" @cancel="cancel">
+      <a-modal :title="title" :visible="visible" @cancel="cancel" v-show="showVisible">
          <a-form-model :model="attrForm" :rules="rules" ref="attrForm">
             <a-form-model-item
                label="设备属性"
                prop="equipment_attribute"
-               :labelCol="{ span: 4 }"
-               :wrapperCol="{ span: 20 }"
+               :labelCol="{ span: 5 }"
+               :wrapperCol="{ span: 19 }"
             >
                <a-select
                   v-model="attrForm.equipment_attribute"
                   placeholder="请选择设备属性"
-                  @change="attrChange"
+                  :disabled="disabled"
                >
                   <a-select-option
-                     :value="item.code"
+                     :value="item.name"
                      v-for="item in eqMessage.equipMajor"
                      :key="item.code"
                   >
@@ -25,8 +25,8 @@
             <a-form-model-item
                label="设备类型"
                prop="equipment_type"
-               :labelCol="{ span: 4 }"
-               :wrapperCol="{ span: 20 }"
+               :labelCol="{ span: 5 }"
+               :wrapperCol="{ span: 19 }"
             >
                <!-- <a-tree-select
                   v-model="attrForm.equipment_type"
@@ -39,14 +39,47 @@
                   v-model="attrForm.equipment_type"
                   :options="eqMessage.equipTypes"
                   placeholder="请选择设备类型"
+                  :show-search="{ filter }"
                   :fieldNames="fieldNames"
-                  @change="cascaderTree"
+                  :disabled="disabled"
                />
             </a-form-model-item>
+            <a-form-model-item
+               label="设备类型图片"
+               :labelCol="{ span: 5 }"
+               :wrapperCol="{ span: 19 }"
+            >
+               <a-select v-model="attrForm.equipment_picture" placeholder="请选择设备类型图片">
+                  <a-select-option :value="item" v-for="item in imgList" :key="item">
+                     {{ item }}
+                  </a-select-option>
+               </a-select>
+            </a-form-model-item>
+            <div class="pictureShow" v-if="attrForm.equipment_picture">
+               <img
+                  @click="previewVisible = true"
+                  :src="
+                     require('../../../assets/equipment/' +
+                        this.attrForm.equipment_picture.replace('./', ''))
+                  "
+                  alt="avatar"
+                  style="width: 150px; height: 150px; border: 1px dashed #ccc"
+               />
+               <a-modal :visible="previewVisible" :footer="null" @cancel="previewVisible = false">
+                  <img
+                     alt="example"
+                     style="width: 100%"
+                     :src="
+                        require('../../../assets/equipment/' +
+                           this.attrForm.equipment_picture.replace('./', ''))
+                     "
+                  />
+               </a-modal>
+            </div>
             <a-form-model-item label="基础信息">
                <div class="scroll-container">
                   <a-row
-                     :gutter="10"
+                     :gutter="[10, 2]"
                      type="flex"
                      v-for="(item, index) in attrForm.position_number"
                      :key="item.base_id"
@@ -108,7 +141,7 @@
 </template>
 
 <script>
-import { getEqbitNameApi } from '@/api'
+import { getBaseNameApi } from '@/api'
 import { eqTypeMixin } from '@/mixins/eqTypeMixins'
 import BitTable from './bitTable.vue'
 export default {
@@ -130,6 +163,8 @@ export default {
    },
    data() {
       return {
+         showVisible: true,
+         disabled: this.title === '修改' ? true : false,
          bit: [
             {
                key: 'wave_spectrum',
@@ -155,6 +190,7 @@ export default {
                span: 19,
             },
          },
+         imgList: [],
          treeData: [], //树形设备类型
          bitList: [], //位号列表
          //校验规则
@@ -164,6 +200,7 @@ export default {
          },
 
          dataAttr: 'wave_spectrum', //当前所选栏
+         previewVisible: false,
       }
    },
    methods: {
@@ -174,9 +211,7 @@ export default {
       //添加属性行
       addAttr() {
          this.attrForm.position_number.push({
-            base_id: this.attrForm.position_number.length
-               ? this.attrForm.position_number[this.attrForm.position_number.length - 1].base_id + 1
-               : 0,
+            base_id: '-' + this.attrForm.position_number.length + 1,
             base_name: undefined,
             unit: '',
             wave_spectrum: 0,
@@ -199,13 +234,16 @@ export default {
          })
       },
       nextStep() {
-         // console.log(this.attrForm)
-         this.attrForm.position_number = this.attrForm.position_number.filter(
-            item => item.base_name
-         )
-         this.bitData = this.attrForm.position_number
-         this.visible = false
-         this.typeVisible = true
+         this.$refs.attrForm.validate(valid => {
+            if (valid) {
+               this.attrForm.position_number = this.attrForm.position_number.filter(
+                  item => item.base_name
+               )
+               this.bitData = this.attrForm.position_number
+               this.showVisible = false
+               this.typeVisible = true
+            }
+         })
       },
       cancel() {
          this.$refs.attrForm.resetFields()
@@ -220,7 +258,6 @@ export default {
       setTypeVisible() {
          //新增设备类型
          this.$emit('handleEqType', this.attrForm, this.title)
-         // this.typeVisible = false
       },
       //获取位号是否选择
       getbitDataValue(id, checked) {
@@ -230,45 +267,18 @@ export default {
          })
          console.log(this.bitData)
       },
-      cascaderTree() {
-         this.getBitName()
-         this.clearPosition()
-      },
-      attrChange() {
-         this.getBitName()
-         this.clearPosition()
-      },
-      clearPosition() {
-         this.bitList = []
-         this.attrForm.position_number.forEach(item => {
-            let hasBit = this.bitList.some(ele => ele.base_name === item.base_name)
-            if (!hasBit) {
-               item.base_name = ''
-               item.unit = ''
-               item.wave_spectrum = 0
-               item.time_domain = 0
-               item.frequency_domain = 0
-            }
-         })
-      },
+
       //获取位号内容
       async getBitName() {
-         if (this.attrForm.equipment_attribute && this.attrForm.equipment_type?.length) {
-            const {
-               result: { data },
-            } = await getEqbitNameApi({
-               equipment_attribute: this.attrForm.equipment_attribute,
-               equipment_type: this.attrForm.equipment_type,
-            })
-            this.bitList = data.map(item => {
-               return {
-                  ...item,
-                  disabled: this.attrForm.position_number.some(
-                     bit => bit.base_name === item.base_name
-                  ),
-               }
-            })
-         }
+         const { result } = await getBaseNameApi()
+         this.bitList = result.map(item => {
+            return {
+               ...item,
+               disabled: this.attrForm.position_number.some(
+                  bit => bit.base_name === item.base_name
+               ),
+            }
+         })
       },
       dropDown() {
          if (!this.attrForm.equipment_attribute || !this.attrForm.equipment_type.length)
@@ -283,29 +293,38 @@ export default {
          this.bitList[listIndex].disabled = true
       },
    },
-   watch: {
-      attrForm: {
-         handler(newValue) {
-            console.log(newValue)
-            this.attrForm = newValue
-         },
-         deep: true,
-      },
-   },
 
    created() {
       this.title === '修改' && this.getBitName()
       this.getEquipInitMessage()
+      this.getBitName()
+   },
+   mounted() {
+      this.imgList = require
+         .context('@/assets/equipment', true, /\.(png|jpg|gif|jpeg|webp|ico)$/)
+         .keys()
+         .map(item => item.replace('./', ''))
    },
 }
 </script>
 
 <style scoped lang="less">
+.pictureShow {
+   text-align: center;
+   img {
+      cursor: pointer;
+   }
+   img:hover {
+      z-index: 99;
+      background-color: #3d3634;
+   }
+}
+
 .scroll-container {
    overflow-y: scroll;
    overflow-x: hidden;
    scroll-behavior: smooth;
    display: block;
-   height: 200px;
+   height: 205px;
 }
 </style>

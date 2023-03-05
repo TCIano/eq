@@ -1,40 +1,32 @@
 <template>
    <div class="eq-detail">
-      <div
-         class="bgPicture"
-         :style="{
-            background: `url(${$route.query.equipment_picture}) no-repeat 50% 60%`,
-            backgroundSize: '500px 500px',
-         }"
-      >
-         <div class="text-center bg-transparent text-white font-mono" style="font-size: 0.5rem">
-            {{ equipment_name }}综合监视
-         </div>
-         <a-tabs
-            default-active-key="1"
-            v-model="currentPage"
-            tabPosition="left"
-            @change="onChangeTabs"
-         >
-            <a-tab-pane key="1" tab="设备参数">
-               <eq-param :equipment_id="equipment_id" :data="tableData"></eq-param>
-            </a-tab-pane>
-            <a-tab-pane key="2" tab="时域分析">
-               <time-domain :equipment_id="equipment_id" :timeDomainList="mapList[0].list" />
-            </a-tab-pane>
-            <a-tab-pane key="3" tab="故障预测">
-               <fault-prediction
-                  ref="faultPre"
-                  :equipment_id="equipment_id"
-                  :frePositionNumber="mapList[1].list"
-                  :kurPositionNumber="mapList[2].list"
-               />
-            </a-tab-pane>
-            <a-tab-pane key="4" tab="故障诊断">
-               <fault-diagnosis ref="faultDia" :equipment_id="equipment_id" />
-            </a-tab-pane>
-         </a-tabs>
+      <div class="text-center bg-transparent text-white font-mono" style="font-size: 0.5rem">
+         {{ equipment_name }}综合监视
       </div>
+      <img
+         v-if="$route.query.equipment_picture"
+         :src="require('../../assets/equipment/' + $route.query.equipment_picture)"
+         class="bgPicture"
+      />
+      <a-tabs
+         default-active-key="1"
+         v-model="currentPage"
+         tabPosition="left"
+         @change="onChangeTabs"
+      >
+         <a-tab-pane key="1" tab="设备参数">
+            <eq-param :equipment_id="equipment_id" :data="tableData"></eq-param>
+         </a-tab-pane>
+         <a-tab-pane key="2" tab="时域分析">
+            <time-domain :equipment_id="equipment_id" :timeDomainList="mapList[0].list" />
+         </a-tab-pane>
+         <a-tab-pane key="3" tab="故障预测">
+            <fault-prediction ref="faultPre" :equipment_id="equipment_id" />
+         </a-tab-pane>
+         <a-tab-pane key="4" tab="故障诊断">
+            <fault-diagnosis ref="faultDia" :equipment_id="equipment_id" />
+         </a-tab-pane>
+      </a-tabs>
    </div>
 </template>
 
@@ -86,7 +78,10 @@ export default {
                this.mapList[index].list = result
                   .filter(item => item[this.mapList[index].key])
                   .map(pn => {
-                     return pn.name
+                     return {
+                        name: pn.position_name,
+                        value: pn.position_number,
+                     }
                   })
             }
          }
@@ -119,13 +114,21 @@ export default {
 @import './card.less';
 
 .eq-detail {
+   position: relative;
    padding: 10px 20px;
    // width: 100%;
    min-height: 100vh - 10px;
    // height: 100%;
    background: url('@/assets/img/eqdetail.png') no-repeat;
    background-size: cover;
-   // background: url('http://dummyimage.com/200x100/894FC4/FFF.png&text=!') no-repeat 50% 60%;
+   .bgPicture {
+      // z-index: 1;
+      position: absolute;
+      width: 90%;
+      height: 90%;
+      // top: 30%;
+      // left: 20%;
+   }
    .ant-tabs {
       width: 100%;
       color: white;

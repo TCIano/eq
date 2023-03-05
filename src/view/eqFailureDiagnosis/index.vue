@@ -52,9 +52,9 @@ export default {
       async getExternalFaultDiagnosis() {
          const { result } = await getExternalFaultDiagnosisApi()
          if (result) {
-            this.equipment_node = result.equipment_node
+            this.equipment_node = result.equipment_tree.join(',')
             this.getEqByTree(this.equipment_node)
-            this.eq = result.equipment_id
+            this.eq = this.eqList.length ? result.equipment_id : result.equipment_name
             this.$refs.faultDia.handleOption(result)
          }
       },

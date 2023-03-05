@@ -6,16 +6,24 @@ import request from '@/utils/request'
  * status int 状态
  * @returns
  */
-export const getWarningListApi = ({ equipment_id, page = 0, amount = 0, status = 1 }) => {
+export const getWarningListApi = ({
+   equipment_id = '',
+   page = 0,
+   amount = 9,
+   processed = null,
+   equipment_tree = [],
+   filtration = '',
+}) => {
    return request({
       method: 'POST',
-      //   url: '/getWarningList',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/getWarningList',
+      url: '/getWarningList',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/getWarningList',
       data: {
          equipment_id,
          page,
-         status,
+         processed,
          amount,
+         filtration,
       },
    })
 }
@@ -27,8 +35,8 @@ export const getWarningListApi = ({ equipment_id, page = 0, amount = 0, status =
 export const getWarningDetailApi = fault_id => {
    return request({
       method: 'POST',
-      // url: '/warningDetail',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/warningDetail',
+      url: '/warningDetail',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/warningDetail',
       data: {
          fault_id,
       },
@@ -41,14 +49,15 @@ export const getWarningDetailApi = fault_id => {
  * 月份	month	String
  * @returns Promise
  */
-export const getWarningStatisticsApi = ({ month, equipment_tree }) => {
+export const getWarningStatisticsApi = ({ month = '', equipment_tree = [], filtration = '' }) => {
    return request({
       method: 'POST',
-      // url: '/warningStatistics',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/warningStatistics',
+      url: '/warningStatistics',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/warningStatistics',
       data: {
          month,
          equipment_tree,
+         filtration,
       },
    })
 }

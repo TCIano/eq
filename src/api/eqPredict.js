@@ -7,8 +7,8 @@ import request from '@/utils/request'
 export const getFaultPredictApi = equipment_id => {
    return request({
       method: 'POST',
-      // url:"/faultPredict"
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/faultPredict',
+      url: '/faultPredict',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/faultPredict',
       data: {
          equipment_id,
       },
@@ -24,8 +24,8 @@ export const getFaultPredictApi = equipment_id => {
 export const getFrequencyDomainAnalysisApi = data => {
    return request({
       method: 'POST',
-      // url: '/frequencyDomainAnalysis',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/frequencyDomainAnalysis',
+      url: '/frequencyDomainAnalysis',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/frequencyDomainAnalysis',
       data,
    })
 }
@@ -42,7 +42,8 @@ export const getFrequencyDomainAnalysisApi = data => {
 export const getKurtosisAnalysisApi = data => {
    return request({
       method: 'POST',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/kurtosisAnalysis',
+      url: '/kurtosisAnalysis',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/kurtosisAnalysis',
       data,
    })
 }
@@ -53,7 +54,7 @@ export const getKurtosisAnalysisApi = data => {
 export const getExternalFaultPredictApi = () => {
    return request({
       method: 'GET',
-      // url: '/getFaultPredict',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/getFaultPredict',
+      url: '/getFaultPredict',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/getFaultPredict',
    })
 }

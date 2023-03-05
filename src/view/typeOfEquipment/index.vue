@@ -105,6 +105,7 @@ export default {
                key: 'position_number',
                align: 'center',
                title: '基础数据',
+               width: '60%',
                dataIndex: 'position_number',
                scopedSlots: { customRender: 'position_number' },
             },
@@ -156,8 +157,8 @@ export default {
       },
       //新增设备类型
       addEqType() {
-         this.modalVisible = true
          this.title = '新增'
+         this.modalVisible = true
          //获取设备属性和类型
          let position_number = []
          for (let index = 0; index < 5; index++) {
@@ -185,15 +186,27 @@ export default {
       },
       editEqType(record) {
          console.log(record)
-         this.handleId = record.id
-         this.modalVisible = true
          this.title = '修改'
-         let param = deepClone(record) //深拷贝一下，防止污染原数据
-         param.position_number = param.position_number
-         this.attrForm = param
+         this.modalVisible = true
+         // //深拷贝一下，防止污染原数据
+         let param = deepClone(record)
+         for (let index = 0; index < 5; index++) {
+            this.attrForm = param
+            if (record.position_number[index]) {
+               this.attrForm.position_number[index] = param.position_number[index]
+            } else {
+               this.attrForm.position_number[index] = {
+                  base_id: index,
+                  base_name: undefined,
+                  unit: '',
+                  wave_spectrum: 0,
+                  time_domain: 0,
+                  frequency_domain: 0,
+               }
+            }
+         }
       },
-      //编辑数据分析类型
-      editAna() {},
+
       async deleteAna(id) {
          await deleteEquipmentTypeApi(id)
          this.$message.success('删除成功')

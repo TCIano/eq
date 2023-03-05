@@ -7,8 +7,8 @@ import request from '@/utils/request'
 export const getFaultDiagnosisApi = equipment_id => {
    return request({
       method: 'POST',
-      //   url: '/faultDiagnosis',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/faultDiagnosis',
+      url: '/faultDiagnosis',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/faultDiagnosis',
       data: {
          equipment_id,
       },
@@ -21,7 +21,7 @@ export const getFaultDiagnosisApi = equipment_id => {
 export const getExternalFaultDiagnosisApi = () => {
    return request({
       method: 'GET',
-      // url: '/faultDiagnosis',
-      url: 'http://127.0.0.1:4523/m1/2242345-0-default/faultDiagnosis',
+      url: '/getFaultDiagnosis',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/getFaultDiagnosis',
    })
 }

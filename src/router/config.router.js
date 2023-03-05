@@ -7,6 +7,7 @@ export default [
    {
       name: '设备管理',
       path: 'equipmentManagement',
+      icon: 'message',
       component: () => import('@/view/eqManagement/index.vue'),
    },
    {

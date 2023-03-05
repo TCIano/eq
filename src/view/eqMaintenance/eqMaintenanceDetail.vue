@@ -31,7 +31,16 @@
          </a-col>
          <a-col :span="6">
             <div class="device-scroll-page" style="height: 5rem">
-               <a-card style="height: 100%"></a-card>
+               <a-card style="height: 100%">
+                  <a-row :gutter="[0, 20]" v-for="item in warningDatail" :key="item.key">
+                     <a-col :span="12">
+                        <h4>{{ item.key }}</h4>
+                     </a-col>
+                     <a-col :span="12">
+                        <span>{{ item.value }}</span>
+                     </a-col>
+                  </a-row>
+               </a-card>
             </div>
          </a-col>
       </a-row>
@@ -80,6 +89,8 @@ export default {
             ],
          },
          positionOption: [],
+         warningDatail: [],
+         timer: null,
       }
    },
    methods: {
@@ -90,6 +101,28 @@ export default {
             this.handleRelationPoint(result.fault_diagnosis)
             this.handleRelationLink(result.fault_diagnosis)
             this.handlePositionList(result.position_list)
+            //报警内容
+            this.warningDatail = result.warning_detail
+            //实现故障点闪烁
+            let count = 0
+            this.timer = setInterval(() => {
+               if (count % 2 == 0) {
+                  this.relativeOption.series[0].links.forEach(item => {
+                     if (item.highlight)
+                        return (item.lineStyle = {
+                           color: 'blue',
+                        })
+                  })
+               } else {
+                  this.relativeOption.series[0].links.forEach(item => {
+                     if (item.highlight)
+                        return (item.lineStyle = {
+                           color: 'orangered',
+                        })
+                  })
+               }
+               count += 1
+            }, 1000)
          }
       },
       handleLine(result) {
@@ -224,6 +257,9 @@ export default {
             }
          })
       },
+   },
+   beforeDestroy() {
+      clearInterval(this.time)
    },
    created() {
       this.getWarningDetail()

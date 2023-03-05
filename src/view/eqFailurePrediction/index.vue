@@ -34,19 +34,13 @@
             </a-space>
          </a-col>
       </a-row>
-      <fault-prediction
-         theme=""
-         ref="faultPre"
-         :equipment_id="eq"
-         :frePositionNumber="frePositionNumber"
-         :kurPositionNumber="kurPositionNumber"
-      />
+      <fault-prediction theme="" ref="faultPre" :equipment_id="eq" />
    </div>
 </template>
 
 <script>
 import faultPrediction from '../eqMonitoring/components/faultPrediction.vue'
-import { getExternalFaultPredictApi, getFaultPredictApi } from '@/api/eqPredict'
+import { getExternalFaultPredictApi } from '@/api/eqPredict'
 import { mixin } from '@/mixins/mixins'
 export default {
    name: 'eqFailurePre',
@@ -63,15 +57,10 @@ export default {
       async getExternalFaultPredict() {
          const { result } = await getExternalFaultPredictApi()
          if (result) {
-            this.equipment_node = result.equipment_node
+            this.equipment_node = result.equipment_tree.join(',')
             this.getEqByTree(this.equipment_node)
-            // this.eq = result.equipment_name
             this.eq = result.equipment_id
 
-            //获取频域分析，峭度分析位号列表
-            this.frePositionNumber = result.frequency_analysis.position_list
-            this.kurPositionNumber = result.kurtosis_analysis.position_list
-            this.$refs.faultPre.interval = result.kurtosis_analysis.span
             this.$refs.faultPre.handleOption(result)
          }
       },

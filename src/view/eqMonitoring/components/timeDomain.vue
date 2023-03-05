@@ -11,8 +11,8 @@
          placeholder="请选择位号"
          @change="onChangePositionNumber"
       >
-         <a-select-option v-for="item in timeDomainList" :key="item" :value="item">
-            {{ item }}
+         <a-select-option v-for="item in timeDomainList" :key="item.value" :value="item.value">
+            {{ item.name }}
          </a-select-option>
       </a-select>
       <e-chart ref="chart" :option="option" theme="dark" height="300px" width="100%" />
@@ -148,7 +148,7 @@ export default {
             },
          ],
          selectedRowKeys: [],
-         position_number: this.timeDomainList[0],
+         position_number: this.timeDomainList[0].value,
          type: '', //滤波类型
       }
    },
@@ -174,7 +174,9 @@ export default {
       async getTimeDomainAnalysis(type = '', low_value = 0, high_value = 0) {
          const { result } = await getTimeDomainAnalysisApi({
             equipment_id: this.equipment_id,
-            position_number: this.position_number,
+            position_number: {
+               value: this.position_number,
+            },
             wave_filter: {
                type,
                low_value,
@@ -191,27 +193,6 @@ export default {
             })
             this.setOption(raw_data, filter_data)
          }
-         // this.data = [
-         //    {
-         //       key: 0,
-         //       name: '低通滤波',
-         //       value: 0,
-         //       select: 0,
-         //    },
-         //    {
-         //       key: 1,
-         //       name: '高通滤波',
-         //       value: 0,
-         //       select: 0,
-         //    },
-         //    {
-         //       key: 2,
-         //       name: '带通滤波',
-         //       lowValue: 0,
-         //       highValue: 0,
-         //       select: 0,
-         //    },
-         // ]
       },
       onSelectChange(selectedRowKeys) {
          console.log(selectedRowKeys)

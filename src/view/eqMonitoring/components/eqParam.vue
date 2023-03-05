@@ -7,14 +7,17 @@
       <a-table
          :columns="columns"
          :data-source="data"
+         rowKey="unit"
          :pagination="{
             pageSize: 7,
          }"
-         row-key="name"
       >
+         <template slot="name" slot-scope="text">
+            {{ text.name || text.position_name }}
+         </template>
          <template slot="action" slot-scope="text">
             <img
-               v-if="text.wave_analysis"
+               v-if="text.comprehensive_analysis"
                src="@/assets/img/parameAnalysis.svg"
                alt=""
                style="width: 35px; cursor: pointer"
@@ -22,7 +25,7 @@
             />
          </template>
          <template slot="value" slot-scope="text">
-            {{ text.name + '  ' + text.unit }}
+            {{ text.value + '  ' + text.unit }}
          </template>
       </a-table>
       <!-- 参数分析弹窗 -->
@@ -70,10 +73,11 @@ import { getWaveShapeAnalysisApi } from '@/api/eqMonitor'
 
 const columns = [
    {
-      dataIndex: 'name',
+      // dataIndex: 'name',
       key: 'name',
       align: 'center',
       title: '参数',
+      scopedSlots: { customRender: 'name' },
    },
    {
       title: '状态或位号值',

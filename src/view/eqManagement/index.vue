@@ -3,6 +3,7 @@
       <a-col :span="4">
          <a-card class="device-scroll-page">
             <a-input-search
+               allowClear
                style="margin-bottom: 8px"
                placeholder="请输入组织机构名称"
                @change="onChange"
@@ -48,20 +49,26 @@
                            训练
                         </a>
                      </template>
-                     <a-icon
-                        type="close-circle"
-                        style="float: right; font-size: 16px"
-                        @click="deleteEq(item.equipment_id)"
-                     />
+                     <a-popconfirm
+                        title="确定删除？"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="deleteEq(item.equipment_id)"
+                     >
+                        <!-- <a href="#">Delete</a> -->
+                        <a-icon type="close-circle" style="float: right; font-size: 16px" />
+                     </a-popconfirm>
+
                      <a-card-meta :title="item.equipment_name">
-                        <a-avatar slot="avatar" src="" />
+                        <!-- <a-avatar slot="avatar" src="" /> -->
                         <template slot="description">
-                           <a-icon
-                              type="poweroff"
-                              :style="{ color: item.isopen ? '#3c94d9' : 'red' }"
-                              @click="handleMonitoring(item)"
-                           ></a-icon>
-                           {{ item.isopen ? '开启' : '关闭' }}监控
+                           <div @click="handleMonitoring(item)">
+                              <a-icon
+                                 type="poweroff"
+                                 :style="{ color: item.isopen ? 'red' : '#3c94d9' }"
+                              ></a-icon>
+                              {{ item.isopen ? '关闭' : '开启' }}监控
+                           </div>
                         </template>
                      </a-card-meta>
                   </a-card>
@@ -69,6 +76,7 @@
             </a-row>
             <!-- 分页 -->
             <a-pagination
+               v-if="eqList.length > 19"
                show-quick-jumper
                :page-size="pageSize"
                :default-current="1"
@@ -94,20 +102,6 @@ import {
 } from '@/api/eqManage'
 import { oriMixins } from '@/mixins/oriMixins'
 
-const getParentKey = (key, tree) => {
-   let parentKey
-   for (let i = 0; i < tree.length; i++) {
-      const node = tree[i]
-      if (node.children) {
-         if (node.children.some(item => item.key === key)) {
-            parentKey = node.key
-         } else if (getParentKey(key, node.children)) {
-            parentKey = getParentKey(key, node.children)
-         }
-      }
-   }
-   return parentKey
-}
 export default {
    mixins: [oriMixins],
    components: { eqManageModal },
@@ -116,39 +110,22 @@ export default {
       return {
          title: '',
          // replaceFields: { children: 'children', title: 'name', key: 'key' },
-         expandedKeys: [],
-         searchValue: '',
          listOrignation: [],
          eqList: [],
          visible: false,
          currentPage: 1,
          pageSize: 19,
          total: 0,
-         equipment_tree: [''],
+         equipment_tree: [],
       }
    },
    methods: {
-      onChange(e) {
-         const value = e.target.value
-         const expandedKeys = dataList
-            .map(item => {
-               if (item.title.indexOf(value) > -1) {
-                  return getParentKey(item.key, this.gData)
-               }
-               return null
-            })
-            .filter((item, i, self) => item && self.indexOf(item) === i)
-         Object.assign(this, {
-            expandedKeys,
-            searchValue: value,
-            autoExpandParent: true,
-         })
-      },
       selectOri(value, e) {
          this.equipment_tree = value[0]?.split(',')
          this.getEquipmentList()
       },
       pageChange(page) {
+         this.pageSize = page === 1 ? 19 : 20
          this.currentPage = page
          this.getEquipmentList()
       },
@@ -158,8 +135,9 @@ export default {
          const {
             result: { datas, total_amount },
          } = await getEquipmentListApi({
+            amount: this.pageSize,
             page: this.currentPage,
-            equipment_tree: this.equipment_tree,
+            filtration: this.equipment_tree,
          })
          this.total = total_amount
          this.eqList = datas
@@ -195,8 +173,16 @@ export default {
          } catch (error) {}
       },
       async deleteEq(id) {
+         // this.$confirm({
+         //    content: '是否要删除',
+         //    async onOk() {
          await deleteEquipmentExampleApi(id)
          this.getEquipmentList()
+         this.$message.success('删除成功')
+         //    },
+         //    cancelText: '取消',
+         //    onCancel() {},
+         // })
       },
       // /跳转模型训练页面
       train(id) {

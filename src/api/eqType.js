@@ -89,3 +89,12 @@ export const getEquipInitMessageApi = () => {
       url: '/message',
    })
 }
+/**
+ * 获取所有的位号
+ * @returns Promise
+ */
+export const getBaseNameApi = () => {
+   return request({
+      url: '/getBaseName',
+   })
+}

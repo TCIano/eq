@@ -41,6 +41,7 @@
             <a-col :span="5">
                <a-card :bordered="false" class="eq-device-scroll-page">
                   <a-input-search
+                     allowClear
                      style="margin-bottom: 8px"
                      placeholder="请输入组织机构名称"
                      @change="onChange"
@@ -70,6 +71,7 @@
                      <eq-list :eqInfo="eqInfo" ref="eqInfo" />
                      <!-- 分页 -->
                      <a-pagination
+                        v-if="eqInfo.length >= pageSize"
                         :default-current="1"
                         :total="500"
                         show-quick-jumper
@@ -91,22 +93,7 @@
 import eqList from './components/eqList.vue'
 import { getEquipmentMonitorApi } from '@/api/eqMonitor'
 import { oriMixins } from '@/mixins/oriMixins'
-const dataList = []
 
-const getParentKey = (key, tree) => {
-   let parentKey
-   for (let i = 0; i < tree.length; i++) {
-      const node = tree[i]
-      if (node.children) {
-         if (node.children.some(item => item.key === key)) {
-            parentKey = node.key
-         } else if (getParentKey(key, node.children)) {
-            parentKey = getParentKey(key, node.children)
-         }
-      }
-   }
-   return parentKey
-}
 export default {
    mixins: [oriMixins],
    components: { eqList },
@@ -116,45 +103,27 @@ export default {
          total_amount: 0,
          currentPage: 1,
          pageSize: 8,
-         expandedKeys: [],
-         searchValue: '',
          eqInfo: [],
          warning_message: {},
-         equipment_tree: [''],
+         equipment_tree: [],
       }
    },
    methods: {
       async getEquipmentMonitor() {
          const {
-            result: { equipment, warning_message, total_amount },
+            result: {
+               equipment: { data, total_amount },
+               warning_message,
+            },
          } = await getEquipmentMonitorApi({
             page: this.currentPage,
-            equipment_tree: this.equipment_tree,
+            filtration: this.equipment_tree,
          })
          this.total_amount = total_amount
-         this.eqInfo = equipment
+         this.eqInfo = data
          this.warning_message = warning_message
       },
-      onExpand(expandedKeys) {
-         this.expandedKeys = expandedKeys
-         this.autoExpandParent = false
-      },
-      onChange(e) {
-         const value = e.target.value
-         const expandedKeys = dataList
-            .map(item => {
-               if (item.title.indexOf(value) > -1) {
-                  return getParentKey(item.key, this.gData)
-               }
-               return null
-            })
-            .filter((item, i, self) => item && self.indexOf(item) === i)
-         Object.assign(this, {
-            expandedKeys,
-            searchValue: value,
-            autoExpandParent: true,
-         })
-      },
+
       pageChange(page) {
          this.currentPage = page
          this.getEquipmentMonitor()

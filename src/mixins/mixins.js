@@ -23,10 +23,10 @@ export const mixin = {
       async getEqByTree(value) {
          this.eq = undefined
          const { result } = await getEquipmentListApi({
-            equipment_tree: Array.isArray(value) ? value : value.split(','),
+            filtration: Array.isArray(value) ? value : value.split(','),
          })
          if (result) {
-            this.eqList = result
+            this.eqList = result.datas
          }
       },
    },

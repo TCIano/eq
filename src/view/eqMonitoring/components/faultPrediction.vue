@@ -7,7 +7,7 @@
       <a-row type="flex" justify="end">
          <span class="title">
             24小时故障预测:
-            <span class="text-red-600 font-bold">{{ isnormal }}</span>
+            <span class="text-red-600 font-bold">{{ isnormal ? '正常' : '危险' }}</span>
          </span>
       </a-row>
       <a-row>
@@ -19,11 +19,15 @@
                <a-select
                   placeholder="请选择分析数据"
                   style="width: 40%"
-                  v-model="frequency"
+                  :value="frequency"
                   @change="onChangeFre"
                >
-                  <a-select-option v-for="item in frePositionNumber" :key="item" :value="item">
-                     {{ item }}
+                  <a-select-option
+                     v-for="item in frePositionNumber"
+                     :key="item.value"
+                     :value="item.value"
+                  >
+                     {{ item.name }}
                   </a-select-option>
                </a-select>
             </a-row>
@@ -32,15 +36,19 @@
          <a-col :span="12">
             <a-row type="flex" justify="end" align="middle" :gutter="5">
                <a-col :span="2">
-                  <a-input v-model.number="interval" placeholder="输入间隔时间"></a-input>
+                  <a-input v-model.number="interval" placeholder="间隔"></a-input>
                </a-col>
                <a-col>
                   <span>：小时</span>
                </a-col>
                <a-col :span="6">
                   <a-select style="width: 100%" v-model="kurtosis" placeholder="请选择分析数据">
-                     <a-select-option v-for="item in kurPositionNumber" :key="item" :value="item">
-                        {{ item }}
+                     <a-select-option
+                        v-for="item in kurPositionNumber"
+                        :key="item.value"
+                        :value="item.value"
+                     >
+                        {{ item.name }}
                      </a-select-option>
                   </a-select>
                </a-col>
@@ -76,14 +84,6 @@ import eChart from '@/components/eChart.vue'
 export default {
    components: { eChart },
    props: {
-      frePositionNumber: {
-         type: Array,
-         default: () => [],
-      },
-      kurPositionNumber: {
-         type: Array,
-         default: () => [],
-      },
       equipment_id: {
          type: String,
       },
@@ -95,12 +95,14 @@ export default {
    data() {
       return {
          title: '故障预测',
-         frequency: [], //频域分析下拉框
-         kurtosis: [], //鞘度分析下拉框
+         frequency: '', //频域分析下拉框
+         kurtosis: '', //鞘度分析下拉框
+         kurPositionNumber: [],
+         frePositionNumber: [],
          interval: 2, //间隔时间
          dateFormat: 'YYYY-MM-DD HH:mm',
          currentTime: new Date(),
-         isnormal: '',
+         isnormal: undefined,
          //鞘度分析时间
          time: [
             moment(moment(this.currentTime).subtract(2, 'days').format(this.dateFormat)), //moment写法获取前三天
@@ -169,11 +171,13 @@ export default {
    },
    methods: {
       handleOption(result) {
-         this.isnormal = result.isnormal
-         this.frequency = result.frequency_analysis.position_nunber
-         this.kurtosis = result.kurtosis_analysis.position_nunber
-         let threshold = result.predict_result.threshold
-         let predictData = result.predict_result.data.map(item => {
+         this.kurPositionNumber = result.kurtosis_analysis.position_list
+         this.frePositionNumber = result.frequency_analysis.position_list
+         this.frequency = result.frequency_analysis.position_number.value
+         this.kurtosis = result.kurtosis_analysis.position_number.value
+         let threshold = result.prediction.threshold
+         this.isnormal = result.prediction.flag
+         let predictData = result.prediction.data.map(item => {
             return [item.time, item.predict_number]
          })
          let frequencyNormalData = result.frequency_analysis.normal_frequency.map(item => {
@@ -247,18 +251,19 @@ export default {
          }
       },
       async getFaultPredict() {
-         const { result } = await getFaultPredictApi({
-            equipment_id: this.equipment_id,
-         })
+         const { result } = await getFaultPredictApi(this.equipment_id)
          if (result) {
             this.handleOption(result)
          }
       },
       //频域分析内容
       async onChangeFre(position_number) {
+         this.frequency = position_number
          const { result } = await getFrequencyDomainAnalysisApi({
             equipment_id: this.equipment_id,
-            position_number,
+            position_number: {
+               value: position_number,
+            },
          })
          if (result) {
             this.frequencyOption.series[0].data = result.normal_frequency.map(item => {
@@ -275,7 +280,9 @@ export default {
             result: { result },
          } = await getKurtosisAnalysisApi({
             equipment_id: this.equipment_id,
-            position_number: this.kurtosis,
+            position_number: {
+               value: this.kurtosis,
+            },
             start_time: moment(this.time[0]).format(this.dateFormat) + ':00',
             end_time: moment(this.time[1]).format(this.dateFormat) + ':00',
             span: this.interval / 1,

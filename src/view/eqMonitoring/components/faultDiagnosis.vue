@@ -28,17 +28,12 @@
                </div>
             </a-col>
             <a-col :span="8">
-               <e-chart :option="standardRelateOption" :theme="theme" height="4rem" />
+               <e-chart :option="bitRelateOption" :theme="theme" height="4rem" width="100%" />
             </a-col>
          </a-row>
          <!-- 警告提示 -->
          <a-row>
-            <a-alert
-               :message="`请注意！通过高斯图方法训练对比发现：预测推断 ${equipment_name} 可能发生故障
-
-               发生参考点：${description.fault_time}  故障位号：${description.faultName} ${description.faultValue}`"
-               banner
-            />
+            <a-alert :message="description" banner />
          </a-row>
       </div>
    </a-card>
@@ -47,6 +42,9 @@
 <script>
 import eChart from '@/components/eChart.vue'
 import { getFaultDiagnosisApi } from '@/api/eqDiagnosis'
+const generateRandomInteger = (min = 1, max = 10) => {
+   return Math.random() * (max - min + 1) + min
+}
 export default {
    components: { eChart },
    props: {
@@ -62,11 +60,7 @@ export default {
       return {
          title: '故障诊断',
          equipment_name: '',
-         description: {
-            fault_time: '',
-            faultName: '',
-            position_list: [],
-         },
+         description: '',
          ralationMap: ['standard_graph', 'current_graph'],
 
          option: {},
@@ -144,28 +138,76 @@ export default {
                },
             ],
          },
+         bitRelateOption: {
+            tooltip: {
+               formatter: params => {
+                  return params.name
+               },
+            },
+            grid: {
+               bottom: '1%',
+               top: '1%',
+               right: '5%',
+               left: '1%',
+            },
+            xAxis: {
+               axisTick: {
+                  show: false,
+               },
+               axisLabel: {
+                  show: false,
+               },
+            },
+            yAxis: {
+               axisTick: {
+                  show: false,
+               },
+               axisLabel: {
+                  show: false,
+               },
+            },
+            series: [
+               {
+                  data: [],
+                  type: 'scatter',
+               },
+            ],
+         },
          time: {},
       }
    },
    methods: {
       async getFaultDiagnosis() {
-         const res = await getFaultDiagnosisApi({
-            equipment_id: this.equipment_id,
-         })
+         const res = await getFaultDiagnosisApi(this.equipment_id)
          if (res.result) {
             this.handleOption(res.result)
          }
       },
       handleOption(result) {
          //故障信息
-         this.description.fault_time = result.description.fault_time
-         this.description.faultName = result.description.fault_position.fault_position_name
-         this.description.faultValue = result.description.fault_position.fault_position_value
-         this.description.position_list = result.description.position_list
+         this.description = result.description
          this.equipment_name = result.equipment_name
+         let faultPosition = result.fault_position.name
+         //位号图
+         this.bitRelateOption.series[0].data = result.position_list.map(item => {
+            return {
+               name: item,
+               label: {
+                  show: item === faultPosition ? true : false,
+                  formatter: params => {
+                     return params.name
+                  },
+               },
+               value: [generateRandomInteger(), generateRandomInteger()],
+               symbolSize: item === faultPosition ? 70 : 50,
+               itemStyle: {
+                  color: item === faultPosition ? '#a32f2d' : '#313269',
+               },
+            }
+         })
          //预测数据
-         let threshold = result.predict_result.threshold
-         let predict_result = result.predict_result.data.map(item => {
+         let threshold = result.fault_predict.threshold
+         let predict_result = result.fault_predict.data.map(item => {
             return [item.time, item.predict_number]
          })
          //折线图
@@ -225,9 +267,9 @@ export default {
             ],
          }
          //关系图列表
-         this.handleRelationPoint(result.data)
+         this.handleRelationPoint(result.fault_diagnosis)
          //关系link
-         this.handleRelationLink(result.data)
+         this.handleRelationLink(result.fault_diagnosis)
          //实现故障点闪烁
          let count = 0
          this.time = setInterval(() => {
@@ -238,7 +280,6 @@ export default {
                         color: 'blue',
                      })
                })
-               // this.$refs.currentRelate.chart.setOption(this.currentRelateOption, true)
             } else {
                this.currentRelateOption.series[0].links.forEach(item => {
                   if (item.highlight)
@@ -246,7 +287,6 @@ export default {
                         color: 'orangered',
                      })
                })
-               // this.$refs.currentRelate.chart.setOption(this.currentRelateOption, true)
             }
             count += 1
          }, 1000)

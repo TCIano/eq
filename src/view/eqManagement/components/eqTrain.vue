@@ -3,7 +3,7 @@
       <a-row type="flex" justify="space-between" :gutter="[16, 16]">
          <a-col>
             <a-button type="primary" @click="modeTraining">
-               {{ istrain ? '训练中...' : '模型训练' }}
+               {{ storageStore.get('isTrain') ? '上一条数据训练中...' : '模型训练' }}
             </a-button>
          </a-col>
          <a-col>
@@ -19,7 +19,7 @@
                      <a-space size="middle">
                         <a-space :size="1">
                            <span>类型：</span>
-                           <a-input disabled v-model="item.base_name"></a-input>
+                           <a-input disabled v-model="item.position_type"></a-input>
                         </a-space>
                         <a-space :size="1">
                            位号：
@@ -67,6 +67,7 @@
                :columns="columns"
                :data-source="trainHistory"
                :scroll="{ y: 240 }"
+               :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
                row-key="record_id"
                bordered
                :pagination="false"
@@ -79,6 +80,11 @@
                </template>
                <template slot="position_name" slot-scope="text">
                   {{ text.position_name.join(' | ') }}
+               </template>
+               <template slot="result" slot-scope="text, record">
+                  <h3 style="color: red">
+                     {{ record.used ? '训练成功' : '未参与训练' }}
+                  </h3>
                </template>
             </a-table>
          </a-col>
@@ -100,11 +106,13 @@ import {
    getTrainProgressApi,
    trainModelApi,
 } from '@/api/eqManage'
+import { storageStore } from '@/store/local'
 export default {
    components: { eChart },
    name: 'eqTrain',
    data() {
       return {
+         storageStore,
          timeFormat: 'YYYY-MM-DD HH:mm',
          trainTime: [moment(new Date()), moment(new Date())],
          columns: [
@@ -125,25 +133,25 @@ export default {
                align: 'center',
                title: '训练结果',
                width: 200,
-
+               scopedSlots: { customRender: 'result' },
                dataIndex: 'result',
             },
-            {
-               key: 'option',
-               align: 'center',
-               title: '操作',
-               width: 200,
-               scopedSlots: { customRender: 'option' },
-               dataIndex: 'option',
-            },
+            // {
+            //    key: 'option',
+            //    align: 'center',
+            //    title: '操作',
+            //    width: 200,
+            //    scopedSlots: { customRender: 'option' },
+            //    dataIndex: 'option',
+            // },
          ],
+         selectedRowKeys: [],
          trainHistory: [],
          option: {},
          trainList: [],
          trainModal: false,
          progress: 0,
          time: null,
-         istrain: undefined,
       }
    },
 
@@ -154,15 +162,28 @@ export default {
       exit() {
          this.$router.go(-1)
       },
+      onSelectChange(selectedRowKeys) {
+         console.log(selectedRowKeys)
+         this.selectedRowKeys = selectedRowKeys
+      },
       //改变状态
       changeIsTrain(index, e) {
          this.trainList[index].used = e
       },
-      modeTraining() {
-         if (!this.trainList.some(item => item.used))
+      async modeTraining() {
+         clearInterval(this.timer)
+         if (!this.selectedRowKeys.length && !storageStore.get('isTrain'))
             return this.$message.warning('最少选择一项训练测点')
          this.trainModal = true
          //1.先进行训练进度查询
+         this.getIsTrain()
+         if (!storageStore.get('isTrain')) {
+            //新的模型训练
+            await trainModelApi({
+               equipment_id: this.$route.query.id,
+               record_id: this.selectedRowKeys,
+            })
+         }
          //每隔一秒进行一次调用
          this.timer = setInterval(() => {
             this.getTrainProgress()
@@ -172,48 +193,41 @@ export default {
          const {
             result: { istrain, progress },
          } = await getTrainProgressApi()
-         this.istrain = istrain
+         storageStore.set('isTrain', istrain)
          //2.若无在训练中的模型则可进行训练，若有则展示进度
-         if (!istrain) {
-            //新的模型训练
-            await trainModelApi({
-               equipment_id: this.$route.query.id,
-               record_id: this.trainList
-                  .filter(item => item.used)
-                  .map(ele => {
-                     return ele.message_id
-                  }),
-            })
+         if (istrain === 0) {
+            this.closeTrainProgress()
+            clearInterval(this.timer)
+            this.$message.success('训练成功')
          }
+
          this.progress = Number((progress * 100).toFixed(2))
-         if (progress === 1) {
-            this.istrain = 0
-            return clearInterval(this.timer)
-         }
       },
       closeTrainProgress() {
          this.trainModal = false
-         clearInterval(this.timer)
          if (this.progress === 100) return (this.progress = 0)
       },
       async getChartData() {
          if (!this.trainList.some(item => item.used))
             return this.$message.warning('最少选择一项训练测点')
+
          let start = moment(this.trainTime[0]).format(this.timeFormat) + ':00'
          let end = moment(this.trainTime[1]).format(this.timeFormat) + ':00'
          const { result } = await getHistoryDataApi({
+            equipment_id: this.$route.query.id,
             start_time: start,
             end_time: end,
             position_number: this.trainList
                .filter(ele => ele.used)
                .map(item => {
                   return {
-                     name: item.base_name,
+                     name: item.position_type,
                      value: item.position_number,
                   }
                }),
          })
          if (result) {
+            this.historyShow()
             this.option = {
                tooltip: {
                   trigger: 'axis',
@@ -261,6 +275,12 @@ export default {
             this.trainHistory = result
          }
       },
+      async getIsTrain() {
+         const {
+            result: { istrain },
+         } = await getTrainProgressApi()
+         storageStore.set('isTrain', istrain)
+      },
    },
    computed: {
       totalPoint() {
@@ -273,6 +293,7 @@ export default {
    created() {
       this.getEquipmentDetail()
       this.historyShow()
+      this.getIsTrain()
    },
 }
 </script>
