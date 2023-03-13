@@ -22,7 +22,8 @@ Router.prototype.push = function push(location) {
 }
 
 const router = new Router({
-   mode: 'history',
+   // mode: 'history',
+   mode: 'hash',
    routes,
 })
 export default router

@@ -4,18 +4,12 @@
          <a-col>
             <a-form layout="inline">
                <a-form-item label="组织节点">
-                  <a-tree-select
-                     v-model="equipment_node"
-                     style="width: 200px"
-                     :replaceFields="replaceFields"
-                     :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                     :tree-data="treeData"
-                     @select="getEqByTree"
-                     placeholder="请选择设备组织节点"
-                  ></a-tree-select>
+                  <a-tree-select v-model="equipment_node" style="width: 200px" :replaceFields="replaceFields"
+                     :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" :tree-data="treeData" @select="getEqByTree"
+                     placeholder="请选择设备组织节点"></a-tree-select>
                </a-form-item>
                <a-form-item label="时间">
-                  <a-month-picker v-model="month" placeholder="请选择月份" />
+                  <a-month-picker v-model="month" placeholder="请选择月份" :disabledDate="disabledDate" />
                </a-form-item>
             </a-form>
          </a-col>
@@ -28,7 +22,7 @@
       </a-row>
       <a-row :gutter="gutter">
          <a-col>
-            <a-card>
+            <a-card class="indicator">
                <template slot="title">
                   <a-space>
                      <a-icon type="team" style="color: red" />
@@ -140,6 +134,9 @@ export default {
       }
    },
    methods: {
+      disabledDate(current) {
+         return current && current > moment().endOf('month')
+      },
       reSearch() {
          // this.equipment_node = undefined
          this.getWarningStatistics()
@@ -149,12 +146,11 @@ export default {
          this.month = undefined
       },
       async getWarningStatistics() {
-         console.log(moment(this.month).format('YYYY-MM'))
          const {
             result: { table, graph },
          } = await getWarningStatisticsApi({
             equipment_tree: this.equipment_node && this.equipment_node.split(','),
-            month: this.month && moment(this.month).format('YYYY-MM'),
+            month: moment(this.month).format('YYYY-MM'),
          })
          if (table && graph) {
             this.data = table
@@ -184,16 +180,25 @@ export default {
                         {
                            name: item.grade,
                            type: 'gauge',
+                           // startAngle: 200,
+                           // endAngle: -50,
                            detail: {
                               formatter: '{value}%',
+                              fontSize: 20,
+                              offsetCenter: [0, '60%'],
                            },
                            splitNumber: 8,
                            axisTick: {
                               show: true,
+                              distance: -15,
+                              lineStyle: {
+                                 color: '#fff',
+                              },
+                              // length: 5,
                            },
                            splitLine: {
-                              distance: -13,
-                              length: 30,
+                              distance: -15,
+                              length: 20,
                               lineStyle: {
                                  color: '#fff',
                                  width: 2,
@@ -201,7 +206,7 @@ export default {
                            },
                            axisLine: {
                               lineStyle: {
-                                 width: 11,
+                                 width: 15,
                                  color: [
                                     [0, '#f4271c'],
                                     [0.125, '#f4271c'],
@@ -235,4 +240,10 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="less">
+.indicator {
+   ::v-deep .ant-card-body {
+      padding: 0;
+   }
+}
+</style>

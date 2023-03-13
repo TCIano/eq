@@ -1,19 +1,20 @@
 <template>
    <a-layout id="components-layout-demo-custom-trigger" style="min-height: 100%">
       <SideMenu :menuData="sideMenuData"></SideMenu>
-      <a-layout
-         :style="{
-            // minHeight: '100%',
-            // minWidth: '1330px',
-         }"
-      >
-         <a-layout-content
-            :style="{
-               padding: '20px 20px 0px 20px',
-               background: '#fff',
-            }"
-         >
-            <router-view></router-view>
+      <a-layout :style="{
+         // minHeight: '100%',
+         // minWidth: '1330px',
+      }">
+         <a-layout-content :style="{
+            padding: '20px 20px 0px 20px',
+            background: '#fff',
+         }">
+
+            <keep-alive :include='keepAliveList'>
+               <router-view>
+               </router-view>
+            </keep-alive>
+
          </a-layout-content>
       </a-layout>
    </a-layout>
@@ -21,14 +22,15 @@
 
 <script>
 import SideMenu from '@/components/menu/SideMenu.vue'
-
 export default {
    components: { SideMenu },
    data() {
-      return {}
+      return {
+         keepAliveList: ['eqTrain'],//给训练页面添加缓存
+      }
    },
    watch: {
-      menuData() {},
+      menuData() { },
    },
    computed: {
       sideMenuData() {
@@ -40,7 +42,9 @@ export default {
          return isDisplayRouter
       },
    },
-   created() {},
+   created() {
+      console.log(this.$route);
+   },
 }
 </script>
 
@@ -55,6 +59,7 @@ export default {
       }
    }
 }
+
 #components-layout-demo-custom-trigger .trigger {
    font-size: 18px;
    line-height: 64px;

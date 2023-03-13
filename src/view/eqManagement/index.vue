@@ -62,12 +62,15 @@
                      <a-card-meta :title="item.equipment_name">
                         <!-- <a-avatar slot="avatar" src="" /> -->
                         <template slot="description">
-                           <div @click="handleMonitoring(item)">
-                              <a-icon
-                                 type="poweroff"
-                                 :style="{ color: item.isopen ? 'red' : '#3c94d9' }"
-                              ></a-icon>
-                              {{ item.isopen ? '关闭' : '开启' }}监控
+                           <div style="display: flex; justify-content: space-between">
+                              <div @click="handleMonitoring(item)">
+                                 <a-icon
+                                    type="poweroff"
+                                    :style="{ color: item.isopen ? 'red' : '#3c94d9' }"
+                                 ></a-icon>
+                                 {{ item.isopen ? '关闭' : '开启' }}
+                              </div>
+                              <div>({{ '监控已' + (item.isopen ? '开启' : '关闭') }})</div>
                            </div>
                         </template>
                      </a-card-meta>
@@ -76,15 +79,15 @@
             </a-row>
             <!-- 分页 -->
             <a-pagination
-               v-if="eqList.length > 19"
+               style="position: fixed; bottom: 50px; right: 50px"
                show-quick-jumper
                :page-size="pageSize"
+               v-if="eqList.length"
                :default-current="1"
                :current="currentPage"
                :defaultPageSize="19"
                :total="total"
                @change="pageChange"
-               class="item-pagination"
             />
          </a-card>
       </a-col>
@@ -96,7 +99,6 @@
 import eqManageModal from './components/eqManageModal.vue'
 import {
    deleteEquipmentExampleApi,
-   getEquipmentDetailApi,
    getEquipmentListApi,
    updateAlgorithmStatusApi,
 } from '@/api/eqManage'
@@ -162,13 +164,13 @@ export default {
             },
          })
       },
-      async handleMonitoring({ equipment_id, isopen }) {
+      async handleMonitoring({ equipment_id, isopen, equipment_name }) {
          try {
             await updateAlgorithmStatusApi({
                equipment_id,
                isopen: isopen ? 0 : 1,
             })
-            this.$message.success('状态修改成功')
+            this.$message.success(equipment_name + ' 监控已' + (isopen ? '关闭' : '开启'))
             this.getEquipmentList()
          } catch (error) {}
       },

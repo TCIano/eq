@@ -8,24 +8,13 @@
             <a-step v-for="item in steps" :key="item.title" :title="item.title" />
          </a-steps>
          <div class="steps-content">
-            <basic-info
-               v-show="current === 0"
-               ref="basicInfo"
-               :title="title"
-               :form="basicInfoForm"
-               @getType="getType"
-            />
-            <bit-config
-               v-show="current === 1"
-               ref="bitConfig"
-               :bitList="bitConfigForm"
-               :title="title"
-            />
+            <basic-info v-show="current === 0" ref="basicInfo" :title="title" :form="basicInfoForm" @getType="getType" />
+            <bit-config v-show="current === 1" ref="bitConfig" :bitList="bitConfigForm" :title="title" />
             <online-show v-show="current === 2" ref="onlineShow" />
          </div>
          <div class="steps-action">
             <a-button v-if="current > 0" @click="prev" style="margin-right: 8px">上一步</a-button>
-            <a-button v-if="current == steps.length - 1" type="primary" @click="submit">
+            <a-button :loading="submitLoading" v-if="current == steps.length - 1" type="primary" @click="submit">
                提交
             </a-button>
             <a-button v-if="current < steps.length - 1" type="primary" @click="next">
@@ -69,6 +58,7 @@ export default {
          currentEqType: [],
          bitConfigForm: {},
          basicInfoForm: {},
+         submitLoading: false,
       }
    },
    methods: {
@@ -110,12 +100,15 @@ export default {
             ...basicInfo,
             position_number: [...onlineShow],
          }
+         this.submitLoading = true
          if (this.title === '新增') {
             await addEquipmentExampleApi(option)
             this.$message.success('新增成功')
+            this.submitLoading = false
          } else {
             await updateEquipmentExampleApi(option)
             this.$message.success('修改成功')
+            this.submitLoading = false
          }
          this.$router.go(-1)
       },
@@ -127,7 +120,7 @@ export default {
          let otherOption = {
             comprehensive_show: 0,
             online_show: 0,
-            base_name: '',
+            position_name: '',
             position_number: '',
             upper: 0,
             lower: 0,
@@ -137,7 +130,7 @@ export default {
          })
 
          result.forEach((element, index) => {
-            element.id = index
+            element.message_id = index
             for (const key in otherOption) {
                element[key] = otherOption[key]
             }
@@ -196,6 +189,7 @@ export default {
 <style scoped lang="less">
 .steps {
    margin-top: 10px;
+
    .steps-content {
       margin-top: 20px;
       border: 1px dashed #e9e9e9;

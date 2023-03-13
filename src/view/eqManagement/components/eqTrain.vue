@@ -27,12 +27,8 @@
                         </a-space>
                         <a-space :size="1">
                            参与训练：
-                           <a-switch
-                              checked-children="是"
-                              un-checked-children="否"
-                              :checked="item.used ? true : false"
-                              @change="changeIsTrain(index, $event)"
-                           ></a-switch>
+                           <a-switch checked-children="是" un-checked-children="否" :checked="item.used ? true : false"
+                              @change="changeIsTrain(index, $event)"></a-switch>
                         </a-space>
                      </a-space>
                   </a-col>
@@ -49,12 +45,8 @@
             <a-card style="height: 6.3rem">
                <a-space>
                   选择日期:
-                  <a-range-picker
-                     :disabledDate="disabledDate"
-                     v-model="trainTime"
-                     showTime
-                     :format="timeFormat"
-                  ></a-range-picker>
+                  <a-range-picker :disabledDate="disabledDate" v-model="trainTime" showTime
+                     :format="timeFormat"></a-range-picker>
                   <a-button type="primary" icon="check-square" @click="getChartData">提交</a-button>
                </a-space>
                <e-chart :option="option" height="5.625rem" width="90%" />
@@ -63,20 +55,16 @@
       </a-row>
       <a-row :gutter="[10, 10]">
          <a-col>
-            <a-table
-               :columns="columns"
-               :data-source="trainHistory"
-               :scroll="{ y: 240 }"
-               :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-               row-key="record_id"
-               bordered
-               :pagination="false"
-            >
+            <a-table :columns="columns" :data-source="trainHistory" :scroll="{ y: 240 }"
+               :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" row-key="record_id" bordered
+               :pagination="false">
                <template slot="time" slot-scope="text">
                   <span>{{ text.start_time }} ~ {{ text.end_time }}</span>
                </template>
-               <template slot="option">
-                  <a href="#">删除</a>
+               <template slot="option" slot-scope='text,record'>
+                  <a-popconfirm title="是否删除？" ok-text="确定" cancel-text="取消" @confirm="deleteRecord(record.record_id)">
+                     <a href="#">删除</a>
+                  </a-popconfirm>
                </template>
                <template slot="position_name" slot-scope="text">
                   {{ text.position_name.join(' | ') }}
@@ -105,8 +93,10 @@ import {
    getHistoryShowApi,
    getTrainProgressApi,
    trainModelApi,
+   deleteHistoryDataApi
 } from '@/api/eqManage'
 import { storageStore } from '@/store/local'
+import { mapActions } from 'vuex'
 export default {
    components: { eChart },
    name: 'eqTrain',
@@ -136,14 +126,14 @@ export default {
                scopedSlots: { customRender: 'result' },
                dataIndex: 'result',
             },
-            // {
-            //    key: 'option',
-            //    align: 'center',
-            //    title: '操作',
-            //    width: 200,
-            //    scopedSlots: { customRender: 'option' },
-            //    dataIndex: 'option',
-            // },
+            {
+               key: 'option',
+               align: 'center',
+               title: '操作',
+               width: 200,
+               scopedSlots: { customRender: 'option' },
+               dataIndex: 'option',
+            },
          ],
          selectedRowKeys: [],
          trainHistory: [],
@@ -151,11 +141,12 @@ export default {
          trainList: [],
          trainModal: false,
          progress: 0,
-         time: null,
+         timer: null,
       }
    },
 
    methods: {
+      // ...mapActions('train', ['setTimerAc', 'clearTimerAc']),
       disabledDate(current) {
          return current && current > moment().endOf('day')
       },
@@ -163,7 +154,6 @@ export default {
          this.$router.go(-1)
       },
       onSelectChange(selectedRowKeys) {
-         console.log(selectedRowKeys)
          this.selectedRowKeys = selectedRowKeys
       },
       //改变状态
@@ -171,7 +161,7 @@ export default {
          this.trainList[index].used = e
       },
       async modeTraining() {
-         clearInterval(this.timer)
+
          if (!this.selectedRowKeys.length && !storageStore.get('isTrain'))
             return this.$message.warning('最少选择一项训练测点')
          this.trainModal = true
@@ -185,9 +175,15 @@ export default {
             })
          }
          //每隔一秒进行一次调用
-         this.timer = setInterval(() => {
-            this.getTrainProgress()
-         }, 1000)
+
+         if (!this.timer) {
+            // this.setTimerAc(setInterval(() => {
+            //    this.getTrainProgress()
+            // }, 1000))
+            this.timer = setInterval(() => {
+               this.getTrainProgress()
+            }, 1000)
+         }
       },
       async getTrainProgress() {
          const {
@@ -195,21 +191,28 @@ export default {
          } = await getTrainProgressApi()
          storageStore.set('isTrain', istrain)
          //2.若无在训练中的模型则可进行训练，若有则展示进度
+         this.progress = Number((progress * 100).toFixed(2))
          if (istrain === 0) {
-            this.closeTrainProgress()
             clearInterval(this.timer)
+            this.closeTrainProgress(true)
+            // this.clearTimerAc()
+            this.timer = null
             this.$message.success('训练成功')
+            //延迟两秒拿结果
+            setTimeout(() => {
+               this.historyShow()
+            }, 2000)
          }
 
-         this.progress = Number((progress * 100).toFixed(2))
       },
-      closeTrainProgress() {
+      closeTrainProgress(state) {
          this.trainModal = false
-         if (this.progress === 100) return (this.progress = 0)
+         // this.historyShow()
+         if (state) return (this.progress = 0)
       },
       async getChartData() {
          if (!this.trainList.some(item => item.used))
-            return this.$message.warning('最少选择一项训练测点')
+            return this.$message.warning('最少选择三项训练测点')
 
          let start = moment(this.trainTime[0]).format(this.timeFormat) + ':00'
          let end = moment(this.trainTime[1]).format(this.timeFormat) + ':00'
@@ -261,19 +264,27 @@ export default {
             this.trainList = result.position_number.map(item => {
                return {
                   ...item,
-                  used: 0,
+                  used: 1,
                }
             })
          }
       },
       //展示训练数据
       async historyShow() {
+         this.trainHistory = []
          const { result } = await getHistoryShowApi({
             equipment_id: this.$route.query.id,
          })
          if (result) {
-            this.trainHistory = result
+            // console.log(result);
+            this.selectedRowKeys = []
+            this.trainHistory = result.reverse()
          }
+      },
+      async deleteRecord(record_id) {
+         await deleteHistoryDataApi([record_id])
+         this.$message.success('删除成功')
+         this.historyShow()
       },
       async getIsTrain() {
          const {
@@ -282,6 +293,7 @@ export default {
          storageStore.set('isTrain', istrain)
       },
    },
+
    computed: {
       totalPoint() {
          return this.trainList.length
@@ -290,11 +302,17 @@ export default {
          return this.trainList.filter(item => item.used).length
       },
    },
-   created() {
+   // created() {
+   //    this.getEquipmentDetail()
+   //    this.historyShow()
+   //    this.getIsTrain()
+   // },
+   activated() {
+      this.option = {}
       this.getEquipmentDetail()
       this.historyShow()
       this.getIsTrain()
-   },
+   }
 }
 </script>
 

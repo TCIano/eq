@@ -17,16 +17,8 @@
          </a-row>
       </a-row>
       <a-row>
-         <a-table
-            style="margin-top: 10px"
-            :scroll="{ y: 700 }"
-            :columns="columns"
-            :data-source="eqData"
-            row-key="id"
-            bordered
-            :pagination="pagination"
-            @change="onChangePage"
-         >
+         <a-table style="margin-top: 10px" :columns="columns" :data-source="eqData" row-key="id" bordered
+            :pagination="pagination" @change="onChangePage">
             <template slot="equipment_type" slot-scope="text">
                <span>{{ text[text.length - 1] }}</span>
             </template>
@@ -38,25 +30,15 @@
             <template slot="analysis" slot-scope="text, record">
                <a-space>
                   <a href="#" @click="editEqType(record)">编辑</a>
-                  <a-popconfirm
-                     title="是否删除？"
-                     ok-text="确定"
-                     cancel-text="取消"
-                     @confirm="deleteAna(record.id)"
-                  >
+                  <a-popconfirm title="是否删除？" ok-text="确定" cancel-text="取消" @confirm="deleteAna(record.id)">
                      <a href="#" style="color: red">删除</a>
                   </a-popconfirm>
                </a-space>
             </template>
          </a-table>
       </a-row>
-      <eq-modal
-         v-if="modalVisible"
-         :title="title"
-         :attr-form="attrForm"
-         :visible.sync="modalVisible"
-         @handleEqType="handleEqType"
-      />
+      <eq-modal v-if="modalVisible" :title="title" :attr-form="attrForm" :visible.sync="modalVisible"
+         @handleEqType="handleEqType" />
       <!-- <img src="" alt=""> -->
    </div>
 </template>
@@ -216,8 +198,14 @@ export default {
    created() {
       this.getEqTypeList()
    },
-   mounted() {},
+   mounted() { },
 }
 </script>
 
-<style scoped></style>
+<style scoped lang='less'>
+/deep/ .ant-table-pagination {
+   position: fixed;
+   bottom: 50px;
+   right: 10px;
+}
+</style>

@@ -15,12 +15,7 @@
             </a-col>
             <!-- 当前情况 -->
             <a-col :span="7">
-               <e-chart
-                  ref="currentRelate"
-                  :option="currentRelateOption"
-                  :theme="theme"
-                  height="4rem"
-               />
+               <e-chart ref="currentRelate" :option="currentRelateOption" :theme="theme" height="4rem" />
             </a-col>
             <a-col :span="2">
                <div style="text-align: center">
@@ -42,11 +37,13 @@
 <script>
 import eChart from '@/components/eChart.vue'
 import { getFaultDiagnosisApi } from '@/api/eqDiagnosis'
+import { chartsMixin } from '@/mixins/chartsMixins'
 const generateRandomInteger = (min = 1, max = 10) => {
    return Math.random() * (max - min + 1) + min
 }
 export default {
    components: { eChart },
+   mixins: [chartsMixin],
    props: {
       theme: {
          type: String,
@@ -77,6 +74,7 @@ export default {
                left: '6%',
                right: '3%',
             },
+
             series: [
                {
                   type: 'graph',
@@ -177,6 +175,7 @@ export default {
       }
    },
    methods: {
+
       async getFaultDiagnosis() {
          const res = await getFaultDiagnosisApi(this.equipment_id)
          if (res.result) {
@@ -243,6 +242,7 @@ export default {
             yAxis: {
                type: 'value',
             },
+            dataZoom: this.dataZoom,
             series: [
                {
                   data: predict_result,
@@ -326,7 +326,7 @@ export default {
          }
       },
    },
-   created() {},
+   created() { },
    beforeDestroy() {
       clearInterval(this.time)
    },

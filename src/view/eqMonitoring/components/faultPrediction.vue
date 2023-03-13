@@ -16,17 +16,8 @@
       <a-row :gutter="20">
          <a-col :span="12">
             <a-row type="flex" justify="end">
-               <a-select
-                  placeholder="请选择分析数据"
-                  style="width: 40%"
-                  :value="frequency"
-                  @change="onChangeFre"
-               >
-                  <a-select-option
-                     v-for="item in frePositionNumber"
-                     :key="item.value"
-                     :value="item.value"
-                  >
+               <a-select placeholder="请选择分析数据" style="width: 40%" :value="frequency" @change="onChangeFre">
+                  <a-select-option v-for="item in frePositionNumber" :key="item.value" :value="item.value">
                      {{ item.name }}
                   </a-select-option>
                </a-select>
@@ -43,23 +34,14 @@
                </a-col>
                <a-col :span="6">
                   <a-select style="width: 100%" v-model="kurtosis" placeholder="请选择分析数据">
-                     <a-select-option
-                        v-for="item in kurPositionNumber"
-                        :key="item.value"
-                        :value="item.value"
-                     >
+                     <a-select-option v-for="item in kurPositionNumber" :key="item.value" :value="item.value">
                         {{ item.name }}
                      </a-select-option>
                   </a-select>
                </a-col>
                <a-col :span="11">
-                  <a-range-picker
-                     :format="dateFormat"
-                     allowClear
-                     v-model="time"
-                     show-time
-                     style="width: 100%"
-                  >
+                  <a-range-picker :format="dateFormat" allowClear v-model="time" show-time style="width: 100%"
+                     :disabledDate="disabledDate">
                      <a-icon slot="suffixIcon" type="calendar" style="color: white" />
                   </a-range-picker>
                </a-col>
@@ -81,8 +63,10 @@ import {
 } from '@/api/eqPredict'
 import moment from 'moment'
 import eChart from '@/components/eChart.vue'
+import { chartsMixin } from '@/mixins/chartsMixins'
 export default {
    components: { eChart },
+   mixins: [chartsMixin],
    props: {
       equipment_id: {
          type: String,
@@ -128,6 +112,7 @@ export default {
             yAxis: {
                type: 'value',
             },
+
             series: [
                {
                   name: '正常',
@@ -159,6 +144,7 @@ export default {
             yAxis: {
                type: 'value',
             },
+
             series: [
                {
                   name: '峭度',
@@ -170,6 +156,9 @@ export default {
       }
    },
    methods: {
+      disabledDate(current) {
+         return current && current > moment().endOf('day')
+      },
       handleOption(result) {
          this.kurPositionNumber = result.kurtosis_analysis.position_list
          this.frePositionNumber = result.frequency_analysis.position_list
@@ -189,9 +178,11 @@ export default {
 
          this.frequencyOption.series[0].data = frequencyNormalData
          this.frequencyOption.series[1].data = frequencyCurrentData
+         this.frequencyOption.dataZoom = this.dataZoom
          let kurtosisData = result.kurtosis_analysis.result.map(item => {
             return [item.time, item.value]
          })
+         this.kurtosisOption.dataZoom = this.dataZoom
          this.kurtosisOption.series[0].data = kurtosisData
          this.predictOption = {
             tooltip: {
@@ -226,6 +217,7 @@ export default {
             yAxis: {
                type: 'value',
             },
+            dataZoom: this.dataZoom,
             series: [
                {
                   data: predictData,
@@ -294,7 +286,7 @@ export default {
          }
       },
    },
-   created() {},
+   created() { },
 }
 </script>
 

@@ -5,76 +5,47 @@
          <span>{{ title }}</span>
       </div>
 
-      <a-select
-         style="width: 20%; margin-bottom: 5px"
-         v-model="position_number"
-         placeholder="请选择位号"
-         @change="onChangePositionNumber"
-      >
+      <a-select style="width: 20%; margin-bottom: 5px" v-model="position_number" placeholder="请选择位号"
+         @change="onChangePositionNumber">
          <a-select-option v-for="item in timeDomainList" :key="item.value" :value="item.value">
             {{ item.name }}
          </a-select-option>
       </a-select>
       <e-chart ref="chart" :option="option" theme="dark" height="300px" width="100%" />
       <!-- 计算表格 -->
-      <a-table
-         size="middle"
-         :data-source="data"
-         :rowSelection="{
-            type: 'radio',
-            onChange: onSelectChange,
-            selectedRowKeys: selectedRowKeys,
-         }"
-         :columns="columns"
-      >
+      <a-table size="middle" :data-source="data" :rowSelection="{
+         type: 'radio',
+         onChange: onSelectChange,
+         selectedRowKeys: selectedRowKeys,
+      }" :columns="columns">
          <template slot="value" slot-scope="text, record">
-            <a-input-number
-               :style="{ width: inputStyle.width }"
-               v-if="text.key !== 2"
-               :value="text.value"
-               :min="inputStyle.min"
-               :max="inputStyle.max"
-               :step="inputStyle.step"
-               @change="$event => handleChange($event, record.key)"
-            ></a-input-number>
+            <a-input-number :style="{ width: inputStyle.width }" v-if="text.key !== 2" :value="text.value"
+               :min="inputStyle.min" :max="inputStyle.max" :step="inputStyle.step"
+               @change="$event => handleChange($event, record.key)"></a-input-number>
             <a-row :gutter="10" v-else>
                <a-col :span="12">
-                  <a-input-number
-                     :style="{ width: inputStyle.width }"
-                     :min="inputStyle.min"
-                     :max="inputStyle.max"
-                     :step="inputStyle.step"
-                     :value="text.lowValue"
-                     @change="$event => handleChangeOther($event, record.key, 'lowValue')"
-                  ></a-input-number>
+                  <a-input-number :style="{ width: inputStyle.width }" :min="inputStyle.min" :max="inputStyle.max"
+                     :step="inputStyle.step" :value="text.lowValue"
+                     @change="$event => handleChangeOther($event, record.key, 'lowValue')"></a-input-number>
                </a-col>
                <a-col :span="12">
-                  <a-input-number
-                     :style="{ width: inputStyle.width }"
-                     :min="inputStyle.min"
-                     :max="inputStyle.max"
-                     :step="inputStyle.step"
-                     :value="text.highValue"
-                     @change="$event => handleChangeOther($event, record.key, 'highValue')"
-                  ></a-input-number>
+                  <a-input-number :style="{ width: inputStyle.width }" :min="inputStyle.min" :max="inputStyle.max"
+                     :step="inputStyle.step" :value="text.highValue"
+                     @change="$event => handleChangeOther($event, record.key, 'highValue')"></a-input-number>
                </a-col>
             </a-row>
          </template>
          <template slot="action" slot-scope="text">
-            <a
-               href="#"
-               v-show="text.select"
-               @click="
-                  calculate(
-                     text.name,
-                     text.name !== '带通滤波'
-                        ? text.name === '低通滤波'
-                           ? [text.value, 0]
-                           : [0, text.value]
-                        : [text.lowValue, text.highValue]
-                  )
-               "
-            >
+            <a href="#" v-show="text.select" @click="
+               calculate(
+                  text.name,
+                  text.name !== '带通滤波'
+                     ? text.name === '低通滤波'
+                        ? [text.value, 0]
+                        : [0, text.value]
+                     : [text.lowValue, text.highValue]
+               )
+            ">
                计算
             </a>
          </template>
@@ -85,9 +56,11 @@
 <script>
 import eChart from '@/components/eChart.vue'
 import { getTimeDomainAnalysisApi } from '@/api/eqMonitor'
+import { chartsMixin } from '@/mixins/chartsMixins'
 export default {
    name: 'time-domain',
    components: { eChart },
+   mixins: [chartsMixin],
    props: {
       timeDomainList: {
          type: Array,
@@ -101,7 +74,7 @@ export default {
          title: '时域分析图谱',
          inputStyle: {
             min: 0,
-            max: 0.5,
+            max: 0.4,
             step: 0.1,
             width: '100%',
          },
@@ -162,7 +135,6 @@ export default {
          }
       },
       handleChangeOther(value, key, type) {
-         console.log(value)
          const newData = [...this.data]
          const target = newData.find(item => key === item.key)
          if (target) {
@@ -184,7 +156,6 @@ export default {
             },
          })
          if (result) {
-            console.log(11)
             let raw_data = result.raw_data.map(item => {
                return [item.time, item.value]
             })
@@ -195,14 +166,13 @@ export default {
          }
       },
       onSelectChange(selectedRowKeys) {
-         console.log(selectedRowKeys)
          this.selectedRowKeys = selectedRowKeys
          this.data.map(item => {
             item.key === selectedRowKeys[0] ? (item.select = 1) : (item.select = 0)
          })
       },
       calculate(type, value) {
-         if (type === '带通滤波' && value[0] > value[1]) {
+         if (type === '带通滤波' && value[0] >= value[1]) {
             this.data[2].lowValue = 0
             this.data[2].highValue = 0
             return this.$message.warning('输入值大小有问题，请重新输入')
@@ -225,6 +195,7 @@ export default {
             yAxis: {
                type: 'value',
             },
+            dataZoom: this.dataZoom,
             series: [
                {
                   name: '未滤波',

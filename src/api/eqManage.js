@@ -222,3 +222,17 @@ export const getTrainProgressApi = () => {
       url: '/getTrainProgress',
    })
 }
+/**
+ * 删除训练数据
+ * @param {Array} record_id 训练记录ID
+ * @returns Promise
+ */
+export const deleteHistoryDataApi = (record_id) => {
+   return request({
+      method: "POST",
+      url: '/deleteHistoryData',
+      data: {
+         record_id
+      }
+   })
+}

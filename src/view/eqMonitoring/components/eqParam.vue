@@ -4,39 +4,22 @@
          <a-icon type="pause" style="font-size: 20px" />
          <span>{{ title }}</span>
       </div>
-      <a-table
-         :columns="columns"
-         :data-source="data"
-         rowKey="unit"
-         :pagination="{
-            pageSize: 7,
-         }"
-      >
+      <a-table :columns="columns" :data-source="data" rowKey="value" :pagination="{
+         pageSize: 7,
+      }">
          <template slot="name" slot-scope="text">
             {{ text.name || text.position_name }}
          </template>
          <template slot="action" slot-scope="text">
-            <img
-               v-if="text.comprehensive_analysis"
-               src="@/assets/img/parameAnalysis.svg"
-               alt=""
-               style="width: 35px; cursor: pointer"
-               @click="openModal(text.position_number, text.name)"
-            />
+            <img v-if="text.comprehensive_analysis" src="@/assets/img/parameAnalysis.svg" alt=""
+               style="width: 35px; cursor: pointer" @click="openModal(text.position_number, text.name)" />
          </template>
          <template slot="value" slot-scope="text">
-            {{ text.value + '  ' + text.unit }}
+            {{ text.value + ' ' + text.unit }}
          </template>
       </a-table>
       <!-- 参数分析弹窗 -->
-      <a-modal
-         :title="title"
-         :visible="visible"
-         centered
-         @cancel="closeModal"
-         @ok="getAnaData"
-         v-if="visible"
-      >
+      <a-modal :title="title" :visible="visible" centered @cancel="closeModal" @ok="getAnaData" v-if="visible">
          <!-- 表单 -->
          <a-form-model ref="form" :model="form">
             <a-form-model-item label="分析时间" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -49,11 +32,7 @@
             <a-row :gutter="24">
                <a-col :span="12" v-for="(value, key) in form.waveParam" :key="key">
                   <a-form-item :label="form.map[key]">
-                     <a-input
-                        placeholder="请输入"
-                        disabled
-                        v-model.number="form.waveParam[key]"
-                     ></a-input>
+                     <a-input placeholder="请输入" disabled v-model.number="form.waveParam[key]"></a-input>
                   </a-form-item>
                </a-col>
             </a-row>
@@ -181,33 +160,36 @@ export default {
          ]
       },
    },
-   created() {
-      console.log('created')
-   },
 }
 </script>
 
 <style scoped lang="less">
 /deep/.ant-modal {
    background: transparent;
+
    .ant-modal-content {
       background: rgba(41, 44, 52, 0.9);
       color: white;
+
       .ant-modal-close {
          color: white;
       }
+
       .ant-modal-footer {
          border-top: none;
       }
+
       .ant-modal-body {
          label {
             color: white;
          }
+
          .ant-calendar-picker-input.ant-input {
             background: transparent;
             border: 1px solid #47d6d7;
             color: white;
          }
+
          .ant-calendar {
             color: white;
             background-color: #141414 !important;
@@ -215,19 +197,23 @@ export default {
             // -webkit-box-shadow: 0 2px 8px rgb(255 255 255 / 15%);
             // box-shadow: 0 2px 8px rgb(255 255 255 / 15%);
          }
+
          .ant-input {
             border: 1px solid #47d6d7;
             color: white;
             background: transparent;
          }
+
          .ant-input:hover {
             border: 1px solid #386b8a;
          }
       }
+
       .ant-modal-header {
          border-bottom: none;
          //  background: #323335;
          background: rgba(50, 51, 53, 0.9);
+
          .ant-modal-title {
             color: white;
          }

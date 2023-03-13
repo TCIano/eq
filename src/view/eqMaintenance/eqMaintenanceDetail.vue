@@ -18,11 +18,7 @@
                <div class="device-scroll-page" style="height: 5.2rem">
                   <a-col :span="6" v-for="(item, index) in positionOption" :key="index">
                      <a-card style="height: 2.45rem" hoverable>
-                        <a-statistic
-                           :title="item.position_name"
-                           :value="item.value"
-                           style="height: 0.5rem"
-                        />
+                        <a-statistic :title="item.position_value" :value="item.current" style="height: 0.5rem" />
                         <e-chart theme="" height="2.3rem" :option="item.option" />
                      </a-card>
                   </a-col>
@@ -50,8 +46,10 @@
 <script>
 import eChart from '@/components/eChart.vue'
 import { getWarningDetailApi } from '@/api/eqWaring'
+import { chartsMixin } from '@/mixins/chartsMixins'
 
 export default {
+   mixins: [chartsMixin],
    components: { eChart },
    data() {
       return {
@@ -95,14 +93,14 @@ export default {
    },
    methods: {
       async getWarningDetail() {
-         const { result } = await getWarningDetailApi(this.$route.query.fault_id)
+         const { result } = await getWarningDetailApi(this.$route.query.fault_id / 1)
          if (result) {
             this.handleLine(result)
-            this.handleRelationPoint(result.fault_diagnosis)
-            this.handleRelationLink(result.fault_diagnosis)
+            this.warningDatail = result.detail
+            this.handleRelationPoint(result.fault_diagnosis.current_graph)
+            this.handleRelationLink(result.fault_diagnosis.current_graph)
             this.handlePositionList(result.position_list)
             //报警内容
-            this.warningDatail = result.warning_detail
             //实现故障点闪烁
             let count = 0
             this.timer = setInterval(() => {
@@ -157,6 +155,7 @@ export default {
             yAxis: {
                type: 'value',
             },
+            dataZoom: this.dataZoom,
             series: [
                {
                   data: result.fault_predict.data.map(item => {
@@ -240,6 +239,7 @@ export default {
                      show: false,
                      type: 'value',
                   },
+                  // dataZoom: this.dataZoom,
                   series: [
                      {
                         type: 'line',
