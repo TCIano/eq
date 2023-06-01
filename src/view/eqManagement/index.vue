@@ -59,7 +59,7 @@
                         <a-icon type="close-circle" style="float: right; font-size: 16px" />
                      </a-popconfirm>
 
-                     <a-card-meta :title="item.equipment_name">
+                     <a-card-meta :title="item.equipment_name + item.equipment_id">
                         <!-- <a-avatar slot="avatar" src="" /> -->
                         <template slot="description">
                            <div style="display: flex; justify-content: space-between">

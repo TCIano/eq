@@ -11,13 +11,23 @@
                <a-col>
                   <a-form layout="inline" style="width: 550px">
                      <a-form-item label="组织节点">
-                        <a-tree-select v-model="equipment_node" style="width: 200px" :replaceFields="replaceFields"
-                           :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" :tree-data="treeData"
-                           @select="getEqByTree" placeholder="请选择设备组织节点"></a-tree-select>
+                        <a-tree-select
+                           v-model="equipment_node"
+                           style="width: 200px"
+                           :replaceFields="replaceFields"
+                           :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                           :tree-data="treeData"
+                           @select="getEqByTree"
+                           placeholder="请选择设备组织节点"
+                        ></a-tree-select>
                      </a-form-item>
                      <a-form-item label="设备">
                         <a-select v-model="eq" placeholder="请选择设备" style="width: 200px">
-                           <a-select-option :value="item.equipment_id" v-for="item in eqList" :key="item.equipment_id">
+                           <a-select-option
+                              :value="item.equipment_id"
+                              v-for="item in eqList"
+                              :key="item.equipment_id"
+                           >
                               {{ item.equipment_name }}
                            </a-select-option>
                         </a-select>
@@ -47,8 +57,11 @@
                      </div>
                   </template>
                   <a-card-meta :title="item.equipment_name" class="cardMeta">
-                     <a-avatar slot="avatar" :style="{ backgroundColor: item.processed ? '#608eef' : '#e68086' }"
-                        :icon="item.processed ? 'check' : 'info'" />
+                     <a-avatar
+                        slot="avatar"
+                        :style="{ backgroundColor: item.processed ? '#608eef' : '#e68086' }"
+                        :icon="item.processed ? 'check' : 'info'"
+                     />
                      <template slot="description">
                         <div class="MetaCon">
                            <div>推送报警时间：{{ item.warning_time }}</div>
@@ -61,8 +74,16 @@
          </div>
       </div>
       <a-row>
-         <a-pagination style='position: fixed;bottom: 90px;right: 30px;' v-if="faultList.length" show-quick-jumper
-            :default-current="1" :current="currentPage" :defaultPageSize="pageSize" :total="total" @change="pageChange" />
+         <a-pagination
+            style="float: right; margin-top: 10px"
+            v-if="faultList.length"
+            show-quick-jumper
+            :default-current="1"
+            :current="currentPage"
+            :defaultPageSize="pageSize"
+            :total="total"
+            @change="pageChange"
+         />
       </a-row>
    </div>
 </template>

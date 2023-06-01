@@ -7,7 +7,9 @@
       <a-row type="flex" justify="end">
          <span class="title">
             24小时故障预测:
-            <span class="text-red-600 font-bold">{{ isnormal ? '正常' : '危险' }}</span>
+            <span :class="isnormal ? 'text-green-600 font-bold' : 'text-red-600 font-bold'">
+               {{ isnormal ? '正常' : '危险' }}
+            </span>
          </span>
       </a-row>
       <a-row>
@@ -16,8 +18,17 @@
       <a-row :gutter="20">
          <a-col :span="12">
             <a-row type="flex" justify="end">
-               <a-select placeholder="请选择分析数据" style="width: 40%" :value="frequency" @change="onChangeFre">
-                  <a-select-option v-for="item in frePositionNumber" :key="item.value" :value="item.value">
+               <a-select
+                  placeholder="请选择分析数据"
+                  style="width: 40%"
+                  :value="frequency"
+                  @change="onChangeFre"
+               >
+                  <a-select-option
+                     v-for="item in frePositionNumber"
+                     :key="item.value"
+                     :value="item.value"
+                  >
                      {{ item.name }}
                   </a-select-option>
                </a-select>
@@ -34,14 +45,24 @@
                </a-col>
                <a-col :span="6">
                   <a-select style="width: 100%" v-model="kurtosis" placeholder="请选择分析数据">
-                     <a-select-option v-for="item in kurPositionNumber" :key="item.value" :value="item.value">
+                     <a-select-option
+                        v-for="item in kurPositionNumber"
+                        :key="item.value"
+                        :value="item.value"
+                     >
                         {{ item.name }}
                      </a-select-option>
                   </a-select>
                </a-col>
                <a-col :span="11">
-                  <a-range-picker :format="dateFormat" allowClear v-model="time" show-time style="width: 100%"
-                     :disabledDate="disabledDate">
+                  <a-range-picker
+                     :format="dateFormat"
+                     allowClear
+                     v-model="time"
+                     show-time
+                     style="width: 100%"
+                     :disabledDate="disabledDate"
+                  >
                      <a-icon slot="suffixIcon" type="calendar" style="color: white" />
                   </a-range-picker>
                </a-col>
@@ -286,7 +307,7 @@ export default {
          }
       },
    },
-   created() { },
+   created() {},
 }
 </script>
 

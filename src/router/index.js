@@ -22,8 +22,9 @@ Router.prototype.push = function push(location) {
 }
 
 const router = new Router({
-   // mode: 'history',
    mode: 'hash',
+   // base: '/equipmentWeb',
+   // mode: process.env.NODE_ENV === 'production' ? 'history' : 'hash',
    routes,
 })
 export default router

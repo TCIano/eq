@@ -1,15 +1,36 @@
-const purgecss = require('@fullhuman/postcss-purgecss')({
-   content: ['./src/**/*.html', './src/**/*.vue', './src/**/*.jsx'],
+const purgecss = require('@fullhuman/postcss-purgecss')
 
-   // Include any special characters you're using in this regular expression
-   defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
-})
+// const join = require("path").join;
+
+// const tailwindJS = join(__dirname, "tailwind.js");
+
+class TailwindExtractor {
+   static extract(content) {
+      return content.match(/[A-Za-z0-9-_:\/]+/g) || []
+   }
+}
+
+const plugins = [require('tailwindcss'), require('autoprefixer')]
+// if (process.env.NODE_ENV === "production") {
+//     plugins.push(
+//         purgecss({
+//             content: [
+//                 "./layout/**/*.vue",
+//                 "./components/**/*.vue",
+//                 "./view/**/*.vue"
+//             ],
+//             whitelist: ["html", "body"],
+//             // whitelistPatternsChildren: [/^token/, /^pre/, /^code/],
+//             extractors: [
+//                 {
+//                     extractor: TailwindExtractor,
+//                     extensions: ["html", "vue"]
+//                 }
+//             ]
+//         })
+//     );
+// }
 
 module.exports = {
-   plugins: [
-      require('tailwindcss'),
-      require('postcss-nested'),
-      require('autoprefixer'),
-      ...(process.env.NODE_ENV === 'production' ? [purgecss] : []),
-   ],
+   plugins,
 }

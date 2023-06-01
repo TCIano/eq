@@ -1,5 +1,5 @@
 <template>
-   <a-layout-sider v-model="collapsed" :trigger="null" width="200px" collapsible v-if="true">
+   <a-layout-sider v-model="collapsed" :trigger="null" width="200px" collapsible v-if="isDev">
       <!-- <div class="logo" /> -->
       <a-menu
          mode="inline"
@@ -21,6 +21,7 @@
 
 <script>
 export default {
+   name: 'sideMenu',
    props: {
       menuData: {
          type: Array,
@@ -35,6 +36,7 @@ export default {
    data() {
       return {
          collapsed: false,
+         isDev: process.env.NODE_ENV === 'development',
       }
    },
    methods: {},

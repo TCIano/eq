@@ -2,24 +2,45 @@
    <div>
       <a-row :gutter="[10, 10]">
          <a-col :span="6" v-for="item in eqInfo" :key="item.equipment_id">
-            <a-card class="eq-list" :headStyle="{ border: 'none' }"
-               @click="getEqDetail(item.equipment_id, item.equipment_name, item.equipment_picture)">
-               <div slot="title" style="display: flex; justify-content: center; align-items: center">
-                  <div :id="
-                     item.equipment_status === '0'
-                        ? 'error'
-                        : item.equipment_status === '1'
+            <a-card
+               class="eq-list"
+               :headStyle="{ border: 'none' }"
+               @click="getEqDetail(item.equipment_id, item.equipment_name, item.equipment_picture)"
+            >
+               <div
+                  slot="title"
+                  style="display: flex; justify-content: center; align-items: center"
+               >
+                  <div
+                     :id="
+                        item.equipment_status === '0'
+                           ? 'error'
+                           : item.equipment_status === '1'
                            ? 'success'
                            : 'waring'
-                  "></div>
-                  <span class="eq-title">{{ item.equipment_name }}</span>
+                     "
+                  ></div>
+                  <span class="truncate ... eq-title">
+                     {{ item.equipment_name + item.equipment_id }}
+                  </span>
                </div>
-               <img slot="cover" alt="example" :src="require('../../../assets/equipment/' + item.equipment_picture)"
-                  style="width: 1.875rem; height: 1.875rem; margin: 0 auto" />
+               <img
+                  slot="cover"
+                  alt="example"
+                  :src="require('../../../assets/equipment/' + item.equipment_picture)"
+                  style="width: 1.875rem; height: 1.875rem; margin: 0 auto"
+               />
                <a-card-meta>
                   <template slot="description">
-                     <a-row :gutter="10" type="flex" align="middle" justify="center" class="row"
-                        v-for="bit in item.equipment_message" :key="bit.name">
+                     <a-row
+                        :gutter="10"
+                        type="flex"
+                        align="middle"
+                        justify="center"
+                        class="row"
+                        v-for="bit in item.equipment_message"
+                        :key="bit.name"
+                     >
                         <a-col>
                            <span>{{ bit.name }}</span>
                         </a-col>
@@ -68,7 +89,7 @@ export default {
       },
    },
 
-   created() { },
+   created() {},
 }
 </script>
 

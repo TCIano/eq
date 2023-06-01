@@ -1,7 +1,10 @@
 const { defineConfig } = require('@vue/cli-service')
+const isProd = process.env.NODE_ENV === 'production'
 module.exports = defineConfig({
    // transpileDependencies: true,
-   publicPath: './',
+   publicPath: isProd ? './' : '/',
+   // publicPath: '/',
+   assetsDir: 'static',
    lintOnSave: true,
    devServer: {
       hot: true,
@@ -9,7 +12,7 @@ module.exports = defineConfig({
          '/tianwei/message': {
             target: 'http://192.168.0.99:8085/',
             changeOrigin: true,
-            pathRewrite: { '/tianwei': '' },
+            pathRewrite: { '^/tianwei': '' },
          },
          '/tianwei': {
             target: 'http://192.168.0.100:9001', //请求的服务器地址

@@ -71,16 +71,4 @@ export default [
       keepAlive: false,
       component: () => import('@/view/eqWaringStatic'),
    },
-   {
-      name: 'test1',
-      path: '/test1',
-      keepAlive: false,
-      component: () => import('@/view/test1.vue'),
-   },
-   {
-      name: 'test2',
-      path: '/test2',
-      keepAlive: false,
-      component: () => import('@/view/test2.vue'),
-   },
 ]

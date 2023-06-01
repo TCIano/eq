@@ -86,7 +86,8 @@ export const deleteEquipmentTypeApi = id => {
  */
 export const getEquipInitMessageApi = () => {
    return request({
-      url: '/message',
+      // url: '/message',
+      url: '/message/equipInitMessage',
    })
 }
 /**

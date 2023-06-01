@@ -20,6 +20,7 @@
             :options="eqMessage.departs"
             :fieldNames="fieldNames"
             :show-search="{ filter }"
+            change-on-select
             placeholder="请选择组织机构"
          />
       </a-form-model-item>
@@ -58,7 +59,7 @@
             @focus="getEqName"
          >
             <a-select-option :value="item.code" v-for="item in equipNameList" :key="item.code">
-               {{ item.name }}
+               {{ item.name + item.code }}
             </a-select-option>
          </a-select>
       </a-form-model-item>
@@ -120,8 +121,8 @@ export default {
          //判断设备属性类型组织是否变化，变化则重新获取设备名称
          if (!isObjectEqual(storageStore.get('basic-info-addInfo'), params)) {
             const { data } = await getEqNameApi({
-               depart: params.equipment_tree[0],
-               section: params.equipment_tree[1],
+               depart: params.equipment_tree[1],
+               section: params.equipment_tree[2],
                equipMajorDIC: params.equipment_attribute,
                equipType: params.equipment_type[params.equipment_type.length - 1],
             })

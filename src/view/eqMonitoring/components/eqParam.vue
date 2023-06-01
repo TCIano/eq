@@ -4,22 +4,39 @@
          <a-icon type="pause" style="font-size: 20px" />
          <span>{{ title }}</span>
       </div>
-      <a-table :columns="columns" :data-source="data" rowKey="value" :pagination="{
-         pageSize: 7,
-      }">
+      <a-table
+         :columns="columns"
+         :data-source="data"
+         rowKey="value"
+         :pagination="{
+            pageSize: 7,
+         }"
+      >
          <template slot="name" slot-scope="text">
             {{ text.name || text.position_name }}
          </template>
          <template slot="action" slot-scope="text">
-            <img v-if="text.comprehensive_analysis" src="@/assets/img/parameAnalysis.svg" alt=""
-               style="width: 35px; cursor: pointer" @click="openModal(text.position_number, text.name)" />
+            <img
+               v-if="text.comprehensive_analysis"
+               src="@/assets/img/parameAnalysis.svg"
+               alt=""
+               style="width: 35px; cursor: pointer"
+               @click="openModal(text.position_number, text.position_name)"
+            />
          </template>
          <template slot="value" slot-scope="text">
             {{ text.value + ' ' + text.unit }}
          </template>
       </a-table>
       <!-- 参数分析弹窗 -->
-      <a-modal :title="title" :visible="visible" centered @cancel="closeModal" @ok="getAnaData" v-if="visible">
+      <a-modal
+         :title="modalTitle"
+         :visible="visible"
+         centered
+         @cancel="closeModal"
+         @ok="getAnaData"
+         v-if="visible"
+      >
          <!-- 表单 -->
          <a-form-model ref="form" :model="form">
             <a-form-model-item label="分析时间" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -32,7 +49,11 @@
             <a-row :gutter="24">
                <a-col :span="12" v-for="(value, key) in form.waveParam" :key="key">
                   <a-form-item :label="form.map[key]">
-                     <a-input placeholder="请输入" disabled v-model.number="form.waveParam[key]"></a-input>
+                     <a-input
+                        placeholder="请输入"
+                        disabled
+                        v-model.number="form.waveParam[key]"
+                     ></a-input>
                   </a-form-item>
                </a-col>
             </a-row>
@@ -84,6 +105,7 @@ export default {
    data() {
       return {
          title: '设备参数',
+         modalTitle: '',
          columns,
          // data: [],
          visible: false,
@@ -133,7 +155,7 @@ export default {
       openModal(position_number, name) {
          this.position_number = position_number
          this.visible = true
-         this.title = name + '参数分析'
+         this.modalTitle = name + '参数分析'
          this.currentTime = new Date()
          this.getAnaData(position_number)
       },
