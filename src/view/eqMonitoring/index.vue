@@ -4,10 +4,19 @@
          <a-row type="flex" justify="space-between" style="padding: 5px">
             <a-col>
                <a-space>
-                  <a-space v-for="item in warning" :key='item.name'>
+                  <a-space v-for="item in warning" :key="item.name">
                      <span>{{ item.name }}</span>
-                     <span :id="item.name === '正常' ? 'successLabel' : item.name === '故障' ? 'errorLabel' : 'waringLabel'">{{
-                        item.count || 0 }}</span>
+                     <span
+                        :id="
+                           item.name === '正常'
+                              ? 'successLabel'
+                              : item.name === '故障'
+                              ? 'errorLabel'
+                              : 'waringLabel'
+                        "
+                     >
+                        {{ item.count || 0 }}
+                     </span>
                      <a-divider type="vertical" id="divider" />
                   </a-space>
                </a-space>
@@ -31,9 +40,19 @@
          <a-row>
             <a-col :span="5">
                <a-card :bordered="false" class="eq-device-scroll-page">
-                  <a-input-search allowClear style="margin-bottom: 8px" placeholder="请输入组织机构名称" @change="onChange" />
-                  <a-tree :expanded-keys="expandedKeys" :auto-expand-parent="autoExpandParent" :tree-data="gData"
-                     @select="select" @expand="onExpand">
+                  <a-input-search
+                     allowClear
+                     style="margin-bottom: 8px"
+                     placeholder="请输入组织机构名称"
+                     @change="onChange"
+                  />
+                  <a-tree
+                     :expanded-keys="expandedKeys"
+                     :auto-expand-parent="autoExpandParent"
+                     :tree-data="gData"
+                     @select="select"
+                     @expand="onExpand"
+                  >
                      <template slot="title" slot-scope="{ title }">
                         <span v-if="title.indexOf(searchValue) > -1">
                            {{ title.substr(0, title.indexOf(searchValue)) }}
@@ -47,14 +66,22 @@
             </a-col>
             <a-col :span="19">
                <a-card class="eq-device-scroll-page" :bordered="false">
-                  <a-row :gutter="15">
-                     <!-- 设备监控列表 -->
-                     <eq-list :eqInfo="eqInfo" ref="eqInfo" />
-                     <!-- 分页 -->
-                     <a-pagination style='position: fixed; bottom: 80px; right: 50px;' v-if="eqInfo.length"
-                        :default-current="1" :total="total_amount" show-quick-jumper :page-size="pageSize"
-                        :current="currentPage" :defaultPageSize="8" @change="pageChange" class="item-pagination" />
-                  </a-row>
+                  <!-- <a-row :gutter="15"> -->
+                  <!-- 设备监控列表 -->
+                  <eq-list :eqInfo="eqInfo" ref="eqInfo" />
+                  <!-- 分页 -->
+                  <!-- </a-row> -->
+                  <a-pagination
+                     v-if="eqInfo.length > 0"
+                     :default-current="1"
+                     :total="total_amount"
+                     show-quick-jumper
+                     :page-size="pageSize"
+                     :current="currentPage"
+                     :defaultPageSize="8"
+                     @change="pageChange"
+                     class="item-pagination"
+                  />
                </a-card>
             </a-col>
          </a-row>
@@ -79,7 +106,7 @@ export default {
          eqInfo: [],
          warning_message: {},
          equipment_tree: [],
-         warning: []//报警信息
+         warning: [], //报警信息
       }
    },
    methods: {
@@ -96,6 +123,7 @@ export default {
          })
          this.total_amount = total_amount
          this.eqInfo = data
+         // this.eqInfo = equipment
          this.warning_message = warning_message
          this.warning = warning
       },
@@ -141,7 +169,6 @@ export default {
    .topColumn {
       border-bottom: 1px solid #30917f;
       padding: 0px 15px;
-
       // border-bottom: 1px solid #30917f;
       span {
          color: white;

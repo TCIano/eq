@@ -1,7 +1,16 @@
 <template>
    <div>
-      <a-row :gutter="[10, 10]">
-         <a-col :span="6" v-for="item in eqInfo" :key="item.equipment_id">
+      <a-row :gutter="[10, 10]" type="flex">
+         <a-col
+            :span="8"
+            :md="8"
+            :sm="8"
+            :lg="8"
+            :xl="8"
+            :xxl="6"
+            v-for="item in eqInfo"
+            :key="item.equipment_id"
+         >
             <a-card
                class="eq-list"
                :headStyle="{ border: 'none' }"
@@ -20,20 +29,24 @@
                            : 'waring'
                      "
                   ></div>
-                  <span class="truncate ... eq-title">
+                  <span
+                     :title="item.equipment_name + item.equipment_id"
+                     class="truncate ... eq-title"
+                  >
                      {{ item.equipment_name + item.equipment_id }}
                   </span>
                </div>
                <img
                   slot="cover"
                   alt="example"
+                  :class="item.equipment_status === '1' ? 'img' : ''"
                   :src="require('../../../assets/equipment/' + item.equipment_picture)"
-                  style="width: 1.875rem; height: 1.875rem; margin: 0 auto"
+                  style="width: 200px; height: 150px; margin: 0 auto"
                />
                <a-card-meta>
                   <template slot="description">
                      <a-row
-                        :gutter="10"
+                        :gutter="[10]"
                         type="flex"
                         align="middle"
                         justify="center"
@@ -90,14 +103,17 @@ export default {
    },
 
    created() {},
+   mounted() {
+      console.log(this.eqInfo)
+   },
 }
 </script>
 
 <style scoped lang="less">
 .eq-list {
    cursor: pointer;
-   height: 4.5rem;
-   overflow-y: scroll;
+   height: 360px;
+   // overflow-y: scroll;
    scroll-behavior: smooth;
 
    &::-webkit-scrollbar {
@@ -107,7 +123,22 @@ export default {
    ::v-deep .ant-card {
       box-shadow: 1px 1px 1px 1px;
    }
-
+   .img {
+      transform: rotateY(20deg);
+      animation: img-anim 5s ease-in-out infinite;
+   }
+   //图片动画
+   @keyframes img-anim {
+      0% {
+         transform: rotate(-5deg);
+      }
+      50% {
+         transform: rotate(5deg);
+      }
+      100% {
+         transform: rotate(-5deg);
+      }
+   }
    .eq-title {
       font-size: 0.32rem;
       margin-left: 0.125rem;
@@ -120,7 +151,7 @@ export default {
       padding-bottom: 0.125rem;
 
       span {
-         font-size: 0.2rem;
+         font-size: 18px;
       }
 
       .ant-col {

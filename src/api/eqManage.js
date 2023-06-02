@@ -113,6 +113,7 @@ export const getEquipmentListApi = ({ page = 0, amount = 0, filtration = [] }) =
    return request({
       method: 'POST',
       url: '/getEquipmentList',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/getEquipmentList',
       data: {
          amount,
          page,
@@ -227,12 +228,12 @@ export const getTrainProgressApi = () => {
  * @param {Array} record_id 训练记录ID
  * @returns Promise
  */
-export const deleteHistoryDataApi = (record_id) => {
+export const deleteHistoryDataApi = record_id => {
    return request({
-      method: "POST",
+      method: 'POST',
       url: '/deleteHistoryData',
       data: {
-         record_id
-      }
+         record_id,
+      },
    })
 }
