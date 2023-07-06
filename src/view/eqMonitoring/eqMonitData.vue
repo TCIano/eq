@@ -1,7 +1,7 @@
 <template>
    <div class="eq-detail">
-      <div class="text-center bg-transparent text-white font-mono" style="font-size: 0.5rem">
-         {{ equipment_name }}综合监视
+      <div class="font-mono text-center text-white bg-transparent" style="font-size: 0.5rem">
+         {{ equipment_name + equipment_id }}综合监视
       </div>
       <img
          v-if="$route.query.equipment_picture"

@@ -53,7 +53,7 @@
       <a-form-model-item label="设备名称" prop="equipment_name">
          <a-select
             :disabled="disabled"
-            :value="form.equipment_name"
+            :value="form.equipment_name + form.equipment_id"
             @change="nameChange"
             placeholder="请选择设备名称"
             @focus="getEqName"

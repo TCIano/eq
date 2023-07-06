@@ -2,7 +2,10 @@
    <div>
       <a-row :gutter="gutter">
          <a-col :span="18">
-            <a-card style="height: 5.5rem">
+            <a-card style="height: 5.5rem" :bodyStyle="{ padding: '10px' }">
+               <a-button type="primary" size="small" icon="rollback" @click="$router.go(-1)">
+                  返回
+               </a-button>
                <e-chart theme="" height="5rem" :option="lineOption" />
             </a-card>
          </a-col>
@@ -18,7 +21,11 @@
                <div class="device-scroll-page" style="height: 5.2rem">
                   <a-col :span="6" v-for="(item, index) in positionOption" :key="index">
                      <a-card style="height: 2.45rem" hoverable>
-                        <a-statistic :title="item.position_value" :value="item.current" style="height: 0.5rem" />
+                        <a-statistic
+                           :title="item.position_value"
+                           :value="item.current"
+                           style="height: 0.5rem"
+                        />
                         <e-chart theme="" height="2.3rem" :option="item.option" />
                      </a-card>
                   </a-col>

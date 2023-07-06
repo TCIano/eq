@@ -21,7 +21,7 @@
                         v-for="item in eqList"
                         :key="item.equipment_id"
                      >
-                        {{ item.equipment_name }}
+                        {{ item.equipment_name + item.equipment_id }}
                      </a-select-option>
                   </a-select>
                </a-form-item>
@@ -52,9 +52,7 @@ export default {
       async getExternalFaultDiagnosis() {
          const { result } = await getExternalFaultDiagnosisApi()
          if (result) {
-            this.equipment_node = result.equipment_tree.join(',')
-            this.getEqByTree(this.equipment_node)
-            this.eq = this.eqList.length ? result.equipment_id : result.equipment_name
+            this.handleTreeNode(result)
             this.$refs.faultDia.handleOption(result)
          }
       },
@@ -62,12 +60,10 @@ export default {
          this.$refs.faultDia.getFaultDiagnosis()
       },
       reset() {
-         this.equipment_node = undefined
-         this.eq = undefined
-         this.eqList = []
+         this.reSetTreeNode()
       },
    },
-   created() {
+   mounted() {
       this.getExternalFaultDiagnosis()
    },
 }

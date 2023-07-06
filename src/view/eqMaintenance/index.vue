@@ -28,7 +28,7 @@
                               v-for="item in eqList"
                               :key="item.equipment_id"
                            >
-                              {{ item.equipment_name }}
+                              {{ item.equipment_name + item.equipment_id }}
                            </a-select-option>
                         </a-select>
                      </a-form-item>
@@ -56,7 +56,10 @@
                         </a>
                      </div>
                   </template>
-                  <a-card-meta :title="item.equipment_name" class="cardMeta">
+                  <a-card-meta
+                     :title="`${item.equipment_name}${item.equipment_id}`"
+                     class="cardMeta"
+                  >
                      <a-avatar
                         slot="avatar"
                         :style="{ backgroundColor: item.processed ? '#608eef' : '#e68086' }"
@@ -138,9 +141,7 @@ export default {
          this.getWarningList()
       },
       reset() {
-         this.equipment_node = undefined
-         this.eq = undefined
-         this.eqList = []
+         this.reSetTreeNode()
       },
    },
    created() {

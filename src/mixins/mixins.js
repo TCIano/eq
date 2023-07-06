@@ -29,6 +29,17 @@ export const mixin = {
             this.eqList = result.datas
          }
       },
+      //获取数据处理
+      handleTreeNode(result) {
+         this.equipment_node = result.equipment_tree.join(',')
+         this.getEqByTree(this.equipment_node)
+         this.eq = result.equipment_id
+      },
+      reSetTreeNode() {
+         this.equipment_node = undefined
+         this.eq = undefined
+         this.eqList = []
+      },
    },
    created() {
       this.getOrigination()
