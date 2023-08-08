@@ -27,16 +27,20 @@
                         </a-space>
                         <a-space :size="1">
                            参与训练：
-                           <a-switch checked-children="是" un-checked-children="否" :checked="item.used ? true : false"
-                              @change="changeIsTrain(index, $event)"></a-switch>
+                           <a-switch
+                              checked-children="是"
+                              un-checked-children="否"
+                              :checked="item.used ? true : false"
+                              @change="changeIsTrain(index, $event)"
+                           ></a-switch>
                         </a-space>
                      </a-space>
                   </a-col>
                   <a-col>
                      合计训练测点
-                     <span class="text-red-600 font-bold">{{ totalPoint }}</span>
+                     <span class="font-bold text-red-600">{{ totalPoint }}</span>
                      ,参与模型训练测点
-                     <span class="text-red-600 font-bold">{{ trainPoint }}</span>
+                     <span class="font-bold text-red-600">{{ trainPoint }}</span>
                   </a-col>
                </a-row>
             </a-card>
@@ -45,8 +49,12 @@
             <a-card style="height: 6.3rem">
                <a-space>
                   选择日期:
-                  <a-range-picker :disabledDate="disabledDate" v-model="trainTime" showTime
-                     :format="timeFormat"></a-range-picker>
+                  <a-range-picker
+                     :disabledDate="disabledDate"
+                     v-model="trainTime"
+                     showTime
+                     :format="timeFormat"
+                  ></a-range-picker>
                   <a-button type="primary" icon="check-square" @click="getChartData">提交</a-button>
                </a-space>
                <e-chart :option="option" height="5.625rem" width="90%" />
@@ -55,14 +63,25 @@
       </a-row>
       <a-row :gutter="[10, 10]">
          <a-col>
-            <a-table :columns="columns" :data-source="trainHistory" :scroll="{ y: 240 }"
-               :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" row-key="record_id" bordered
-               :pagination="false">
+            <a-table
+               :columns="columns"
+               :data-source="trainHistory"
+               :scroll="{ y: 240 }"
+               :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+               row-key="record_id"
+               bordered
+               :pagination="false"
+            >
                <template slot="time" slot-scope="text">
                   <span>{{ text.start_time }} ~ {{ text.end_time }}</span>
                </template>
-               <template slot="option" slot-scope='text,record'>
-                  <a-popconfirm title="是否删除？" ok-text="确定" cancel-text="取消" @confirm="deleteRecord(record.record_id)">
+               <template slot="option" slot-scope="text, record">
+                  <a-popconfirm
+                     title="是否删除？"
+                     ok-text="确定"
+                     cancel-text="取消"
+                     @confirm="deleteRecord(record.record_id)"
+                  >
                      <a href="#">删除</a>
                   </a-popconfirm>
                </template>
@@ -93,7 +112,7 @@ import {
    getHistoryShowApi,
    getTrainProgressApi,
    trainModelApi,
-   deleteHistoryDataApi
+   deleteHistoryDataApi,
 } from '@/api/eqManage'
 import { storageStore } from '@/store/local'
 import { mapActions } from 'vuex'
@@ -161,7 +180,6 @@ export default {
          this.trainList[index].used = e
       },
       async modeTraining() {
-
          if (!this.selectedRowKeys.length && !storageStore.get('isTrain'))
             return this.$message.warning('最少选择一项训练测点')
          this.trainModal = true
@@ -203,7 +221,6 @@ export default {
                this.historyShow()
             }, 2000)
          }
-
       },
       closeTrainProgress(state) {
          this.trainModal = false
@@ -234,6 +251,9 @@ export default {
             this.option = {
                tooltip: {
                   trigger: 'axis',
+               },
+               legend: {
+                  type: 'scroll',
                },
                grid: {
                   left: '6%',
@@ -312,7 +332,7 @@ export default {
       this.getEquipmentDetail()
       this.historyShow()
       this.getIsTrain()
-   }
+   },
 }
 </script>
 

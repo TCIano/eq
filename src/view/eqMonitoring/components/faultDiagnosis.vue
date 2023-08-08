@@ -15,7 +15,12 @@
             </a-col>
             <!-- 当前情况 -->
             <a-col :span="7">
-               <e-chart ref="currentRelate" :option="currentRelateOption" :theme="theme" height="4rem" />
+               <e-chart
+                  ref="currentRelate"
+                  :option="currentRelateOption"
+                  :theme="theme"
+                  height="4rem"
+               />
             </a-col>
             <a-col :span="2">
                <div style="text-align: center">
@@ -175,7 +180,6 @@ export default {
       }
    },
    methods: {
-
       async getFaultDiagnosis() {
          const res = await getFaultDiagnosisApi(this.equipment_id)
          if (res.result) {
@@ -326,7 +330,7 @@ export default {
          }
       },
    },
-   created() { },
+   created() {},
    beforeDestroy() {
       clearInterval(this.time)
    },
