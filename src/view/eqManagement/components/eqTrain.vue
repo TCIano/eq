@@ -263,6 +263,7 @@ export default {
                   type: 'time',
                },
                yAxis: {
+                  scale: true,
                   type: 'value',
                },
                series: [],

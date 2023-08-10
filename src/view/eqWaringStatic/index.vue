@@ -4,12 +4,22 @@
          <a-col>
             <a-form layout="inline">
                <a-form-item label="组织节点">
-                  <a-tree-select v-model="equipment_node" style="width: 200px" :replaceFields="replaceFields"
-                     :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" :tree-data="treeData" @select="getEqByTree"
-                     placeholder="请选择设备组织节点"></a-tree-select>
+                  <a-tree-select
+                     v-model="equipment_node"
+                     style="width: 200px"
+                     :replaceFields="replaceFields"
+                     :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                     :tree-data="treeData"
+                     @select="getEqByTree"
+                     placeholder="请选择设备组织节点"
+                  ></a-tree-select>
                </a-form-item>
                <a-form-item label="时间">
-                  <a-month-picker v-model="month" placeholder="请选择月份" :disabledDate="disabledDate" />
+                  <a-month-picker
+                     v-model="month"
+                     placeholder="请选择月份"
+                     :disabledDate="disabledDate"
+                  />
                </a-form-item>
             </a-form>
          </a-col>
@@ -167,10 +177,9 @@ export default {
 
                         textAlign: 'middle',
                         textVerticalAlign: 'middle',
-                        text: item.grade + '报警',
                         itemGap: -40,
-                        top: '90%',
-                        left: 'middle',
+                        top: '89%',
+                        left: '49%',
                         subtext: item.count + `${index === 3 ? ' 台' : ' 次'} `,
                      },
                      tooltip: {
@@ -185,7 +194,7 @@ export default {
                            detail: {
                               formatter: '{value}%',
                               fontSize: 20,
-                              offsetCenter: [0, '60%'],
+                              offsetCenter: [0, '85%'],
                            },
                            splitNumber: 8,
                            axisTick: {
@@ -208,22 +217,30 @@ export default {
                               lineStyle: {
                                  width: 15,
                                  color: [
-                                    [0, '#f4271c'],
-                                    [0.125, '#f4271c'],
-                                    [0.25, '#f4271c'],
+                                    [0, '#6aa0fd'],
+                                    [0.125, '#6aa0fd'],
+                                    [0.25, '#6aa0fd'],
                                     [0.375, '#f8c126'],
                                     [0.5, '#f8c126'],
                                     [0.625, '#f8c126'],
                                     [0.75, '#f8c126'],
-                                    [0.875, '#6aa0fd'],
-                                    [1, '#6aa0fd'],
+                                    [0.875, '#f4271c'],
+                                    [1, '#f4271c'],
                                  ],
                               },
                            },
+                           title: {
+                              offsetCenter: [0, '109%'],
+                           },
+
                            data: [
                               {
                                  value: item.ratio,
-                                 //  name: '百分比',
+                                 name: item.grade + '报警',
+                                 title: {
+                                    fontWeight: 900,
+                                    fontSize: 18,
+                                 },
                               },
                            ],
                         },
