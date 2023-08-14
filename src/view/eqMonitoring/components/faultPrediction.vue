@@ -7,8 +7,14 @@
       <a-row type="flex" justify="end">
          <span class="title">
             24小时故障预测:
-            <span :class="isnormal ? 'text-green-600 font-bold' : 'text-red-600 font-bold'">
-               {{ isnormal ? '正常' : '危险' }}
+            <span
+               :class="
+                  parseFloat(isnormal.replace('%', '')) < 100
+                     ? 'text-green-600 font-bold'
+                     : 'text-red-600 font-bold'
+               "
+            >
+               {{ isnormal }}
             </span>
          </span>
       </a-row>
@@ -107,7 +113,7 @@ export default {
          interval: 2, //间隔时间
          dateFormat: 'YYYY-MM-DD HH:mm',
          currentTime: new Date(),
-         isnormal: undefined,
+         isnormal: '0%',
          //鞘度分析时间
          time: [
             moment(moment(this.currentTime).subtract(2, 'days').format(this.dateFormat)), //moment写法获取前三天
