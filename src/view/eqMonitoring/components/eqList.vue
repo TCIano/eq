@@ -22,9 +22,9 @@
                >
                   <div
                      :id="
-                        item.equipment_status === '0'
+                        item.equipment_status === '故障'
                            ? 'error'
-                           : item.equipment_status === '1'
+                           : item.equipment_status === '正常'
                            ? 'success'
                            : 'waring'
                      "
