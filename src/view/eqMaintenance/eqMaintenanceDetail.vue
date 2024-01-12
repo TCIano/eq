@@ -18,18 +18,25 @@
       <a-row :gutter="gutter">
          <a-col :span="18">
             <a-row :gutter="gutter">
-               <div class="device-scroll-page" style="height: 5.2rem">
-                  <a-col :span="6" v-for="(item, index) in positionOption" :key="index">
-                     <a-card style="height: 2.45rem" hoverable>
-                        <a-statistic
-                           :title="item.position_value"
-                           :value="item.current"
-                           style="height: 0.5rem"
-                        />
-                        <e-chart theme="" height="2.3rem" :option="item.option" />
-                     </a-card>
-                  </a-col>
-               </div>
+               <a-spin tip="加载中....." :spinning="spinning">
+                  <div class="device-scroll-page" style="height: 5.2rem">
+                     <a-col :span="6" v-for="(item, index) in positionOption" :key="index">
+                        <a-card style="height: 2.45rem" hoverable>
+                           <a-statistic
+                              :title="item.position_value"
+                              :value="item.current"
+                              style="height: 0.5rem"
+                           />
+                           <e-chart
+                              theme=""
+                              height="2.3rem"
+                              :option="item.option"
+                              :showLoading="false"
+                           />
+                        </a-card>
+                     </a-col>
+                  </div>
+               </a-spin>
             </a-row>
          </a-col>
          <a-col :span="6">
@@ -60,6 +67,7 @@ export default {
    components: { eChart },
    data() {
       return {
+         spinning: true,
          gutter: [20, 10],
          lineOption: {},
          relativeOption: {
@@ -100,6 +108,7 @@ export default {
    },
    methods: {
       async getWarningDetail() {
+         this.spinning = true
          const { result } = await getWarningDetailApi(this.$route.query.fault_id / 1)
          if (result) {
             this.handleLine(result)
@@ -107,6 +116,7 @@ export default {
             this.handleRelationPoint(result.fault_diagnosis.current_graph)
             this.handleRelationLink(result.fault_diagnosis.current_graph)
             this.handlePositionList(result.position_list)
+            this.spinning = false
             //报警内容
             //实现故障点闪烁
             let count = 0
@@ -217,6 +227,8 @@ export default {
          this.relativeOption.series[0].links = links
       },
       handlePositionList(data) {
+         //初始化positionOption
+
          this.positionOption = data.map(item => {
             return {
                ...item,

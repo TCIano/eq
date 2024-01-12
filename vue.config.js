@@ -3,7 +3,7 @@ const isProd = process.env.NODE_ENV === 'production'
 module.exports = defineConfig({
    // transpileDependencies: true,
    publicPath: isProd ? './' : '/',
-   // publicPath: '/',
+   // publicPath: '/equipmentWeb',
    assetsDir: 'static',
    lintOnSave: true,
    devServer: {

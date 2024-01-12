@@ -271,6 +271,7 @@ export default {
       },
       async getFaultPredict() {
          const { result } = await getFaultPredictApi(this.equipment_id)
+
          if (result) {
             this.handleOption(result)
          }

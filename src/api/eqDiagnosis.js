@@ -22,6 +22,6 @@ export const getExternalFaultDiagnosisApi = () => {
    return request({
       method: 'GET',
       url: '/getFaultDiagnosis',
-      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/getFaultDiagnosis',
+      // url: 'http://127.0.0.1:4523/m1/2242345-0-default/getFaultPredict?apifoxApiId=63085125',
    })
 }
