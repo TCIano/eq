@@ -40,9 +40,13 @@
                   </a-space>
                </template>
                <a-row>
-                  <a-col :span="6" v-for="(item, index) in optionList" :key="index">
-                     <e-chart height="4rem" :option="item.option" />
-                  </a-col>
+                  <a-spin tip="加载中...." :spinning="spinning">
+                     <div style="height: 4rem">
+                        <a-col :span="6" v-for="(item, index) in optionList" :key="index">
+                           <e-chart height="4rem" :option="item.option" :show-loading="false" />
+                        </a-col>
+                     </div>
+                  </a-spin>
                </a-row>
             </a-card>
          </a-col>
@@ -79,6 +83,7 @@ export default {
    mixins: [mixin],
    data() {
       return {
+         spinning: true,
          moment,
          gutter: [10, 10],
          month: undefined,
@@ -156,12 +161,55 @@ export default {
          this.month = undefined
       },
       async getWarningStatistics() {
+         this.spinning = true
          const {
             result: { table, graph },
          } = await getWarningStatisticsApi({
             equipment_tree: this.equipment_node && this.equipment_node.split(','),
             month: moment(this.month).format('YYYY-MM'),
          })
+         //测试数据
+         // const { table, graph } = {
+         //    graph: [
+         //       {
+         //          count: 14,
+         //          grade: '\u4e00\u822c',
+         //          ratio: 100.0,
+         //       },
+         //       {
+         //          count: 0,
+         //          grade: '\u91cd\u5927',
+         //          ratio: 0.0,
+         //       },
+         //       {
+         //          count: 0,
+         //          grade: '\u7279\u5927',
+         //          ratio: 0.0,
+         //       },
+         //       {
+         //          count: 4,
+         //          grade: '\u6545\u969c\u8bbe\u5907',
+         //          ratio: 50.0,
+         //       },
+         //    ],
+         //    table: [
+         //       {
+         //          count: 14,
+         //          department: [
+         //             '\u5929\u4f1f\u5316\u5de5\u6709\u9650\u516c\u53f8\u5316\u5de5\u5382',
+         //             '\u805a\u5408\u8f66\u95f4',
+         //             '\u805a\u5408\u5e72\u71e5\u5de5\u6bb5',
+         //          ],
+         //          especially: 0,
+         //          fault_count: 2,
+         //          general: 14,
+         //          month: '2024-01',
+         //          normal_count: 2,
+         //          shutdown_count: 2,
+         //          significant: 0,
+         //       },
+         //    ],
+         // }
          if (table && graph) {
             this.data = table
             this.optionList = graph.map((item, index) => {
@@ -248,6 +296,7 @@ export default {
                   },
                }
             })
+            this.spinning = false
          }
       },
    },
