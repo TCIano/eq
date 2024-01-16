@@ -19,7 +19,13 @@
          </span>
       </a-row>
       <a-row>
-         <e-chart :option="predictOption" :theme="theme" height="4.5rem" width="100%" />
+         <e-chart
+            ref="preChart"
+            :option="predictOption"
+            :theme="theme"
+            height="4.5rem"
+            width="100%"
+         />
       </a-row>
       <a-row :gutter="20">
          <a-col :span="12">
@@ -39,7 +45,13 @@
                   </a-select-option>
                </a-select>
             </a-row>
-            <e-chart :option="frequencyOption" :theme="theme" height="3.5rem" width="100%" />
+            <e-chart
+               ref="freChart"
+               :option="frequencyOption"
+               :theme="theme"
+               height="3.5rem"
+               width="100%"
+            />
          </a-col>
          <a-col :span="12">
             <a-row type="flex" justify="end" align="middle" :gutter="5">
@@ -76,7 +88,7 @@
                   <a-button icon="undo" @click="reGetKurtosis"></a-button>
                </a-col>
             </a-row>
-            <e-chart :option="kurtosisOption" :theme="theme" height="3.5rem" />
+            <e-chart ref="kurChart" :option="kurtosisOption" :theme="theme" height="3.5rem" />
          </a-col>
       </a-row>
    </a-card>
@@ -270,6 +282,9 @@ export default {
          }
       },
       async getFaultPredict() {
+         this.$refs.preChart.spinning = true
+         this.$refs.freChart.spinning = true
+         this.$refs.kurChart.spinning = true
          const { result } = await getFaultPredictApi(this.equipment_id)
 
          if (result) {
@@ -278,6 +293,7 @@ export default {
       },
       //频域分析内容
       async onChangeFre(position_number) {
+         this.$refs.freChart.spinning = true
          this.frequency = position_number
          const { result } = await getFrequencyDomainAnalysisApi({
             equipment_id: this.equipment_id,
@@ -296,6 +312,7 @@ export default {
       },
       //h获取峭度
       async reGetKurtosis() {
+         this.$refs.kurChart.spinning = true
          const {
             result: { result },
          } = await getKurtosisAnalysisApi({
@@ -307,6 +324,7 @@ export default {
             end_time: moment(this.time[1]).format(this.dateFormat) + ':00',
             span: this.interval / 1,
          })
+
          if (result) {
             this.kurtosisOption.series[0].data = result.map(item => {
                return [item.time, item.value]
