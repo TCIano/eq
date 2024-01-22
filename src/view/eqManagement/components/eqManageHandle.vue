@@ -8,13 +8,29 @@
             <a-step v-for="item in steps" :key="item.title" :title="item.title" />
          </a-steps>
          <div class="steps-content">
-            <basic-info v-show="current === 0" ref="basicInfo" :title="title" :form="basicInfoForm" @getType="getType" />
-            <bit-config v-show="current === 1" ref="bitConfig" :bitList="bitConfigForm" :title="title" />
+            <basic-info
+               v-show="current === 0"
+               ref="basicInfo"
+               :title="title"
+               :form="basicInfoForm"
+               @getType="getType"
+            />
+            <bit-config
+               v-show="current === 1"
+               ref="bitConfig"
+               :bitList="bitConfigForm"
+               :title="title"
+            />
             <online-show v-show="current === 2" ref="onlineShow" />
          </div>
          <div class="steps-action">
             <a-button v-if="current > 0" @click="prev" style="margin-right: 8px">上一步</a-button>
-            <a-button :loading="submitLoading" v-if="current == steps.length - 1" type="primary" @click="submit">
+            <a-button
+               :loading="submitLoading"
+               v-if="current == steps.length - 1"
+               type="primary"
+               @click="submit"
+            >
                提交
             </a-button>
             <a-button v-if="current < steps.length - 1" type="primary" @click="next">
@@ -96,9 +112,11 @@ export default {
       async submit() {
          let basicInfo = this.$refs.basicInfo.form
          let onlineShow = this.$refs.onlineShow.list
+         const users = this.$refs.onlineShow.tags
          let option = {
             ...basicInfo,
             position_number: [...onlineShow],
+            users,
          }
          this.submitLoading = true
          if (this.title === '新增') {

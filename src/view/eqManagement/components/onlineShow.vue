@@ -33,7 +33,31 @@
                un-checked-children="隐藏"
             ></a-switch>
          </a-col>
-         <a-col></a-col>
+      </a-row>
+      <a-row type="flex" align="middle" :gutter="[8, 35]">
+         <a-col :span="2" :offset="1">{{ `通知用户工号` }} :</a-col>
+         <a-col>
+            <template v-for="(tag, index) in tags">
+               <a-tag :key="tag" closable @close="() => handleClose(tag)" style="margin-left: 0px">
+                  {{ tag }}
+               </a-tag>
+            </template>
+            <a-input
+               v-if="inputVisible"
+               ref="input"
+               type="text"
+               size="small"
+               :style="{ width: '100px' }"
+               :value="inputValue"
+               @change="handleInputChange"
+               @blur="handleInputConfirm"
+               @keyup.enter.stop="$event.target.blur()"
+            />
+            <a-tag v-else style="background: #fff; borderstyle: dashed" @click="showInput">
+               <a-icon type="plus" />
+               新增
+            </a-tag>
+         </a-col>
       </a-row>
    </div>
 </template>
@@ -49,13 +73,15 @@ export default {
          wrapperCol: { span: 8 },
          // onlineForm: {},
          selectBit: [],
-         list: [],
+         list: [true],
          monitor: [],
+         tags: [],
+         inputVisible: false,
+         inputValue: '',
       }
    },
    methods: {
       getBitList(param) {
-         console.log(param)
          this.list = param.filter(item => item.position_name)
          this.selectBit = this.list
             .filter(item => item.comprehensive_show)
@@ -73,6 +99,38 @@ export default {
       setSwitch(index, e) {
          this.list[index].online_show = e ? 1 : 0
          //重新更新配置里边的数据
+      },
+      handleClose(removedTag) {
+         const tags = this.tags.filter(tag => tag !== removedTag)
+         this.tags = tags
+      },
+      showInput() {
+         this.inputVisible = true
+         this.$nextTick(function () {
+            this.$refs.input.focus()
+         })
+      },
+      handleInputChange(e) {
+         this.inputValue = e.target.value
+      },
+
+      handleInputConfirm(e) {
+         e.stopPropagation()
+         const inputValue = this.inputValue
+         let tags = this.tags
+         console.log(inputValue.length, inputValue)
+         if (inputValue.length !== 8) {
+            return this.$message.error('请输入8位数字')
+         } else {
+            if (inputValue && tags.indexOf(inputValue) === -1) {
+               tags = [...tags, inputValue]
+            }
+            Object.assign(this, {
+               tags,
+               inputVisible: false,
+               inputValue: '',
+            })
+         }
       },
    },
 
