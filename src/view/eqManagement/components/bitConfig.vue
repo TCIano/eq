@@ -1,7 +1,13 @@
 <template>
    <div>
-      <a-row type="flex" justify="center" align="middle" :gutter="[15, 35]"
-         v-for="(item, index) in bitList.position_number" :key="item.id">
+      <a-row
+         type="flex"
+         justify="center"
+         align="middle"
+         :gutter="[15, 35]"
+         v-for="(item, index) in bitList.position_number"
+         :key="item.id"
+      >
          <a-col :span="3">
             <h3>{{ item.position_type }} :</h3>
          </a-col>
@@ -18,17 +24,35 @@
             <a-row type="flex" justify="center" align="middle" :gutter="10">
                <a-col :span="6">上下限范围：</a-col>
                <a-col :span="8">
-                  <a-input type="number" v-model.number="item.lower" placeholder="请输入上限"></a-input>
+                  <a-input
+                     type="number"
+                     v-model.number="item.lower"
+                     placeholder="请输入上限"
+                  ></a-input>
                </a-col>
                <a-col :span="1">~</a-col>
                <a-col :span="8">
-                  <a-input type="number" v-model.number="item.upper" placeholder="请输入下限"></a-input>
+                  <a-input
+                     type="number"
+                     v-model.number="item.upper"
+                     placeholder="请输入下限"
+                  ></a-input>
                </a-col>
             </a-row>
          </a-col>
          <a-space>
-            <a-icon type="copy" theme="twoTone" style="font-size: 25px" @click="copyBit(item, index)" />
-            <a-icon type="delete" theme="twoTone" style="font-size: 25px" @click="deleteBit(item.message_id)" />
+            <a-icon
+               type="copy"
+               theme="twoTone"
+               style="font-size: 25px"
+               @click="copyBit(item, index)"
+            />
+            <a-icon
+               type="delete"
+               theme="twoTone"
+               style="font-size: 25px"
+               @click="deleteBit(item.message_id)"
+            />
          </a-space>
       </a-row>
    </div>
@@ -71,7 +95,7 @@ export default {
       },
    },
 
-   created() { },
+   created() {},
 }
 </script>
 

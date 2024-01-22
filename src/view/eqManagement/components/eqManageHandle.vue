@@ -74,6 +74,7 @@ export default {
          currentEqType: [],
          bitConfigForm: {},
          basicInfoForm: {},
+         onlineShowForm: [],
          submitLoading: false,
       }
    },
@@ -96,11 +97,11 @@ export default {
             })
          } else {
             this.current++
-            console.log(this.current)
          }
 
          if (this.current === 2) {
             let bitList = this.$refs.bitConfig.bitList.position_number
+            this.$refs.onlineShow.getUsers(this.onlineShowForm)
             this.$refs.onlineShow.getBitList(bitList)
          }
       },
@@ -170,8 +171,9 @@ export default {
                position_number,
                message_id,
                isopen,
+               users,
             } = deepClone(result)
-            console.log(result)
+            this.onlineShowForm = users
             this.bitConfigForm = {
                position_number,
             }

@@ -90,6 +90,9 @@ export default {
             return item.position_name
          })
       },
+      getUsers(userList) {
+         this.tags = userList
+      },
       onSelect(selectList) {
          this.list.forEach(item => {
             let right = selectList.some(bit => bit === item.position_name)
