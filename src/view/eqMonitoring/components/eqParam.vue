@@ -59,7 +59,7 @@
             </a-row>
          </a-form>
          <template slot="footer">
-            <a-button type="primary" icon="calculator" @click="getAnaData(position_number)">
+            <a-button type="primary" :loading="anaLoading" icon="calculator" @click="getAnaData(position_number)">
                分析
             </a-button>
          </template>
@@ -104,6 +104,7 @@ export default {
    },
    data() {
       return {
+        anaLoading: false,
          title: '设备参数',
          modalTitle: '',
          columns,
@@ -164,7 +165,13 @@ export default {
       },
       //获取波形参数分析分析结果
       async getAnaData(position_number) {
-         console.log(this.time)
+        this.anaLoading = true
+        //判断是否超过七天
+        const interval = moment(this.time[1]).diff(moment(this.time[0]),'day')
+        if(interval+1 > 7){
+          return this.$message.warn('分析时间支持时间为7天')
+        }
+        
          const {
             result: { data },
          } = await getWaveShapeAnalysisApi({
@@ -173,7 +180,10 @@ export default {
             start_time: moment(this.time[0]).format(this.dateFormat),
             end_time: moment(this.time[1]).format(this.dateFormat),
          })
+        setTimeout(()=>{
          this.form.waveParam = data
+         this.anaLoading = false
+        },300)
       },
       reSetTime() {
          this.time = [
