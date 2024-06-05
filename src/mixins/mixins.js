@@ -26,7 +26,7 @@ export const mixin = {
             filtration: Array.isArray(value) ? value : value.split(','),
          })
          if (result) {
-            this.eqList = result.datas
+            this.eqList = result.datas.filter(item => item.isrunning === 1)
          }
       },
       //获取数据处理

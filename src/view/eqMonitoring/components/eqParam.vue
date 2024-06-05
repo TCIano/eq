@@ -169,6 +169,7 @@ export default {
         //判断是否超过七天
         const interval = moment(this.time[1]).diff(moment(this.time[0]),'day')
         if(interval+1 > 7){
+          this.anaLoading = false
           return this.$message.warn('分析时间支持时间为7天')
         }
         

@@ -15,7 +15,6 @@ export const eqTypeMixin = {
       //获取设备属性和类型
       async getEquipInitMessage() {
          this.eqMessage = await getEquipInitMessageApi()
-         console.log(this.eqMessage)
       },
       filter(inputValue, path) {
          return path.some(
