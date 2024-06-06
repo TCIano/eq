@@ -2,7 +2,7 @@
    <div class="eq-detail">
       <div class="font-mono text-center text-white bg-transparent" style="font-size: 0.5rem">
         <div>
-          <a-button style="float: left" @click="onBack">返回</a-button>
+          <a-button type="primary" style="float: left" @click="onBack">返回</a-button>
         </div>
          {{ equipment_name + equipment_id }}综合监视
       </div>
@@ -74,7 +74,9 @@ export default {
    },
    methods: {
      onBack(){
-       this.$router.back()
+       this.$router.push({
+         path:'/equipmentMonitoring'
+       })
      },
       async getComprehensiveMonitor() {
          const { result } = await getComprehensiveMonitorApi(this.equipment_id)

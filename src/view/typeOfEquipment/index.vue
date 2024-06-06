@@ -1,5 +1,6 @@
 <template>
    <div>
+    
       <a-row type="flex" justify="space-between" align="middle">
          <a-row>
             <a-space>
@@ -112,6 +113,7 @@ export default {
       }
    },
    methods: {
+    
       onChangePage(pagination) {
          this.pagination = { ...pagination }
          this.getEqTypeList()
