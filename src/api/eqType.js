@@ -1,19 +1,24 @@
 import request from '@/utils/request'
+import { EQ } from '@/api/index'
 
 /**
  * 获取设备类型列表
  * @returns Promise
  */
-export const getEqTypeListApi = ({ page = 1, amount = 10, filtration = '' }) => {
-   return request({
-      method: 'POST',
-      url: '/getEquipmentType',
-      data: {
-         page,
-         amount,
-         filtration,
-      },
-   })
+export const getEqTypeListApi = ({
+  page = 1,
+  amount = 10,
+  filtration = '',
+}) => {
+  return request({
+    method: 'POST',
+    url: EQ + '/getEquipmentType',
+    data: {
+      page,
+      amount,
+      filtration,
+    },
+  })
 }
 /**
  * 新增设备类型
@@ -29,73 +34,73 @@ export const getEqTypeListApi = ({ page = 1, amount = 10, filtration = '' }) => 
  * @returns Promise
  */
 export const addEqTypeApi = data => {
-   return request({
-      method: 'POST',
-      url: '/addEquipmentMessage',
-      data,
-   })
+  return request({
+    method: 'POST',
+    url: EQ + '/addEquipmentMessage',
+    data,
+  })
 }
 /**
  *
- * @param {Object} data 
+ * @param {Object} data
  * 模板ID	id	Int
-设备属性	equipment_attribute	String
-设备类型	equipment_type	List(String)
-位号	position_number	Object
-位号ID	base_id	Int
-位号类型	base_name	String
-位号单位	unit	String
-波形分析	wave_spectrum	Int
-时域分析	time_domain	Int
-频域分析	frequency_domain	Int
+ 设备属性	equipment_attribute	String
+ 设备类型	equipment_type	List(String)
+ 位号	position_number	Object
+ 位号ID	base_id	Int
+ 位号类型	base_name	String
+ 位号单位	unit	String
+ 波形分析	wave_spectrum	Int
+ 时域分析	time_domain	Int
+ 频域分析	frequency_domain	Int
  * @returns Promise
  */
 export const editEqTypeApi = data => {
-   return request({
-      method: 'POST',
-      url: '/updateEquipmentType',
-      data,
-   })
+  return request({
+    method: 'POST',
+    url: EQ + '/updateEquipmentType',
+    data,
+  })
 }
 /**
  * 根据设备属性和类型确定位号
  * @param {Object} data
  * equipment_attribute	String
-equipment_type	List(String)
+ equipment_type	List(String)
  * @returns
  */
 export const getEqbitNameApi = data => {
-   return request({
-      method: 'POST',
-      url: '/getEquipmentMessage',
-      data,
-   })
+  return request({
+    method: 'POST',
+    url: EQ + '/getEquipmentMessage',
+    data,
+  })
 }
 export const deleteEquipmentTypeApi = id => {
-   return request({
-      method: 'POST',
-      url: '/deleteEquipmentType',
-      data: {
-         id,
-      },
-   })
+  return request({
+    method: 'POST',
+    url: EQ + '/deleteEquipmentType',
+    data: {
+      id,
+    },
+  })
 }
 /**
  * 获取设备属性和设备类型
  * @returns Promise
  */
 export const getEquipInitMessageApi = () => {
-   return request({
-      // url: '/message',
-      url: '/message/equipInitMessage',
-   })
+  return request({
+    // url: '/message',
+    url: EQ + '/message/equipInitMessage',
+  })
 }
 /**
  * 获取所有的位号
  * @returns Promise
  */
 export const getBaseNameApi = () => {
-   return request({
-      url: '/getBaseName',
-   })
+  return request({
+    url: EQ + '/getBaseName',
+  })
 }
