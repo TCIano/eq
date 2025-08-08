@@ -6,12 +6,24 @@
       class="drawer-dialog-wrapper"
       @close="onCancel"
   >
-    <template #extra>
+    <div
+        :style="{
+          position: 'absolute',
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e9e9e9',
+          padding: '10px 16px',
+          background: '#fff',
+          textAlign: 'right',
+          zIndex: 1,
+        }"
+    >
       <a-space>
         <a-button @click="onCancel">取消</a-button>
         <a-button type="primary" @click="onConfirm">确定</a-button>
       </a-space>
-    </template>
+    </div>
     <div>
       <slot name="content"></slot>
     </div>

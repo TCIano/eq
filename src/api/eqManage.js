@@ -7,7 +7,7 @@ import { EQ } from '@/api/index'
  */
 export const getOriginationApi = () => {
   return request({
-    url: '/getOrganizationTree',
+    url: '/getOrgTree',
     // url: 'http://127.0.0.1:4523/m1/2242345-0-default/getOrganizationTree',
   })
 }
@@ -133,6 +133,20 @@ export const getEquipmentListApi = ({
   })
 }
 /**
+ * 获取组织结构下拉框选中时组织机构下的设备
+ * @param org_id
+ * @returns {*}
+ */
+export const getSelectEquipmentByOrg = (org_id) => {
+  return request({
+    method: 'POST',
+    url: EQ + '/getEquipmentByOrg',
+    data: {
+      org_id,
+    },
+  })
+}
+/**
  * 获取设备实例
  * @param {String} equipment_id
  * @returns
@@ -213,8 +227,8 @@ export const getHistoryShowApi = data => {
 /**
  * 模型训练
  * @param {Object} data
- * 设备ID	equipment_id	String
- * 数据ID	record_id	List(Int)
+ *
+ *
  * @returns
  */
 export const trainModelApi = data => {
@@ -248,3 +262,16 @@ export const deleteHistoryDataApi = record_id => {
     },
   })
 }
+/**
+ * 保存训练结果
+ * @param data
+ * @returns {*}
+ */
+export const saveTrainResult = (data) => {
+  return request({
+    method: 'POST',
+    url: '/saveTrainTag',
+    data,
+  })
+}
+

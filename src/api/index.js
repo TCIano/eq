@@ -1,3 +1,5 @@
 export * from './eqType'
 
-export const EQ = '/equipment'
+export const EQ = ''
+
+export const ORG = ''

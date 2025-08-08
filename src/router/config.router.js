@@ -58,13 +58,13 @@ export default [
     keepAlive: false,
     component: () => import('@/view/eqMaintenance'),
   },
-  {
-    display: false,
-    name: '设备维修预警详情',
-    path: '/equipmentMaintenanceDetail',
-    keepAlive: false,
-    component: () => import('@/view/eqMaintenance/eqMaintenanceDetail'),
-  },
+  // {
+  //    display: false,
+  //    name: '设备维修预警详情',
+  //    path: '/equipmentMaintenanceDetail',
+  //    keepAlive: false,
+  //    component: () => import('@/view/eqMaintenance/eqMaintenanceDetail'),
+  // },
   {
     name: '设备故障预测统计',
     path: '/equipmentWaringStatic',
@@ -76,5 +76,17 @@ export default [
     path: '/equipmentOrg',
     keepAlive: false,
     component: () => import('@/view/organization/index.vue'),
+  },
+  {
+    name: '训练页面',
+    path: '/equipmentTrainPage',
+    component: () => import('@/view/eqManagement/components/equipmentTrain.vue'),
+    keepAlive: false,
+  },
+  {
+    name: '设备维修预警详情',
+    path: '/equipmentMaintenanceDetail',
+    component: () => import('@/view/eqManagement/components/equipmentDetail.vue'),
+    keepAlive: false,
   },
 ]

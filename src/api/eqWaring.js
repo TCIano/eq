@@ -13,7 +13,6 @@ export const getWarningListApi = ({
   page = 0,
   amount = 9,
   processed = null,
-  equipment_tree = [],
   filtration = '',
 }) => {
   return request({
@@ -40,6 +39,18 @@ export const getWarningDetailApi = fault_id => {
     url: EQ + '/warningDetail',
     // url: 'http://127.0.0.1:4523/m1/2242345-0-default/warningDetail',
     data: {
+      fault_id,
+    },
+  })
+}
+
+export const getWarningDetailTagApi = (id, position_type, fault_id) => {
+  return request({
+    method: 'POST',
+    url: EQ + '/warningDetailTag',
+    data: {
+      id,
+      position_type,
       fault_id,
     },
   })

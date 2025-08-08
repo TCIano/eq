@@ -1,6 +1,6 @@
 <script>
 import DrawerDialog from '@/components/DrawerDialog.vue'
-import { getOrgApi } from '@/api/org'
+import { createOrgApi, deleteOrgApi, editOrgApi, getOrgApi } from '@/api/org'
 
 export default {
   name: "Organization-com",
@@ -9,6 +9,21 @@ export default {
     return {
       tableHeight: `calc(100vh - 20px - 24px - 10px - (21 + 16 * 2)px - 20px)`,
       tableData: [],
+      title: '',
+      labelCol: { span: 6 },
+      wrapperCol: { span: 15 },
+      options: [],
+      fieldNames: {
+        label: 'name',
+        value: 'id',
+        children: 'children',
+      },
+      formData: {
+        name: '',
+        parentId: '',
+        sortNumber: 0,
+        parentNodePath: [],
+      },
       columns: [
         {
           title: '名称',
@@ -33,9 +48,98 @@ export default {
   methods: {
     onOpenDia() {
       this.$refs.dialog.show()
+      this.title = '增加'
+    },
+    //根据根节点获取树型数据中某个节点的路径
+    getNodePath(node, isIncludeCurrentNode = false) {
+      const pathList = this.getPathList(node)
+      //在节点路径数组中重新查找当前节点所在的路径
+      const currentPath = pathList.find(path => path.find(item => item === node))
+      //去掉数组中的最后一个元素
+      console.log(currentPath)
+      return isIncludeCurrentNode ? currentPath : currentPath.slice(0, -1)
+      
+    },
+    getPathList(currentNodeId) {
+      const pathList = []
+      const traverse = (node, path = []) => {
+        path.push(node.id)
+        if (node.id === currentNodeId) {
+          return [...path]
+        }
+        if (node.children && node.children.length > 0) {
+          for (const child of node.children) {
+            const result = traverse(child, [...path])
+            if (result) return result
+          }
+        }
+        return null
+      }
+      this.tableData.forEach((item) => {
+        pathList.push(traverse(item))
+      })
+      return pathList
     },
     async getOrg() {
-      this.tableData = [await getOrgApi().data]
+      const { result } = await getOrgApi()
+      this.tableData = [result]
+      this.options = [result]
+    },
+    onEdit(record) {
+      this.title = '修改'
+      this.$refs.dialog.show()
+      this.formData = {
+        id: record.id,
+        name: record.name,
+        parentId: record.parentNode || '',
+        sortNumber: record.sortNumber,
+        parentNodePath: this.getNodePath(record.id),
+      }
+      
+    },
+    onAdd(record) {
+      this.title = '增加'
+      this.$refs.dialog.show()
+      this.formData.parentNodePath = this.getNodePath(record.id, true)
+    },
+    reset() {
+      this.formData = {
+        id: '',
+        name: '',
+        parentId: '',
+        sortNumber: 0,
+        parentNodePath: [],
+      }
+    },
+    async onConfirm() {
+      if (this.title === '增加') {
+        console.log(this.formData.parentNodePath)
+        await createOrgApi({
+          name: this.formData.name,
+          fatherId: this.formData.parentNodePath.length
+              ? this.formData.parentNodePath[this.formData.parentNodePath.length - 1]
+              : '',
+          sortNumber: this.formData.sortNumber,
+        })
+      } else {
+        await editOrgApi({
+          id: this.formData.id,
+          name: this.formData.name,
+          fatherId: this.formData.parentNodePath.length
+              ? this.formData.parentNodePath[this.formData.parentNodePath.length - 1]
+              : '',
+          sortNumber: this.formData.sortNumber,
+        })
+        
+      }
+      await this.getOrg()
+      this.reset()
+      await this.$refs.dialog?.close()
+    },
+    async onDelete(record) {
+      await deleteOrgApi(record.id)
+      this.$message.success('删除成功')
+      await this.getOrg()
     },
   },
   mounted() {
@@ -60,6 +164,7 @@ export default {
     </div>
     <div class="table_wrapper">
       <a-table
+          v-if="tableData && tableData.length > 0"
           :columns="columns"
           :dataSource="tableData"
           :defaultExpandAllRows="true"
@@ -68,16 +173,16 @@ export default {
           bordered
           row-key="id"
       >
-        <template slot="action" slot-scope="{ record }">
+        <template slot="action" slot-scope="record">
           <a-space>
-            
             <a-button
                 ghost
                 icon="edit"
                 size="small"
                 type="primary"
                 @click="onEdit(record)"
-            >修改
+            >
+              修改
             </a-button>
             <a-button
                 icon="plus"
@@ -87,44 +192,50 @@ export default {
             </a-button>
             
             <a-popconfirm title="是否删除？" @confirm="onDelete(record)">
-              <a-button danger icon="delete" size="small">删除</a-button>
+              <a-button icon="delete" size="small" type="danger">删除</a-button>
             </a-popconfirm>
           </a-space>
         
         </template>
-        <!--        <template #bodyCell="{ record, index, text, column }">-->
-        <!--          <template v-if="column.key === 'nodeType'">-->
-        <!--            <basic-tag :name="text" />-->
-        <!--          </template>-->
-        <!--          <template v-if="column.key === 'action'">-->
-        <!--            <a-space>-->
-        <!--              <a-button-->
-        <!--                  :icon="edit"-->
-        <!--                  ghost-->
-        <!--                  size="small"-->
-        <!--                  type="primary"-->
-        <!--                  @click="onEdit(record)"-->
-        <!--              >修改-->
-        <!--              </a-button>-->
-        <!--              <a-button-->
-        <!--                  :disabled="record.nodeType === NodeType.DEVICE"-->
-        <!--                  :icon="plus"-->
-        <!--                  size="small"-->
-        <!--                  @click="onAdd(record)"-->
-        <!--              >添加-->
-        <!--              </a-button>-->
-        <!--              -->
-        <!--              <a-popconfirm title="是否删除？" @confirm="onDelete(record)">-->
-        <!--                <a-button :icon="DeleteOutlined" danger size="small">删除</a-button>-->
-        <!--              </a-popconfirm>-->
-        <!--            </a-space>-->
-        <!--          </template>-->
-        <!--        </template>-->
+      
       </a-table>
     </div>
-    <drawer-dialog ref="dialog">
+    <drawer-dialog ref="dialog" :title="title" :width="500" @cancel="reset" @confirm="onConfirm">
       <template #content>
-        <div>1212</div>
+        <a-form
+            ref="facForm"
+            :label-col="labelCol"
+            :model="formData"
+            :wrapper-col="wrapperCol"
+        >
+          <a-form-item label="父节点">
+            <a-cascader
+                v-model="formData.parentNodePath"
+                :fieldNames="fieldNames"
+                :options="options"
+                change-on-select
+                placeholder="请选择父节点"
+            >
+            </a-cascader>
+          </a-form-item>
+          <a-form-item
+              :rules="[{ required: true, trigger: 'blur' }]"
+              label="工厂节点名称"
+              name="name"
+          >
+            <a-input v-model="formData.name" placeholder="请输入工厂节点名称"></a-input>
+          </a-form-item>
+          
+          
+          <a-form-item label="排序">
+            <a-input-number
+                v-model.number="formData.sortNumber"
+                :min="0"
+                placeholder="请输入节点排序"
+                style="width: 100%"
+            ></a-input-number>
+          </a-form-item>
+        </a-form>
       </template>
     </drawer-dialog>
   </div>
