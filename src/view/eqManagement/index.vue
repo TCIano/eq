@@ -66,7 +66,7 @@
                                :title="item.equipment_name + item.equipment_id"
                                class="truncate ..."
                            >
-                              {{ item.equipment_name + item.equipment_id }}
+                              {{ item.equipment_name }}
                            </span>
                 </template>
                 <!-- <a-avatar slot="avatar" src="" /> -->
@@ -123,12 +123,12 @@ export default {
       currentPage: 1,
       pageSize: 19,
       total: 0,
-      equipment_tree: [],
+      equipment_tree: '',
     }
   },
   methods: {
     selectOri(value, e) {
-      this.equipment_tree = value[0]?.split(',')
+      this.equipment_tree = value[0]
       this.getEquipmentList()
     },
     pageChange(page) {
@@ -144,7 +144,7 @@ export default {
       } = await getEquipmentListApi({
         amount: this.pageSize,
         page: this.currentPage,
-        filtration: this.equipment_tree,
+        org_id: this.equipment_tree,
       })
       this.total = total_amount
       this.eqList = datas

@@ -56,7 +56,6 @@ export default {
       //在节点路径数组中重新查找当前节点所在的路径
       const currentPath = pathList.find(path => path.find(item => item === node))
       //去掉数组中的最后一个元素
-      console.log(currentPath)
       return isIncludeCurrentNode ? currentPath : currentPath.slice(0, -1)
       
     },

@@ -9,7 +9,7 @@ import { EQ } from '@/api/index'
 export const getEquipmentMonitorApi = ({
   page = 0,
   amount = 9,
-  filtration = [],
+  org_id = '',
 }) => {
   return request({
     method: 'POST',
@@ -18,7 +18,7 @@ export const getEquipmentMonitorApi = ({
     data: {
       amount,
       page,
-      filtration,
+      org_id,
     },
   })
 }

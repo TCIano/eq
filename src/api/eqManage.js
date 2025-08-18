@@ -37,6 +37,22 @@ export const getEqNameApi = ({
   })
 }
 /**
+ * 根据组织机构获取设备列表
+ * @param org_id 组织机构ID
+ * @param attribute_id 设备属性ID
+ * @returns {Promise<axios.AxiosResponse<any>> | *}
+ */
+export const getExampleListApi = (org_id, attribute_id) => {
+  return request({
+    method: 'POST',
+    url: '/getExampleList',
+    data: {
+      org_id,
+      attribute_id,
+    },
+  })
+}
+/**
  * 获取模板位号
  * @param {Object} data
  * name
@@ -46,7 +62,8 @@ export const getEqNameApi = ({
 export const getModeBitApi = data => {
   return request({
     method: 'POST',
-    url: '/getPositionList',
+    // url: '/getPositionList',
+    url: '/getBaseTagsByType',
     data,
   })
 }
@@ -119,7 +136,7 @@ export const updateEquipmentExampleApi = data => {
 export const getEquipmentListApi = ({
   page = 0,
   amount = 0,
-  filtration = [],
+  org_id = '',
 }) => {
   return request({
     method: 'POST',
@@ -128,7 +145,7 @@ export const getEquipmentListApi = ({
     data: {
       amount,
       page,
-      filtration,
+      org_id,
     },
   })
 }
@@ -273,5 +290,17 @@ export const saveTrainResult = (data) => {
     url: '/saveTrainTag',
     data,
   })
+}
+/**
+ * 获取设备详情用于修改
+ * @returns {Promise<axios.AxiosResponse<any>> | *}
+ */
+export const getEquipmentDetailForModifyApi = (equipment_id) => {
+  return request({
+    method: "POST",
+    url: '/getEquipmentDetailForModify',
+    data: { equipment_id },
+  })
+
 }
 

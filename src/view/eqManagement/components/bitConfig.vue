@@ -1,29 +1,39 @@
 <template>
   <div>
-    <a-form-model-item label="监控数据">
-      <a-select v-model="selectBit" mode="multiple" @change="onSelect">
-        <a-select-option
-            v-for="item in bitList.position_number"
-            :key="item"
-            :disabled="selectBit.length >= 2 && selectBit.findIndex(o => o === item) === -1"
-        >
-          {{ item }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
+    <a-row :gutter="[15, 35]"
+           align="middle"
+           justify="start"
+           type="flex">
+      <a-col :span="3">
+        <h3>监控数据 :</h3>
+      </a-col>
+      <a-col :span="5">
+        <a-select v-model="selectBit" mode="multiple" placeholder="请选择监控数据"
+                  style="width:100%;"
+                  @change="onSelect">
+          <a-select-option
+              v-for="item in bitList.position_number"
+              :key="item.message_id"
+              :disabled="selectBit.length >= 2 && selectBit.findIndex(o => o === item.message_id) === -1"
+          >
+            {{ item.position_name }}
+          </a-select-option>
+        </a-select>
+      </a-col>
+    </a-row>
     <a-row
         v-for="(item, index) in bitList.position_number"
         :key="item.id"
         :gutter="[15, 35]"
         align="middle"
-        justify="center"
+        justify="start"
         type="flex"
     >
       <a-col :span="3">
         <h3>{{ item.position_type }} :</h3>
       </a-col>
       <a-col :span="5">
-        <a-input v-model.trim="item.position_name" placeholder="请输入对应名称"></a-input>
+        <a-input v-model.trim="item.position_name" placeholder="请输入对应名称" @change="onNameChange"></a-input>
       </a-col>
       <a-col :span="2">
         <a-input v-model.trim="item.unit" placeholder="请输入单位"></a-input>
@@ -81,9 +91,24 @@ export default {
     },
   },
   data() {
-    return {}
+    return {
+      selectBit: [],
+      list: [],
+    }
   },
   methods: {
+    onNameChange() {
+    
+    },
+    getBitList() {
+      this.list = this.bitList.position_number.filter(item => item.message_id)
+      this.selectBit = this.list.filter(item => item.comprehensive_show).map(obj => obj.message_id)
+    },
+    onSelect() {
+      this.bitList.position_number.forEach(item => {
+        item.comprehensive_show = this.selectBit.includes(item.message_id) ? 1 : 0
+      })
+    },
     copyBit(param, index) {
       let message_id = -this.bitList.position_number.length
       this.bitList.position_number.splice(index + 1, 0, {
@@ -91,11 +116,11 @@ export default {
         position_type: param.position_type,
         unit: param.unit,
         position_name: param.position_name,
-        online_show: 0,
-        comprehensive_show: 0,
+        // online_show: 0,
+        // comprehensive_show: 0,
         position_number: param.position_number,
-        upper: param.upper,
-        lower: param.lower,
+        // upper: param.upper,
+        // lower: param.lower,
       })
     },
     deleteBit(id) {

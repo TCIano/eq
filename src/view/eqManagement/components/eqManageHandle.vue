@@ -21,7 +21,7 @@
             :bitList="bitConfigForm"
             :title="title"
         />
-        <online-show v-show="current === 2" ref="onlineShow" />
+        <!--        <online-show v-show="current === 2" ref="onlineShow" />-->
       </div>
       <div class="steps-action">
         <a-button v-if="current > 0" style="margin-right: 8px" @click="prev">上一步</a-button>
@@ -44,7 +44,7 @@
 <script>
 import {
   addEquipmentExampleApi,
-  getEquipmentDetailApi,
+  getEquipmentDetailForModifyApi,
   getModeBitApi,
   updateEquipmentExampleApi,
 } from '@/api/eqManage'
@@ -94,6 +94,7 @@ export default {
                 position_number: list,
               }
             }
+            this.$refs.bitConfig.getBitList()
           }
         })
       } else {
@@ -101,9 +102,9 @@ export default {
       }
       
       if (this.current === 2) {
-        let bitList = this.$refs.bitConfig.bitList.position_number
-        this.$refs.onlineShow.getUsers(this.onlineShowForm)
-        this.$refs.onlineShow.getBitList(bitList)
+        // let bitList = this.$refs.bitConfig.bitList.position_number
+        // this.$refs.onlineShow.getUsers(this.onlineShowForm)
+        
       }
     },
     prev() {
@@ -113,24 +114,45 @@ export default {
     
     async submit() {
       let basicInfo = this.$refs.basicInfo.form
-      let onlineShow = this.$refs.onlineShow.list
-      const users = this.$refs.onlineShow.tags
+      let position_number = this.bitConfigForm.position_number.map(item => ({
+        position_name: item.position_name,
+        position_number: item.position_number,
+        position_type: item.position_type,
+        unit: item.unit,
+        comprehensive_show: item.comprehensive_show,
+        lower: item.lower,
+        upper: item.upper,
+        id: item.message_id,
+      }))
+      // let onlineShow = this.$refs.onlineShow.list
+      
+      // const users = this.$refs.onlineShow.tags
       let option = {
-        ...basicInfo,
-        position_number: [...onlineShow],
-        users,
+        equipment_id: basicInfo.equipment_id,
+        equipment_name: basicInfo.equipment_name,
+        equipment_status: basicInfo.equipment_status,
+        org_id: basicInfo.equipment_tree,
+        type_id: basicInfo.equipment_type,
+        attribute_id: basicInfo.equipment_attribute,
+        position_number,
+        // users,
       }
       this.submitLoading = true
-      if (this.title === '新增') {
-        await addEquipmentExampleApi(option)
-        this.$message.success('新增成功')
-        this.submitLoading = false
-      } else {
-        await updateEquipmentExampleApi(option)
-        this.$message.success('修改成功')
+      try {
+        if (this.title === '新增') {
+          await addEquipmentExampleApi(option)
+          this.$message.success('新增成功')
+          this.submitLoading = false
+        } else {
+          await updateEquipmentExampleApi(option)
+          this.$message.success('修改成功')
+          this.submitLoading = false
+        }
+        this.$router.go(-1)
+      } catch (e) {
         this.submitLoading = false
       }
-      this.$router.go(-1)
+      
     },
     getType(param) {
       this.currentEqType = param
@@ -138,15 +160,15 @@ export default {
     //根据设备类型获取模位号
     async getBitByType() {
       let otherOption = {
-        comprehensive_show: 0,
-        online_show: 0,
+        // comprehensive_show: 0,
+        // online_show: 0,
         position_name: '',
         position_number: '',
-        upper: 0,
-        lower: 0,
+        // upper: 0,
+        // lower: 0,
       }
       let { result } = await getModeBitApi({
-        equipment_type: this.$refs.basicInfo.form.equipment_type,
+        type_id: this.$refs.basicInfo.form.equipment_type,
       })
       
       result.forEach((element, index) => {
@@ -161,32 +183,34 @@ export default {
       this.title = this.$route.query.title
       if (this.title === '修改') {
         let id = this.$route.query.id
-        let { result } = await getEquipmentDetailApi(id)
+        let { result } = await getEquipmentDetailForModifyApi(id)
         let {
-          equipment_attribute,
+          attribute_id,
           equipment_id,
           equipment_name,
           equipment_status,
-          equipment_tree,
-          equipment_type,
+          org_id,
+          type_id,
           position_number,
           message_id,
-          isopen,
-          users,
+          // isopen,
+          // users,
         } = deepClone(result)
-        this.onlineShowForm = users
+        //获取设备position_number
+        
+        // this.onlineShowForm = users
         this.bitConfigForm = {
           position_number,
         }
         this.basicInfoForm = {
-          equipment_attribute,
+          equipment_attribute: attribute_id,
           equipment_id,
           message_id,
           equipment_name,
-          isopen,
+          // isopen,
           equipment_status,
-          equipment_tree,
-          equipment_type,
+          equipment_tree: org_id,
+          equipment_type: type_id,
         }
       } else {
         this.basicInfoForm = {

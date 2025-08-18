@@ -64,8 +64,7 @@ export const getWarningDetailTagApi = (id, position_type, fault_id) => {
  */
 export const getWarningStatisticsApi = ({
   month = '',
-  equipment_tree = [],
-  filtration = '',
+  org_id = '',
 }) => {
   return request({
     method: 'POST',
@@ -73,8 +72,19 @@ export const getWarningStatisticsApi = ({
     // url: 'http://127.0.0.1:4523/m1/2242345-0-default/warningStatistics',
     data: {
       month,
-      equipment_tree,
-      filtration,
+      org_id,
     },
+  })
+}
+/**
+ * 设置设备维修状态
+ * @param data
+ * @returns {*}
+ */
+export const setWarningStatusApi = (data) => {
+  return request({
+    method: 'POST',
+    url: EQ + '/confirmWarning',
+    data,
   })
 }

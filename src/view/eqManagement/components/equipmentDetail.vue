@@ -87,8 +87,10 @@
                 {{ equipmentInfo.duration }}
               </a-descriptions-item>
               <a-descriptions-item label="处理状态">
-                <a-tag :color="getStatusColor(equipmentInfo.processed)">
-                  {{ equipmentInfo.processed ? '已处理' : '未处理' }}
+                <a-tag :color="getStatusColor(equipmentInfo.processed)"
+                       @click="onOpenDialog()">
+                  <!--                  误报：2（橙色）-->
+                  {{ getStatusName(equipmentInfo.processed) }}
                 </a-tag>
               </a-descriptions-item>
               <a-descriptions-item label="处理信息">
@@ -96,7 +98,31 @@
               </a-descriptions-item>
             </a-descriptions>
           </div>
-        
+          <a-drawer :visible="drawerVisible" title="清理信息" width="400" @close="onCancel">
+            <a-form-item label="处理信息">
+              <a-textarea v-model="processMessage" />
+            </a-form-item>
+            <div
+                :style="{
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e8e8e8',
+          padding: '10px 16px',
+          textAlign: 'right',
+          left: 0,
+          background: '#fff',
+          borderRadius: '0 0 4px 4px',
+        }"
+            >
+              <a-button style="marginRight: 8px" @click="onCancel">
+                取消
+              </a-button>
+              <a-button type="primary" @click="onHandleStatus">
+                确认
+              </a-button>
+            </div>
+          </a-drawer>
         
         </a-card>
       </a-col>
@@ -106,7 +132,7 @@
 
 <script>
 import eChart from '@/components/eChart.vue'
-import { getWarningDetailApi, getWarningDetailTagApi } from '@/api/eqWaring'
+import { getWarningDetailApi, getWarningDetailTagApi, setWarningStatusApi } from '@/api/eqWaring'
 
 export default {
   name: 'EquipmentDetail',
@@ -115,6 +141,7 @@ export default {
   },
   data() {
     return {
+      drawerVisible: false,
       currentType: '',
       currentTypes: [],
       selectedPrediction: 'result1',
@@ -134,9 +161,31 @@ export default {
       },
       monitoringPoints: [],
       trendChartOption: {},
+      processMessage: '',
     }
   },
   methods: {
+    onOpenDialog() {
+      if (!this.equipmentInfo.processed) {
+        
+        this.drawerVisible = true
+        this.processMessage = this.equipmentInfo.process_message || ''
+      }
+    },
+    onCancel() {
+      this.drawerVisible = false
+      this.processMessage = ''
+    },
+    async onHandleStatus() {
+      await setWarningStatusApi({
+        fault_id: this.$route.query.fault_id,
+        processed: 1, // 切换状态：未处理 -> 已处理 或 已处理 -> 误报
+        process_message: this.processMessage,
+      })
+      this.equipmentInfo.processed = 1
+      this.equipmentInfo.process_message = this.processMessage
+      this.drawerVisible = false
+    },
     createBarChartOption(categories, series1Data, series2Data, markLineValue) {
       return {
         tooltip: {
@@ -170,9 +219,7 @@ export default {
             name: '一阶导',
             type: 'bar',
             data: series1Data,
-            itemStyle: {
-              color: '#1890ff',
-            },
+            
             // 阈值线
             markLine: {
               lineStyle: {
@@ -205,8 +252,18 @@ export default {
       const statusColors = {
         0: '#e68086',
         1: '#608eef',
+        2: '#fa8c16', // 误报
       }
       return statusColors[status]
+    },
+    
+    getStatusName(status) {
+      const statusNames = {
+        0: '未处理',
+        1: '已处理',
+        2: '误报',
+      }
+      return statusNames[status]
     },
     async onChangeType(value) {
       const currentType = this.currentTypes.find(item => item.id === value);
@@ -286,7 +343,12 @@ export default {
           name: item.name,
           chartOption: this.createBarChartOption(
               item.curve_list.map(t => t.time),
-              item.curve_list.map(t => t.diff),
+              item.curve_list.map(t => ({
+                value: t.diff,
+                itemStyle: {
+                  color: t.warning ? 'red' : '#1890ff',
+                },
+              })),
               item.curve_list.map(t => t.value),
               item.threshold.threshold1,
           ),

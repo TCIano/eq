@@ -94,11 +94,11 @@
               <a-form-model ref="formRef" :label-col="{ span: 6 }" :model="currentNode.train_message"
                             :wrapper-col="{ span:12 }">
                 <a-form-model-item label="阈值1" prop="threshold1" required>
-                  <a-input-number v-model.number="currentNode.train_message.threshold1" placeholder="请输入阈值1"
+                  <a-input-number v-model="currentNode.train_message .threshold1" placeholder="请输入阈值1"
                                   style="width: 100%"></a-input-number>
                 </a-form-model-item>
                 <a-form-model-item label="阈值2" prop="threshold2" required>
-                  <a-input-number v-model.number="currentNode.train_message.threshold2" placeholder="请输入阈值2"
+                  <a-input-number v-model="currentNode.train_message.threshold2" placeholder="请输入阈值2"
                                   style="width: 100%"></a-input-number>
                 </a-form-model-item>
                 <a-form-model-item label="训练数据长度" prop="size">
@@ -160,8 +160,8 @@ const currentNode = ref({
   position_type: "",
   train_message: {
     size: 0,
-    threshold1: 0,
-    threshold2: 0,
+    threshold1: '0',
+    threshold2: '0',
   },
   unit: '',
   upper: null,
@@ -261,9 +261,18 @@ const setCurrentChart = (res) => {
       boundaryGap: false,
       data: currentChartInfo.value.values.map(item => item.timestamp),
     },
-    yAxis: {
-      type: 'value',
-    },
+    yAxis: [
+      {
+        type: 'value',
+      },
+      {
+        type: 'value',
+        // position: 'right',
+        // axisLabel: {
+        //   formatter: '{value} %',
+        // },
+      },
+    ],
     series: [
       {
         name: currentChartInfo.value.position_number,
@@ -273,12 +282,16 @@ const setCurrentChart = (res) => {
       },
       {
         name: '训练结果',
+        yAxisIndex: 1,
         type: 'bar',
         smooth: true,
-        data: res.map(item => item.value),
-        itemStyle: {
-          color: res.warning ? 'blue' : 'red',
-        },
+        data: res.map(item => ({
+          value: item.diff,
+          itemStyle: {
+            color: item.warning ? 'red' : '#1890ff',
+          },
+        })),
+        
       },
     
     ],
@@ -292,9 +305,9 @@ const startTraining = async () => {
     isTraining.value = true
     const { result } = await trainModelApi({
       record_id: currentChartInfo.value.record_id,
-      size: currentNode.value.train_message.size,
-      threshold1: currentNode.value.train_message.threshold1,
-      threshold2: currentNode.value.train_message.threshold2,
+      size: currentNode.value.train_message.size || 0,
+      threshold1: currentNode.value.train_message.threshold1 || 0,
+      threshold2: currentNode.value.train_message.threshold2 || 0,
     })
     
     setCurrentChart(result)
@@ -319,24 +332,25 @@ const onSaveTrain = () => {
   })
   
 }
+// const state = reactive({
+//   count: 0,
+// })
+//
+// function f1() {
+//   console.log(1)
+//   return state.count
+// }
+//
+// function f2() {
+//   console.log(2)
+// }
+//
+// watch(f1, f2)
+// state.count++
 const cancelTraining = () => {
   trainParams.modelName = ''
   trainParams.trainingDataset = ''
   console.log('取消训练')
-}
-
-const loadTrainingData = async () => {
-  try {
-    chartLoading.value = true
-    // 模拟数据加载
-    setTimeout(() => {
-      chartLoading.value = false
-    }, 1000)
-  } catch (error) {
-    console.error('加载数据失败：', error)
-  } finally {
-    chartLoading.value = false
-  }
 }
 
 // 生命周期

@@ -104,3 +104,60 @@ export const getBaseNameApi = () => {
     url: EQ + '/getBaseName',
   })
 }
+/**
+ * 对接设备管理系统-获取设备属性列表
+ * @returns {*}
+ */
+export const getAttributeListApi = () => {
+  return request({
+    url: EQ + '/getAttributeList',
+  })
+}
+/**
+ * 删除设备的基础信息
+ * @param id 基础信息id
+ * @returns {*}
+ */
+export const deleteEquipmentBaseApi = (id) => {
+  return request({
+    method: 'POST',
+    url: EQ + '/deleteEquipmentBase',
+    data: {
+      id,
+    },
+  })
+
+}
+/**
+ * 更新设备基础信息
+ * @param data 基础信息列表
+ * @returns {*}
+ */
+export const updateEquipmentBaseApi = (data) => {
+  return request({
+    method: 'POST',
+    url: EQ + '/updateEquipmentBase',
+    data,
+  })
+}
+/**
+ * 新增设备基础信息
+ * @param data
+ * @returns {*}
+ */
+export const addEquipmentBaseApi = (data) => {
+  return request({
+    method: 'POST',
+    url: EQ + '/addEquipmentBase',
+    data,
+  })
+}
+/**
+ * 获取所有设备类型（不分页）
+ * @returns {*}
+ */
+export const getEquipmentTypeWithoutPageApi = () => {
+  return request({
+    url: EQ + '/getEquipmentTypeWithoutPage',
+  })
+}

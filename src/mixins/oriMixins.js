@@ -1,4 +1,4 @@
-import { getOriginationApi } from '@/api/eqManage'
+import { getOrgApi } from '@/api/org'
 
 const dataList = []
 const generateList = data => {
@@ -56,10 +56,9 @@ export const oriMixins = {
     },
     //获取组织机构
     async getOrigination() {
-      const { result } = await getOriginationApi()
+      const { result } = await getOrgApi()
       this.gData = [result]
       generateList(this.gData)
-      console.log('获取组织机构', this.gData)
     },
   },
   created() {},
