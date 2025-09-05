@@ -120,7 +120,7 @@ export default {
   },
   data() {
     return {
-      title: '故障预测',
+      title: '故障监测',
       infoMessage: '',
       info: '',
       currentPage: 1,

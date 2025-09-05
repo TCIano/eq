@@ -57,7 +57,7 @@
           <template slot="title">
             <a-space>
               <a-icon style="color: red" type="team" />
-              <span>设备故障预测统计表</span>
+              <span>设备故障监测统计表</span>
             </a-space>
           </template>
           <a-table :columns="columns" :data-source="data" :scroll="{ y: 200 }" row-key="month">

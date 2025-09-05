@@ -4,11 +4,11 @@
       <div>
         <a-button style="float: left" type="primary" @click="onBack">返回</a-button>
       </div>
-      {{ equipment_name + equipment_id }}综合监视
+      {{ equipment_name }}综合监视
     </div>
     <img
         v-if="$route.query.equipment_picture"
-        :src="getEquipmentImage($route.query.equipment_picture)"
+        :src="require('../../assets/equipment/' + $route.query.equipment_picture)"
         class="bgPicture"
     />
     <a-tabs
@@ -23,7 +23,7 @@
       <!--      <a-tab-pane key="2" tab="时域分析">-->
       <!--        <time-domain :equipment_id="equipment_id" :timeDomainList="mapList[0].list" />-->
       <!--      </a-tab-pane>-->
-      <a-tab-pane key="3" tab="故障预测">
+      <a-tab-pane key="3" tab="故障监测">
         <fault-prediction ref="faultPre" :equipment_id="equipment_id" />
       </a-tab-pane>
       <!--      <a-tab-pane key="4" tab="故障诊断">-->

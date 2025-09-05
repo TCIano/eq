@@ -39,7 +39,7 @@
           <img
               slot="cover"
               :class="item.equipment_status === '1' ? 'img' : ''"
-              :src="getEquipmentImage(item.equipment_picture)"
+              :src="require('../../../assets/equipment/' + item.equipment_picture)"
               alt="example"
               style="width: 200px; height: 150px; margin: 0 auto;"
           />
@@ -108,7 +108,6 @@ export default {
       }
     },
   },
-  
   created() {},
   mounted() {
     console.log(this.eqInfo)

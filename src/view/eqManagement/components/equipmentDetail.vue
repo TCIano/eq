@@ -146,9 +146,9 @@ export default {
       currentTypes: [],
       selectedPrediction: 'result1',
       predictionOptions: [
-        { value: 'result1', label: '预测结果1' },
-        { value: 'result2', label: '预测结果2' },
-        { value: 'result3', label: '预测结果3' },
+        { value: 'result1', label: '监测结果1' },
+        { value: 'result2', label: '监测结果2' },
+        { value: 'result3', label: '监测结果3' },
       ],
       equipmentInfo: {
         equipment_name: '',
@@ -270,10 +270,6 @@ export default {
       const { result } = await getWarningDetailTagApi(currentType.id, currentType.position_type,
           this.$route.query.fault_id)
       this.changeTagChart(result.current_curve)
-    },
-    
-    loadPredictionData(predictionType) {
-      console.log('加载预测数据:', predictionType)
     },
     
     async initChartData() {
