@@ -21,7 +21,7 @@
                   :key="item.equipment_id"
                   :value="item.equipment_id"
               >
-                {{ item.equipment_name + item.equipment_id }}
+                {{ item.equipment_name }}
               </a-select-option>
             </a-select>
           </a-form-item>
