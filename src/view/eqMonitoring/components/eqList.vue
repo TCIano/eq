@@ -119,7 +119,7 @@ export default {
 .eq-list {
   cursor: pointer;
   height: 330px;
-  //overflow-y: scroll;
+  overflow-y: scroll;
   scroll-behavior: smooth;
   
   &::-webkit-scrollbar {

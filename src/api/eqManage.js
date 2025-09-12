@@ -303,4 +303,18 @@ export const getEquipmentDetailForModifyApi = (equipment_id) => {
   })
 
 }
+/**
+ * 删除设备中的位号
+ * @param id 设备位号 message_id
+ * @returns {*}
+ */
+export const deleteExampleDetailApi = (id) => {
+  return request({
+    method: 'POST',
+    url: '/deleteExampleDetail',
+    data: {
+      id,
+    },
+  })
+}
 
