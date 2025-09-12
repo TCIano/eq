@@ -57,7 +57,7 @@
       <!--                :show-search="{ filter }"-->
       <!--                placeholder="请选择设备类型"-->
       <!--                @change="getBitByType"-->
-      <!--            ></a-cascader>-->
+      <!--           ` ></a-cascader>-->
       <a-select
           v-model="form.equipment_type"
           :disabled="disabled"
@@ -74,17 +74,18 @@
       </a-select>
     </a-form-model-item>
     <a-form-model-item label="设备名称" prop="equipment_name">
-      <a-select
-          :disabled="disabled"
-          :value="form.equipment_name"
-          placeholder="请选择设备名称"
-          @change="nameChange"
-          @focus="getEqName"
-      >
-        <a-select-option v-for="item in equipNameList" :key="item.id" :value="item.id">
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
+      <!--      <a-select-->
+      <!--          :disabled="disabled"-->
+      <!--          :value="form.equipment_name"-->
+      <!--          placeholder="请选择设备名称"-->
+      <!--          @change="nameChange"-->
+      <!--          @focus="getEqName"-->
+      <!--      >-->
+      <!--        <a-select-option v-for="item in equipNameList" :key="item.id" :value="item.id">-->
+      <!--          {{ item.name }}-->
+      <!--        </a-select-option>-->
+      <!--      </a-select>-->
+      <a-input v-model="form.equipment_name" placeholder="请输入设备名称" />
     </a-form-model-item>
     <a-form-model-item label="状态位号" prop="equipment_status">
       <a-input v-model="form.equipment_status" placeholder="请输入状态位号"></a-input>

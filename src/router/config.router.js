@@ -89,4 +89,11 @@ export default [
     component: () => import('@/view/eqManagement/components/equipmentDetail.vue'),
     keepAlive: false,
   },
+
+  {
+    name: '设备基础信息',
+    path: '/baseName',
+    component: () => import('@/view/baseName/index.vue'),
+    
+  },
 ]
