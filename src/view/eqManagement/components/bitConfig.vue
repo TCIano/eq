@@ -80,6 +80,8 @@
 </template>
 
 <script>
+import { deleteExampleDetailApi } from '@/api/eqManage'
+
 export default {
   name: 'bitConfig',
   props: {
@@ -123,11 +125,17 @@ export default {
         // lower: param.lower,
       })
     },
-    deleteBit(id) {
+    async deleteBit(id) {
+      // id 为数字说明为新增的，直接删除
+      // 不是数字说明为已有的，就调用删除接口
       if (this.bitList.position_number.length === 1) return
       this.bitList.position_number = this.bitList.position_number.filter(
           item => item.message_id !== id,
       )
+      if (typeof id === 'string') {
+        await deleteExampleDetailApi(id)
+        this.$message.success('删除成功')
+      }
     },
   },
   
