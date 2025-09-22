@@ -22,7 +22,7 @@
           >
             <div
                 :id="
-                        item.equipment_status === '故障'
+                        item.equipment_status === '报警'
                            ? 'error'
                            : item.equipment_status === '正常'
                            ? 'success'
@@ -30,7 +30,7 @@
                      "
             ></div>
             <span
-                :title="item.equipment_name + item.equipment_id"
+                :title="item.equipment_name"
                 class="truncate ... eq-title"
             >
                      {{ item.equipment_name }}
