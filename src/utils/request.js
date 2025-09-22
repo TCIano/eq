@@ -1,5 +1,6 @@
 import { message } from 'ant-design-vue'
 import axios from 'axios'
+import Cookie from 'js-cookie'
 
 const request = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
@@ -7,7 +8,19 @@ const request = axios.create({
 })
 // let codeInfo = ['正常', '数据库访问错误', '访问实时数据库错误', '传参错误']
 //请求拦截器
-request.interceptors.request.use()
+request.interceptors.request.use(
+    (config) => {
+      //请求头添加token
+      // if (token) {
+      config.headers['token'] = Cookie.get('token') || ''
+      // }
+      return config
+    },
+
+    (error) => {
+      return Promise.reject(error)
+    },
+)
 //响应拦截器
 request.interceptors.response.use(
     response => {
