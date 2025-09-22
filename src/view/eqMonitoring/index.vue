@@ -10,7 +10,7 @@
                   :id="
                            item.name === '正常'
                               ? 'successLabel'
-                              : item.name === '故障'
+                              : item.name === '报警'
                               ? 'errorLabel'
                               : 'waringLabel'
                         "
