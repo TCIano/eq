@@ -196,8 +196,8 @@ export default {
         },
         legend: {},
         grid: {
-          left: '8%',
-          right: '9%',
+          left: '15%',
+          right: '15%',
           bottom: '15%',
           top: '17%',
         },
