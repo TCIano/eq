@@ -66,6 +66,8 @@
                                :title="item.equipment_name + item.equipment_id"
                                class="truncate ..."
                            >
+                             <a-icon v-if="!item.tag_status" style="color: red;position: absolute;top: 5px;left: 5px"
+                                     type="info-circle" />
                               {{ item.equipment_name }}
                            </span>
                 </template>

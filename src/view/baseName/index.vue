@@ -7,25 +7,23 @@
           <a-button icon="plus" type="primary" @click="addBaseName">新增</a-button>
         </a-space>
       </a-row>
-      <a-row>
-        <a-space>
-          <a-input v-model="pagination.filtration" placeholder="请输入关键字查询"></a-input>
-          <a-button icon="search" type="primary" @click="search">搜索</a-button>
-          <a-button icon="sync" @click="reset">重置</a-button>
-        </a-space>
-      </a-row>
+      <!--      <a-row>-->
+      <!--        <a-space>-->
+      <!--          <a-input v-model="pagination.filtration" placeholder="请输入关键字查询"></a-input>-->
+      <!--          <a-button icon="search" type="primary" @click="search">搜索</a-button>-->
+      <!--          <a-button icon="sync" @click="reset">重置</a-button>-->
+      <!--        </a-space>-->
+      <!--      </a-row>-->
     </a-row>
     
     <!-- 数据表格 -->
     <a-row>
-      <a-table 
-        :columns="columns" 
-        :data-source="baseNameData" 
-        :pagination="pagination" 
-        bordered 
-        row-key="id"
-        style="margin-top: 10px" 
-        @change="onChangePage"
+      <a-table
+          :columns="columns"
+          :data-source="baseNameData"
+          bordered
+          row-key="id"
+          style="margin-top: 10px"
       >
         <template slot="name" slot-scope="text">
           <span>{{ text }}</span>
@@ -44,11 +42,11 @@
         <template slot="action" slot-scope="text, record">
           <a-space>
             <a href="#" @click="editBaseName(record)">编辑</a>
-            <a-popconfirm 
-              cancel-text="取消" 
-              ok-text="确定" 
-              title="是否删除？" 
-              @confirm="deleteBaseName(record.id)"
+            <a-popconfirm
+                cancel-text="取消"
+                ok-text="确定"
+                title="是否删除？"
+                @confirm="deleteBaseName(record.id)"
             >
               <a href="#" style="color: red">删除</a>
             </a-popconfirm>
@@ -58,13 +56,13 @@
     </a-row>
     
     <!-- 新增/编辑弹窗 -->
-    <base-name-modal 
-      v-if="modalVisible" 
-      :form-data="formData" 
-      :title="title" 
-      :visible.sync="modalVisible"
-      @handleBaseName="handleBaseName" 
-      @reGetBaseNameList="reGetBaseNameList" 
+    <base-name-modal
+        v-if="modalVisible"
+        :form-data="formData"
+        :title="title"
+        :visible.sync="modalVisible"
+        @handleBaseName="handleBaseName"
+        @reGetBaseNameList="reGetBaseNameList"
     />
   </div>
 </template>
@@ -72,12 +70,8 @@
 <script>
 import { deepClone } from '@/utils'
 import BaseNameModal from './components/baseNameModal.vue'
-import { 
-  getBaseNameListApi, 
-  addBaseNameApi, 
-  editBaseNameApi, 
-  deleteBaseNameApi 
-} from '@/api/baseName'
+import { addBaseNameApi, deleteBaseNameApi, editBaseNameApi } from '@/api/baseName'
+import { getBaseNameApi } from '@/api'
 
 export default {
   name: 'BaseName',
@@ -92,35 +86,34 @@ export default {
         {
           key: 'name',
           align: 'center',
-          title: '基础数据名称',
+          title: '基础信息名称',
           width: '20%',
           dataIndex: 'name',
           scopedSlots: { customRender: 'name' },
         },
         {
-          key: 'type',
+          key: 'unit',
           align: 'center',
-          title: '数据类型',
+          title: '单位',
           width: '15%',
-          dataIndex: 'type',
-          scopedSlots: { customRender: 'type' },
+          dataIndex: 'unit',
         },
-        {
-          key: 'description',
-          align: 'center',
-          title: '描述',
-          width: '35%',
-          dataIndex: 'description',
-          scopedSlots: { customRender: 'description' },
-        },
-        {
-          key: 'status',
-          align: 'center',
-          title: '状态',
-          width: '15%',
-          dataIndex: 'status',
-          scopedSlots: { customRender: 'status' },
-        },
+        // {
+        //   key: 'description',
+        //   align: 'center',
+        //   title: '描述',
+        //   width: '35%',
+        //   dataIndex: 'description',
+        //   scopedSlots: { customRender: 'description' },
+        // },
+        // {
+        //   key: 'status',
+        //   align: 'center',
+        //   title: '状态',
+        //   width: '15%',
+        //   dataIndex: 'status',
+        //   scopedSlots: { customRender: 'status' },
+        // },
         {
           key: 'action',
           align: 'center',
@@ -151,82 +144,15 @@ export default {
       this.getBaseNameList()
     },
     
-    /**
-     * 获取基础数据列表
-     * @param {String} filtration 过滤关键字
-     */
-    async getBaseNameList(filtration) {
+    async getBaseNameList() {
       try {
-        let { current, pageSize } = this.pagination
-        const params = {
-          current,
-          pageSize,
-          filtration: filtration || this.keyName
-        }
         
-        const response = await getBaseNameListApi(params)
+        const { result } = await getBaseNameApi()
         
-        if (response && response.result) {
-          this.pagination.total = response.result.total_amount || 0
-          this.baseNameData = response.result.datas || []
-        } else {
-          // 如果API未实现，使用模拟数据
-          const mockData = {
-            result: {
-              datas: [
-                {
-                  id: 1,
-                  name: '温度传感器',
-                  type: '传感器',
-                  description: '用于监测设备温度的传感器',
-                  status: '启用',
-                  createTime: '2024-01-15 10:30:00'
-                },
-                {
-                  id: 2,
-                  name: '压力传感器',
-                  type: '传感器',
-                  description: '用于监测设备压力的传感器',
-                  status: '启用',
-                  createTime: '2024-01-16 14:20:00'
-                },
-                {
-                  id: 3,
-                  name: '振动传感器',
-                  type: '传感器',
-                  description: '用于监测设备振动的传感器',
-                  status: '禁用',
-                  createTime: '2024-01-17 09:15:00'
-                }
-              ],
-              total_amount: 3
-            }
-          }
-          this.pagination.total = mockData.result.total_amount
-          this.baseNameData = mockData.result.datas
-        }
+        this.baseNameData = result
       } catch (error) {
         this.$message.error('获取数据失败')
         console.error('获取基础数据列表失败:', error)
-        
-        // 错误时使用模拟数据
-        const mockData = {
-          result: {
-            datas: [
-              {
-                id: 1,
-                name: '温度传感器',
-                type: '传感器',
-                description: '用于监测设备温度的传感器',
-                status: '启用',
-                createTime: '2024-01-15 10:30:00'
-              }
-            ],
-            total_amount: 1
-          }
-        }
-        this.pagination.total = mockData.result.total_amount
-        this.baseNameData = mockData.result.datas
       }
     },
     
@@ -255,9 +181,7 @@ export default {
       this.modalVisible = true
       this.formData = {
         name: '',
-        type: '',
-        description: '',
-        status: '启用'
+        unit: '',
       }
     },
     
@@ -275,7 +199,7 @@ export default {
         }
         this.$message.success(title + '成功')
         this.modalVisible = false
-        this.getBaseNameList()
+        await this.getBaseNameList()
       } catch (error) {
         this.$message.error(title + '失败')
         console.error('处理基础数据失败:', error)
@@ -312,12 +236,12 @@ export default {
      */
     reGetBaseNameList() {
       this.getBaseNameList()
-    }
+    },
   },
   
   created() {
     this.getBaseNameList()
-  }
+  },
 }
 </script>
 

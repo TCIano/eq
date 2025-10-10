@@ -12,7 +12,7 @@ export const getBaseNameListApi = (params) => {
   return request({
     url: '/api/baseName/list',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -27,9 +27,9 @@ export const getBaseNameListApi = (params) => {
  */
 export const addBaseNameApi = (data) => {
   return request({
-    url: '/api/baseName/add',
+    url: '/addBaseName',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -45,9 +45,9 @@ export const addBaseNameApi = (data) => {
  */
 export const editBaseNameApi = (data) => {
   return request({
-    url: '/api/baseName/edit',
-    method: 'put',
-    data
+    url: '/updateBaseName',
+    method: 'post',
+    data,
   })
 }
 
@@ -58,19 +58,9 @@ export const editBaseNameApi = (data) => {
  */
 export const deleteBaseNameApi = (id) => {
   return request({
-    url: `/api/baseName/delete/${id}`,
-    method: 'delete'
+    url: `/deleteBaseName`,
+    method: 'post',
+    data: { id },
   })
 }
 
-/**
- * 获取基础数据详情
- * @param {Number} id 数据ID
- * @returns {Promise} 返回基础数据详情
- */
-export const getBaseNameDetailApi = (id) => {
-  return request({
-    url: `/api/baseName/detail/${id}`,
-    method: 'get'
-  })
-}
