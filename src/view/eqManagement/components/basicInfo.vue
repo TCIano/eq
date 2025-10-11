@@ -11,7 +11,7 @@
           v-model="form.equipment_tree"
           :disabled="disabled"
           :replaceFields="fieldNames"
-          :treeData="eqMessage.departs"
+          :treeData="departs"
           placeholder="请选择组织机构"
       />
       <!--      <a-cascader-->
@@ -97,6 +97,7 @@ import { eqTypeMixin } from '@/mixins/eqTypeMixins'
 import { getExampleListApi } from '@/api/eqManage'
 import { storageStore } from '@/store/local'
 import { isObjectEqual } from '@/utils'
+import { getOrgInAddEqManageApi } from '@/api/org'
 
 export default {
   mixins: [eqTypeMixin],
@@ -124,6 +125,9 @@ export default {
       treeData: [],
       equipment_tree: '',
       equipNameList: [],
+      
+      //组织机构
+      departs: [],
     }
   },
   methods: {
@@ -163,11 +167,17 @@ export default {
         }
       }
     },
+    async getNewOrg() {
+      const { result } = await getOrgInAddEqManageApi()
+      
+      this.departs = [result]
+    },
   },
   created() {
     // if (this.title === '修改') {
     //    this.getNameList()
     // }
+    this.getNewOrg()
     this.getEquipInitMessage()
   },
 }

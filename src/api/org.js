@@ -13,6 +13,13 @@ export const getOrgApi = () => {
 
   })
 }
+
+export const getOrgInAddEqManageApi = () => {
+  return request({
+    url: ORG + '/getOrgTreeFromEquip',
+  })
+}
+
 /**
  * 创建组织机构
  * @returns {*}
