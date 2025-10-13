@@ -57,7 +57,7 @@
               </div>
             </template>
             <a-card-meta
-                :title="`${item.equipment_name}${item.equipment_id}`"
+                :title="`${item.equipment_name}`"
                 class="cardMeta"
             >
               <a-avatar
