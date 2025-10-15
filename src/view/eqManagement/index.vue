@@ -132,7 +132,8 @@ export default {
       this.getEquipmentList()
     },
     pageChange(page) {
-      this.pageSize = page === 1 ? 19 : 20
+      // this.pageSize = page === 1 ? 19 : 20
+      this.pageSize = 19
       this.currentPage = page
       this.getEquipmentList()
     },
