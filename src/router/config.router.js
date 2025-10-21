@@ -94,6 +94,12 @@ export default [
     name: '设备基础信息',
     path: '/baseName',
     component: () => import('@/view/baseName/index.vue'),
-    
+
+  },
+
+  {
+    name: '测试页面',
+    path: '/test',
+    component: () => import('@/view/eqMonitoring/components/eqParam.vue'),
   },
 ]
