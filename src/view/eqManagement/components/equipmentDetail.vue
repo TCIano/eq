@@ -41,7 +41,7 @@
             </div>
           </template>
           <a-row :gutter="[5, 5]" style="margin: 0">
-            <a-col v-for="(item, index) in monitoringPoints" :key="index"
+            <a-col v-for="(item) in monitoringPoints" :key="item.name"
                    :span="monitoringPoints.length >= 2 ? 12 : 24">
               <a-card :body-style="{ padding: '0px' }" class="monitoring-point-card"
                       size="small">
