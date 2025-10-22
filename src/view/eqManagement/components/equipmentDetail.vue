@@ -41,14 +41,16 @@
             </div>
           </template>
           <a-row :gutter="[5, 5]" style="margin: 0">
-            <a-col v-for="(item, index) in monitoringPoints" :key="index"
+            <!--            name 需要唯一的key，不然会导致每次切换选择的内容时候，布局内元素的高度混乱（vue会复用 DOM）-->
+            <a-col v-for="(item) in monitoringPoints" :key="item.name"
                    :span="monitoringPoints.length >= 2 ? 12 : 24">
               <a-card :body-style="{ padding: '0px' }" class="monitoring-point-card"
                       size="small">
                 <template slot="title">
                   <span>{{ item.name }}</span>
                 </template>
-                <e-chart :height="monitoringPoints.length > 2 ? '2.7rem':'7rem'" :option="item.chartOption"
+                <e-chart ref="currentChart" :height="monitoringPoints.length > 2 ? '2.7rem':'7rem'"
+                         :option="item.chartOption"
                          :show-loading="false" />
               </a-card>
             </a-col>
@@ -266,10 +268,12 @@ export default {
       return statusNames[status]
     },
     async onChangeType(value) {
+      
       const currentType = this.currentTypes.find(item => item.id === value);
       const { result } = await getWarningDetailTagApi(currentType.id, currentType.position_type,
           this.$route.query.fault_id)
       this.changeTagChart(result.current_curve)
+      
     },
     
     async initChartData() {
